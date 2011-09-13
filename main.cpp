@@ -18,7 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <QApplication>
+#include <KAboutData>
+#include <KCmdLineArgs>
+#include <KApplication>
 
 #include <TelepathyQt4/AccountFactory>
 #include <TelepathyQt4/AccountManager>
@@ -34,11 +36,25 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    KAboutData aboutData("telepathy-kde-auth-handler",
+                         0,
+                         ki18n("Telepathy File Auth Handler"),
+                         "0.1");
+    aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
+    aboutData.setProductName("telepathy/auth-handler");
+
+
+    // Add --debug commandline options
+    KCmdLineOptions options;
+    options.add("debug", ki18n("Show Telepathy debugging information"));
+    KCmdLineArgs::addCmdLineOptions(options);
+
+    KCmdLineArgs::init(argc, argv, &aboutData);
+    KApplication app;
     app.setQuitOnLastWindowClosed(false);
 
     Tp::registerTypes();
-//    Tp::enableDebug(true);
+    Tp::enableDebug(KCmdLineArgs::parsedArgs()->isSet("debug"));
     Tp::enableWarnings(true);
 
     Tp::ChannelClassSpecList channelSpecList;
