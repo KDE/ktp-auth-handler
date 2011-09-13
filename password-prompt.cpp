@@ -2,6 +2,7 @@
 #include "ui_password-prompt.h"
 
 #include <KIcon>
+#include <KDebug>
 
 PasswordPrompt::PasswordPrompt(const Tp::AccountPtr &account, QWidget *parent) :
     KDialog(parent),
@@ -22,7 +23,7 @@ PasswordPrompt::PasswordPrompt(const Tp::AccountPtr &account, QWidget *parent) :
 PasswordPrompt::~PasswordPrompt()
 {
     delete ui;
-    qDebug() << "I've been deleted";
+    kDebug() << "I've been deleted";
 }
 
 QString PasswordPrompt::password() const

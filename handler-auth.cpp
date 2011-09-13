@@ -57,7 +57,7 @@ HandlerAuth::~HandlerAuth()
 void HandlerAuth::gotAvailableSASLMechanisms(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        qWarning() << "Unable to retrieve available SASL mechanisms";
+        kWarning() << "Unable to retrieve available SASL mechanisms";
         setFinishedWithError(op->errorName(), op->errorMessage());
         return;
     }
@@ -125,12 +125,12 @@ void HandlerAuth::promptUser(bool isFirstRun)
     PasswordPrompt dialog(m_account);
 
     if (dialog.exec() == QDialog::Rejected) {
-        qDebug() << "Authentication canceled";
+        kDebug() << "Authentication canceled";
         m_channel->close();
         return;
     }
 
-    qDebug() << "Starting authentication...";
+    kDebug() << "Starting authentication...";
 
     m_channel->startMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"),
             dialog.password().toUtf8());
