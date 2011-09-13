@@ -40,3 +40,6 @@ target_link_libraries(telepathy-kde-auth-handler
     ${KDE4_KDECORE_LIBS}
     ${KDE4_KDEUI_LIBS}
 )
+
+configure_file(org.freedesktop.Telepathy.Client.KDE.AuthHandler.service.in
+               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.AuthHandler.service)
