@@ -138,10 +138,10 @@ void HandlerAuth::promptUser(bool isFirstRun)
     //save password in kwallet...
     if (dialog.savePassword()) {
         kDebug() << "Saving password";
-        if (!m_wallet->hasFolder("telepathy")) {
-            m_wallet->createFolder("telepathy");
+        if (!m_wallet->hasFolder("telepathy-kde")) {
+            m_wallet->createFolder("telepathy-kde");
         }
-        m_wallet->setFolder("telepathy");
+        m_wallet->setFolder("telepathy-kde");
         m_wallet->writePassword(m_account->uniqueIdentifier(), dialog.password());
     }
 }
