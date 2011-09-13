@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
             accountFactory, connectionFactory, channelFactory);
 
     if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(&handler), QLatin1String("KDEAuthHanlder"))) {
+                Tp::AbstractClientPtr(&handler), QLatin1String("KDE.AuthHanlder"))) {
         return 1;
     }
 

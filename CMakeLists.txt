@@ -1,4 +1,4 @@
-project(telepathy-kde-sasl)
+project(telepathy-kde-auth-handler)
 
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
@@ -20,7 +20,7 @@ include_directories (${KDE4_INCLUDES}
 )
 
 
-set(saslauth_SRCS
+set(telepathy_kde_auth_handler_SRCS
     main.cpp
     handler.cpp
     handler-auth.cpp
@@ -28,10 +28,10 @@ set(saslauth_SRCS
     password-prompt.cpp)
 
 
-kde4_add_ui_files(saslauth_SRCS password-prompt.ui)
-kde4_add_executable(saslauth ${saslauth_SRCS})
+kde4_add_ui_files(telepathy_kde_auth_handler_SRCS password-prompt.ui)
+kde4_add_executable(telepathy-kde-auth-handler ${telepathy_kde_auth_handler_SRCS})
 
-target_link_libraries(saslauth
+target_link_libraries(telepathy-kde-auth-handler
     ${QT_QTDBUS_LIBRARY}
     ${QT_QTGUI_LIBRARY}
     ${QT_QTXML_LIBRARY}
