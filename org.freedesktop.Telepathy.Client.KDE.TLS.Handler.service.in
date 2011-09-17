@@ -1,3 +1,3 @@
 [D-BUS Service]
-Name=org.freedesktop.Telepathy.Client.KDE.AuthHandler
+Name=org.freedesktop.Telepathy.Client.KDE.TLS.Handler
 Exec=@CMAKE_INSTALL_PREFIX@/bin/telepathy-kde-auth-handler

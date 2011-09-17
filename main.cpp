@@ -1,7 +1,6 @@
 /*
- * This file is part of TelepathyQt4
- *
  * Copyright (C) 2011 Collabora Ltd. <http://www.collabora.co.uk/>
+ *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,17 +31,20 @@
 #include <TelepathyQt4/Debug>
 #include <TelepathyQt4/Types>
 
-#include "handler.h"
+#include "sasl-handler.h"
+#include "tls-handler.h"
+
+// FIXME: Move this to tp-qt4 itself
+#include "types.h"
 
 int main(int argc, char *argv[])
 {
     KAboutData aboutData("telepathy-kde-auth-handler",
                          0,
-                         ki18n("Telepathy File Auth Handler"),
+                         ki18n("Telepathy Authentication Handler"),
                          "0.1");
     aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
     aboutData.setProductName("telepathy/auth-handler");
-
 
     // Add --debug commandline options
     KCmdLineOptions options;
@@ -54,24 +56,13 @@ int main(int argc, char *argv[])
     app.setQuitOnLastWindowClosed(false);
 
     Tp::registerTypes();
+    // FIXME: Move this to tp-qt4 itself
+    registerTypes();
     Tp::enableDebug(KCmdLineArgs::parsedArgs()->isSet("debug"));
     Tp::enableWarnings(true);
 
-    Tp::ChannelClassSpecList channelSpecList;
-
-    QVariantMap otherProperties;
-    otherProperties.insert(
-            QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION ".AuthenticationMethod"),
-            TP_QT4_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION);
-    channelSpecList.append(Tp::ChannelClassSpec(TP_QT4_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION,
-                Tp::HandleTypeNone, false, otherProperties));
-
-    // create the channel approver
-    Handler handler(channelSpecList);
-
     Tp::AccountFactoryPtr accountFactory = Tp::AccountFactory::create(
-            QDBusConnection::sessionBus(),
-                Tp::Features() << Tp::Account::FeatureCore << Tp::Account::FeatureProfile);
+            QDBusConnection::sessionBus(), Tp::Account::FeatureCore);
     Tp::ConnectionFactoryPtr connectionFactory = Tp::ConnectionFactory::create(
             QDBusConnection::sessionBus(), Tp::Connection::FeatureCore);
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(
@@ -80,8 +71,25 @@ int main(int argc, char *argv[])
     Tp::ClientRegistrarPtr clientRegistrar = Tp::ClientRegistrar::create(
             accountFactory, connectionFactory, channelFactory);
 
+    Tp::ChannelClassSpecList saslFilter;
+    QVariantMap saslOtherProperties;
+    saslOtherProperties.insert(
+            QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION ".AuthenticationMethod"),
+            TP_QT4_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION);
+    saslFilter.append(Tp::ChannelClassSpec(TP_QT4_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION,
+                Tp::HandleTypeNone, false, saslOtherProperties));
+    SaslHandler saslHandler(saslFilter);
     if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(&handler), QLatin1String("KDE.AuthHanlder"))) {
+                Tp::AbstractClientPtr(&saslHandler), QLatin1String("KDE.SASL.Handler"))) {
+        return 1;
+    }
+
+    Tp::ChannelClassSpecList tlsFilter;
+    tlsFilter.append(Tp::ChannelClassSpec(TP_QT4_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION,
+                Tp::HandleTypeNone, false));
+    TlsHandler tlsHandler(tlsFilter);
+    if (!clientRegistrar->registerClient(
+                Tp::AbstractClientPtr(&tlsHandler), QLatin1String("KDE.TLS.Handler"))) {
         return 1;
     }
 

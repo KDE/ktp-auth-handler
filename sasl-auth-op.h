@@ -1,7 +1,7 @@
 /*
- * This file is part of TelepathyQt4
- *
  * Copyright (C) 2011 Collabora Ltd. <http://www.collabora.co.uk/>
+ *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
+ * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _TelepathyQt4_examples_saslauth_handler_auth_h_HEADER_GUARD_
-#define _TelepathyQt4_examples_saslauth_handler_auth_h_HEADER_GUARD_
+#ifndef SASLAUTHOP_H
+#define SASLAUTHOP_H
 
 #include <TelepathyQt4/Account>
 #include <TelepathyQt4/Channel>
@@ -27,29 +27,35 @@
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/Types>
 
-#include "KWallet/Wallet"
+#include <KWallet/Wallet>
 
-#include "sasl-channel.h"
-
-class HandlerAuth : public Tp::PendingOperation
+class SaslAuthOp : public Tp::PendingOperation
 {
     Q_OBJECT
+
 public:
-    HandlerAuth(const Tp::AccountPtr &account,
+    SaslAuthOp(const Tp::AccountPtr &account,
             const Tp::ConnectionPtr &connection,
-            const Tp::ChannelPtr &channel);
-    ~HandlerAuth();
+            const Tp::ChannelPtr &channel,
+            KWallet::Wallet *wallet);
+    ~SaslAuthOp();
+
+Q_SIGNALS:
+    void ready(Tp::PendingOperation *self);
 
 private Q_SLOTS:
-    void gotAvailableSASLMechanisms(Tp::PendingOperation *op);
+    void gotProperties(Tp::PendingOperation *op);
     void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
-    void promptUser(bool isFirstPrompt);
 
 private:
+    void promptUser(bool isFirstPrompt);
+
     Tp::AccountPtr m_account;
     Tp::ConnectionPtr m_connection;
-    SaslChannel *m_channel; //FIXME
+    Tp::ChannelPtr m_channel;
+    Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
     KWallet::Wallet *m_wallet;
+    bool m_canTryAgain;
 };
 
 #endif

@@ -1,8 +1,6 @@
 /*
- * This file is part of TelepathyQt4
- *
  * Copyright (C) 2011 Collabora Ltd. <http://www.collabora.co.uk/>
- * Copyright (C) David Edmundson <kde@davidedmundson.co.uk>
+ *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,9 +17,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "handler.h"
+#include "tls-handler.h"
 
-#include "handler-auth.h"
+#include "tls-cert-verifier-op.h"
 
 #include <QDBusConnection>
 
@@ -29,21 +27,23 @@
 #include <TelepathyQt4/ChannelDispatchOperation>
 #include <TelepathyQt4/MethodInvocationContext>
 
-Handler::Handler(const Tp::ChannelClassSpecList &channelFilter)
+#include <KDebug>
+
+TlsHandler::TlsHandler(const Tp::ChannelClassSpecList &channelFilter)
     : Tp::AbstractClientHandler(channelFilter)
 {
 }
 
-Handler::~Handler()
+TlsHandler::~TlsHandler()
 {
 }
 
-bool Handler::bypassApproval() const
+bool TlsHandler::bypassApproval() const
 {
     return true;
 }
 
-void Handler::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
+void TlsHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
         const Tp::AccountPtr &account,
         const Tp::ConnectionPtr &connection,
         const QList<Tp::ChannelPtr> &channels,
@@ -55,31 +55,36 @@ void Handler::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
     Q_UNUSED(userActionTime);
     Q_UNUSED(handlerInfo);
 
-    Q_ASSERT(channels.size() == 1);
-    HandlerAuth *auth = new HandlerAuth(account, connection, channels.first());
-
-    connect(auth,
+    TlsCertVerifierOp *verifier = new TlsCertVerifierOp(
+            account, connection, channels.first());
+    connect(verifier,
+            SIGNAL(ready(Tp::PendingOperation*)),
+            SLOT(onCertVerifierReady(Tp::PendingOperation*)));
+    connect(verifier,
             SIGNAL(finished(Tp::PendingOperation*)),
-            SLOT(onAuthFinished(Tp::PendingOperation*)));
-    mAuthContexts.insert(auth, context);
-
+            SLOT(onCertVerifierFinished(Tp::PendingOperation*)));
+    mVerifiers.insert(verifier, context);
 }
 
-void Handler::onAuthFinished(Tp::PendingOperation *op)
+void TlsHandler::onCertVerifierReady(Tp::PendingOperation *op)
 {
-    HandlerAuth *auth = qobject_cast<HandlerAuth*>(op);
-    Q_ASSERT(mAuthContexts.contains(auth));
+    TlsCertVerifierOp *verifier = qobject_cast<TlsCertVerifierOp*>(op);
+    Q_ASSERT(mVerifiers.contains(verifier));
 
-    Tp::MethodInvocationContextPtr<> context = mAuthContexts.value(auth);
+    Tp::MethodInvocationContextPtr<> context = mVerifiers.value(verifier);
+    context->setFinished();
+}
+
+void TlsHandler::onCertVerifierFinished(Tp::PendingOperation *op)
+{
+    TlsCertVerifierOp *verifier = qobject_cast<TlsCertVerifierOp*>(op);
+    Q_ASSERT(mVerifiers.contains(verifier));
+
     if (op->isError()) {
-        context->setFinishedWithError(op->errorName(), op->errorMessage());
-    } else {
-        context->setFinished();
+        kWarning() << "Error verifying TLS certificate:" << op->errorName() << "-" << op->errorMessage();
     }
 
-    mAuthContexts.remove(auth);
-
-    //if mAuthContexts.size == 0 then close?
+    mVerifiers.remove(verifier);
 }
 
-#include "handler.moc"
+#include "tls-handler.moc"

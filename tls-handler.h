@@ -1,8 +1,6 @@
 /*
- * This file is part of TelepathyQt4
- *
  * Copyright (C) 2011 Collabora Ltd. <http://www.collabora.co.uk/>
- * Copyright (C) David Edmundson <kde@davidedmundson.co.uk>
+ *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +17,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _TelepathyQt4_examples_saslauth_handler_h_HEADER_GUARD_
-#define _TelepathyQt4_examples_saslauth_handler_h_HEADER_GUARD_
+#ifndef TLSHANDLER_H
+#define TLSHANDLER_H
 
 #include <QObject>
 
@@ -31,15 +29,15 @@ namespace Tp
     class PendingOperation;
 };
 
-class HandlerAuth;
+class TlsCertVerifierOp;
 
-class Handler : public QObject, public Tp::AbstractClientHandler
+class TlsHandler : public QObject, public Tp::AbstractClientHandler
 {
     Q_OBJECT
 
 public:
-    explicit Handler(const Tp::ChannelClassSpecList &channelFilter);
-    ~Handler();
+    explicit TlsHandler(const Tp::ChannelClassSpecList &channelFilter);
+    ~TlsHandler();
 
     bool bypassApproval() const;
 
@@ -52,10 +50,11 @@ public:
             const Tp::AbstractClientHandler::HandlerInfo &handlerInfo);
 
 private Q_SLOTS:
-    void onAuthFinished(Tp::PendingOperation *op);
+    void onCertVerifierReady(Tp::PendingOperation *op);
+    void onCertVerifierFinished(Tp::PendingOperation *op);
 
 private:
-    QHash<HandlerAuth *, Tp::MethodInvocationContextPtr<> > mAuthContexts;
+    QHash<Tp::PendingOperation *, Tp::MethodInvocationContextPtr<> > mVerifiers;
 };
 
 #endif

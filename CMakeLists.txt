@@ -19,14 +19,14 @@ include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
 )
 
-
 set(telepathy_kde_auth_handler_SRCS
     main.cpp
-    handler.cpp
-    handler-auth.cpp
-    sasl-channel.cpp
-    password-prompt.cpp)
-
+    password-prompt.cpp
+    sasl-handler.cpp
+    sasl-auth-op.cpp
+    tls-cert-verifier-op.cpp
+    tls-handler.cpp
+    types.cpp)
 
 kde4_add_ui_files(telepathy_kde_auth_handler_SRCS password-prompt.ui)
 kde4_add_executable(telepathy-kde-auth-handler ${telepathy_kde_auth_handler_SRCS})
@@ -41,10 +41,15 @@ target_link_libraries(telepathy-kde-auth-handler
     ${KDE4_KDEUI_LIBS}
 )
 
-configure_file(org.freedesktop.Telepathy.Client.KDE.AuthHandler.service.in
-               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.AuthHandler.service)
+configure_file(org.freedesktop.Telepathy.Client.KDE.SASL.Handler.service.in
+               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.SASL.Handler.service)
+configure_file(org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service.in
+               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service)
+
 
 install(TARGETS telepathy-kde-auth-handler ${INSTALL_TARGETS_DEFAULT_ARGS})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.AuthHandler.service
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.SASL.Handler.service
+        DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service
         DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
 install(FILES KDE.AuthHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
