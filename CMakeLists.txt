@@ -47,7 +47,7 @@ configure_file(org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service.in
                ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service)
 
 
-install(TARGETS telepathy-kde-auth-handler ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS telepathy-kde-auth-handler DESTINATION ${LIBEXEC_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.SASL.Handler.service
         DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service
