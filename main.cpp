@@ -20,6 +20,7 @@
 #include <KAboutData>
 #include <KCmdLineArgs>
 #include <KApplication>
+#include <KDebug>
 
 #include <TelepathyQt4/AccountFactory>
 #include <TelepathyQt4/AccountManager>
@@ -71,6 +72,8 @@ int main(int argc, char *argv[])
     Tp::ClientRegistrarPtr clientRegistrar = Tp::ClientRegistrar::create(
             accountFactory, connectionFactory, channelFactory);
 
+    int handlers = 2;
+
     Tp::ChannelClassSpecList saslFilter;
     QVariantMap saslOtherProperties;
     saslOtherProperties.insert(
@@ -81,7 +84,7 @@ int main(int argc, char *argv[])
     Tp::SharedPtr<SaslHandler> saslHandler = Tp::SharedPtr<SaslHandler>(new SaslHandler(saslFilter));
     if (!clientRegistrar->registerClient(
                 Tp::AbstractClientPtr(saslHandler), QLatin1String("KDE.SASL.Handler"))) {
-        return 1;
+        handlers -= 1;
     }
 
     Tp::ChannelClassSpecList tlsFilter;
@@ -90,6 +93,12 @@ int main(int argc, char *argv[])
     Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler(tlsFilter));
     if (!clientRegistrar->registerClient(
                 Tp::AbstractClientPtr(tlsHandler), QLatin1String("KDE.TLS.Handler"))) {
+        handlers -= 1;
+    }
+
+    if (!handlers)
+    {
+        kDebug() << "No handlers registered. Exiting";
         return 1;
     }
     return app.exec();
