@@ -78,20 +78,19 @@ int main(int argc, char *argv[])
             TP_QT4_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION);
     saslFilter.append(Tp::ChannelClassSpec(TP_QT4_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION,
                 Tp::HandleTypeNone, false, saslOtherProperties));
-    SaslHandler saslHandler(saslFilter);
+    Tp::SharedPtr<SaslHandler> saslHandler = Tp::SharedPtr<SaslHandler>(new SaslHandler(saslFilter));
     if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(&saslHandler), QLatin1String("KDE.SASL.Handler"))) {
+                Tp::AbstractClientPtr(saslHandler), QLatin1String("KDE.SASL.Handler"))) {
         return 1;
     }
 
     Tp::ChannelClassSpecList tlsFilter;
     tlsFilter.append(Tp::ChannelClassSpec(TP_QT4_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION,
                 Tp::HandleTypeNone, false));
-    TlsHandler tlsHandler(tlsFilter);
+    Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler(tlsFilter));
     if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(&tlsHandler), QLatin1String("KDE.TLS.Handler"))) {
+                Tp::AbstractClientPtr(tlsHandler), QLatin1String("KDE.TLS.Handler"))) {
         return 1;
     }
-
     return app.exec();
 }
