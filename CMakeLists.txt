@@ -7,7 +7,7 @@ set (CMAKE_MODULE_PATH
 
 set(KDE_MIN_VERSION "4.4.75")
 find_package (KDE4 4.4.75 REQUIRED)
-find_package (TelepathyQt4 0.7.1 REQUIRED)
+find_package (TelepathyQt4 0.7.3 REQUIRED)
 
 include (KDE4Defaults)
 include (MacroLibrary)
