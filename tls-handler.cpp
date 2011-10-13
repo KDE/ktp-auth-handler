@@ -56,6 +56,8 @@ void TlsHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
     Q_UNUSED(userActionTime);
     Q_UNUSED(handlerInfo);
 
+    Q_ASSERT(channels.size() == 1);
+
     KTelepathy::TelepathyHandlerApplication::newJob();
     TlsCertVerifierOp *verifier = new TlsCertVerifierOp(
             account, connection, channels.first());

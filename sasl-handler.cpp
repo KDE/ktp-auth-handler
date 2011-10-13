@@ -59,6 +59,8 @@ void SaslHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context
     Q_UNUSED(userActionTime);
     Q_UNUSED(handlerInfo);
 
+    Q_ASSERT(channels.size() == 1);
+
     KTelepathy::TelepathyHandlerApplication::newJob();
     SaslAuthOp *auth = new SaslAuthOp(
             account, connection, channels.first(), m_wallet);
