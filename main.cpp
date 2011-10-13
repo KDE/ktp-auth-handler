@@ -34,6 +34,7 @@
 
 #include "sasl-handler.h"
 #include "tls-handler.h"
+#include "common/telepathy-handler-application.h"
 
 // FIXME: Move this to tp-qt4 itself
 #include "types.h"
@@ -47,20 +48,11 @@ int main(int argc, char *argv[])
     aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
     aboutData.setProductName("telepathy/auth-handler");
 
-    // Add --debug commandline options
-    KCmdLineOptions options;
-    options.add("debug", ki18n("Show Telepathy debugging information"));
-    KCmdLineArgs::addCmdLineOptions(options);
-
     KCmdLineArgs::init(argc, argv, &aboutData);
-    KApplication app;
-    app.setQuitOnLastWindowClosed(false);
+    KTelepathy::TelepathyHandlerApplication app;
 
-    Tp::registerTypes();
     // FIXME: Move this to tp-qt4 itself
     registerTypes();
-    Tp::enableDebug(KCmdLineArgs::parsedArgs()->isSet("debug"));
-    Tp::enableWarnings(true);
 
     Tp::AccountFactoryPtr accountFactory = Tp::AccountFactory::create(
             QDBusConnection::sessionBus(), Tp::Account::FeatureCore);

@@ -21,6 +21,7 @@
 #include "sasl-handler.h"
 
 #include "sasl-auth-op.h"
+#include "common/telepathy-handler-application.h"
 
 #include <QDBusConnection>
 
@@ -58,6 +59,7 @@ void SaslHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context
     Q_UNUSED(userActionTime);
     Q_UNUSED(handlerInfo);
 
+    KTelepathy::TelepathyHandlerApplication::newJob();
     SaslAuthOp *auth = new SaslAuthOp(
             account, connection, channels.first(), m_wallet);
     connect(auth,
@@ -88,6 +90,7 @@ void SaslHandler::onAuthFinished(Tp::PendingOperation *op)
     }
 
     mAuthContexts.remove(auth);
+    KTelepathy::TelepathyHandlerApplication::jobFinished();
 }
 
 #include "sasl-handler.moc"

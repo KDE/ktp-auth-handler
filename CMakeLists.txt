@@ -31,6 +31,10 @@ execute_process(COMMAND git submodule update
 endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
 
 
+set (telepathy_kde_common_internals_SRCS
+     common/telepathy-handler-application.cpp
+)
+
 set(telepathy_kde_auth_handler_SRCS
     main.cpp
     password-prompt.cpp
@@ -38,7 +42,9 @@ set(telepathy_kde_auth_handler_SRCS
     sasl-auth-op.cpp
     tls-cert-verifier-op.cpp
     tls-handler.cpp
-    types.cpp)
+    types.cpp
+    ${telepathy_kde_common_internals_SRCS}
+)
 
 kde4_add_ui_files(telepathy_kde_auth_handler_SRCS password-prompt.ui)
 kde4_add_executable(telepathy-kde-auth-handler ${telepathy_kde_auth_handler_SRCS})

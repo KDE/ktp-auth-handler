@@ -20,6 +20,7 @@
 #include "tls-handler.h"
 
 #include "tls-cert-verifier-op.h"
+#include "common/telepathy-handler-application.h"
 
 #include <QDBusConnection>
 
@@ -55,6 +56,7 @@ void TlsHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
     Q_UNUSED(userActionTime);
     Q_UNUSED(handlerInfo);
 
+    KTelepathy::TelepathyHandlerApplication::newJob();
     TlsCertVerifierOp *verifier = new TlsCertVerifierOp(
             account, connection, channels.first());
     connect(verifier,
@@ -85,6 +87,7 @@ void TlsHandler::onCertVerifierFinished(Tp::PendingOperation *op)
     }
 
     mVerifiers.remove(verifier);
+    KTelepathy::TelepathyHandlerApplication::jobFinished();
 }
 
 #include "tls-handler.moc"
