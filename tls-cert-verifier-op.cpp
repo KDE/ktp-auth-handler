@@ -54,6 +54,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     if (op->isError()) {
         kWarning() << "Unable to retrieve properties from AuthenticationTLSCertificate object at" <<
             m_authTLSCertificateIface->path();
+        m_channel->requestClose();
         setFinishedWithError(op->errorName(), op->errorMessage());
         return;
     }
