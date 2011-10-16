@@ -43,8 +43,6 @@ public:
 
 Q_SIGNALS:
     void ready(Tp::PendingOperation *self);
-    void error(Tp::PendingOperation *self, const QString &error, const QString &errorMessage);
-    void finished(Tp::PendingOperation *self);
 
 private Q_SLOTS:
     void gotProperties(Tp::PendingOperation *op);
