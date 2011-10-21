@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
                 Tp::HandleTypeNone, false, saslOtherProperties));
     Tp::SharedPtr<SaslHandler> saslHandler = Tp::SharedPtr<SaslHandler>(new SaslHandler(saslFilter));
     if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(saslHandler), QLatin1String("KDE.SASL.Handler"))) {
+                Tp::AbstractClientPtr(saslHandler), QLatin1String("KDE.SASLHandler"))) {
         handlers -= 1;
     }
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
                 Tp::HandleTypeNone, false));
     Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler(tlsFilter));
     if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(tlsHandler), QLatin1String("KDE.TLS.Handler"))) {
+                Tp::AbstractClientPtr(tlsHandler), QLatin1String("KDE.TLSHandler"))) {
         handlers -= 1;
     }
 

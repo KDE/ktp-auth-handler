@@ -59,15 +59,16 @@ target_link_libraries(telepathy-kde-auth-handler
     ${KDE4_KDEUI_LIBS}
 )
 
-configure_file(org.freedesktop.Telepathy.Client.KDE.SASL.Handler.service.in
-               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.SASL.Handler.service)
-#configure_file(org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service.in
-#               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service)
+configure_file(org.freedesktop.Telepathy.Client.KDE.SASLHandler.service.in
+               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.SASLHandler.service)
+#configure_file(org.freedesktop.Telepathy.Client.KDE.TLSHandler.service.in
+#               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.TLSHandler.service)
 
 
 install(TARGETS telepathy-kde-auth-handler DESTINATION ${LIBEXEC_INSTALL_DIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.SASL.Handler.service
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.SASLHandler.service
         DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
-#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.TLS.Handler.service
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KDE.TLSHandler.service
 #        DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
-install(FILES KDE.AuthHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
+install(FILES KDE.SASLHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
+#install(FILES KDE.TLSHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
