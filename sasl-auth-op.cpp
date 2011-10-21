@@ -23,6 +23,7 @@
 #include <TelepathyQt4/PendingVariantMap>
 
 #include <KDebug>
+#include <KLocalizedString>
 
 #include "password-prompt.h"
 
@@ -105,7 +106,8 @@ void SaslAuthOp::onSASLStatusChanged(uint status, const QString &reason,
             promptUser(false);
         } else {
             m_channel->requestClose();
-            setFinished();
+            QString errorMessage = details[QLatin1String("server-message")].toString();
+            setFinishedWithError(reason, errorMessage.isEmpty() ? i18n("Authentication error") : errorMessage);
         }
     }
 }
