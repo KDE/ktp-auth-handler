@@ -105,6 +105,7 @@ void SaslAuthOp::onSASLStatusChanged(uint status, const QString &reason,
             kDebug() << "Retrying...";
             promptUser(false);
         } else {
+            kWarning() << "Authentication failed and cannot try again";
             m_channel->requestClose();
             QString errorMessage = details[QLatin1String("server-message")].toString();
             setFinishedWithError(reason, errorMessage.isEmpty() ? i18n("Authentication error") : errorMessage);
