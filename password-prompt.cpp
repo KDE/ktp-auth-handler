@@ -18,6 +18,7 @@
 
 #include "password-prompt.h"
 #include "ui_password-prompt.h"
+#include "common/wallet-interface.h"
 
 #include <KIcon>
 #include <KDebug>
@@ -33,6 +34,11 @@ PasswordPrompt::PasswordPrompt(const Tp::AccountPtr &account, QWidget *parent)
     ui->accountName->setText(account->displayName());
     ui->accountIcon->setPixmap(KIcon("dialog-password").pixmap(60,60));
     ui->title->setPixmap(KIcon(account->iconName()).pixmap(22,22));
+
+    KTelepathy::WalletInterface wallet(this->effectiveWinId());
+    if (wallet.hasPassword(account)) {
+        ui->passwordLineEdit->setText(wallet.password(account));
+    }
 }
 
 PasswordPrompt::~PasswordPrompt()
