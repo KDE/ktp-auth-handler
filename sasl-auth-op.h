@@ -27,8 +27,6 @@
 #include <TelepathyQt4/PendingOperation>
 #include <TelepathyQt4/Types>
 
-#include <KWallet/Wallet>
-
 class SaslAuthOp : public Tp::PendingOperation
 {
     Q_OBJECT
@@ -36,8 +34,7 @@ class SaslAuthOp : public Tp::PendingOperation
 public:
     SaslAuthOp(const Tp::AccountPtr &account,
             const Tp::ConnectionPtr &connection,
-            const Tp::ChannelPtr &channel,
-            KWallet::Wallet *wallet);
+            const Tp::ChannelPtr &channel);
     ~SaslAuthOp();
 
 Q_SIGNALS:
@@ -54,7 +51,6 @@ private:
     Tp::ConnectionPtr m_connection;
     Tp::ChannelPtr m_channel;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
-    KWallet::Wallet *m_wallet;
     bool m_canTryAgain;
 };
 

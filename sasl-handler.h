@@ -25,8 +25,6 @@
 
 #include <TelepathyQt4/AbstractClientHandler>
 
-#include <KWallet/Wallet>
-
 namespace Tp
 {
     class PendingOperation;
@@ -57,7 +55,6 @@ private Q_SLOTS:
     void onAuthFinished(Tp::PendingOperation *op);
 
 private:
-    KWallet::Wallet *m_wallet;
     QHash<Tp::PendingOperation *, Tp::MethodInvocationContextPtr<> > mAuthContexts;
 };
 

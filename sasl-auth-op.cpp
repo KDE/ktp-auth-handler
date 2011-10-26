@@ -26,17 +26,16 @@
 #include <KLocalizedString>
 
 #include "password-prompt.h"
+#include "common/wallet-interface.h"
 
 SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
         const Tp::ConnectionPtr &connection,
-        const Tp::ChannelPtr &channel,
-        KWallet::Wallet *wallet)
+        const Tp::ChannelPtr &channel)
     : Tp::PendingOperation(channel),
       m_account(account),
       m_connection(connection),
       m_channel(channel),
       m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthenticationInterface>()),
-      m_wallet(wallet),
       m_canTryAgain(false)
 {
     connect(m_saslIface->requestAllProperties(),
@@ -115,50 +114,30 @@ void SaslAuthOp::onSASLStatusChanged(uint status, const QString &reason,
 
 void SaslAuthOp::promptUser(bool isFirstRun)
 {
+    QString password;
+
     kDebug() << "Trying to load from wallet";
-    if (m_wallet->hasFolder("telepathy-kde") && isFirstRun) {
-        m_wallet->setFolder("telepathy-kde");
-
-        QString password;
-        kDebug() << "Wallet contains telepathy folder";
-
-        if (m_wallet->hasEntry(m_account->uniqueIdentifier())) {
-            kDebug() << "Wallet contains saved password";
-
-            int ret = m_wallet->readPassword(m_account->uniqueIdentifier(), password);
-            if (ret == 0) {
-                kDebug() << "Using saved password";
-                m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"),
-                        password.toUtf8());
-                return;
-            } else {
-                kDebug() << "Error reading saved password";
-            }
+    KTelepathy::WalletInterface wallet(0);
+    if (wallet.hasPassword(m_account) && isFirstRun) {
+        password = wallet.password(m_account);
+    } else {
+        PasswordPrompt dialog(m_account);
+        if (dialog.exec() == QDialog::Rejected) {
+            kDebug() << "Authentication cancelled";
+            m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
+            m_channel->requestClose();
+            setFinished();
+            return;
+        }
+        password = dialog.password();
+        // save password in kwallet if necessary...
+        if (dialog.savePassword()) {
+            kDebug() << "Saving password in wallet";
+            wallet.setPassword(m_account, dialog.password());
         }
     }
 
-    PasswordPrompt dialog(m_account);
-    if (dialog.exec() == QDialog::Rejected) {
-        kDebug() << "Authentication cancelled";
-        m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
-        m_channel->requestClose();
-        setFinished();
-        return;
-    }
-
-    kDebug() << "Starting authentication...";
-    m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"),
-            dialog.password().toUtf8());
-
-    // save password in kwallet...
-    if (dialog.savePassword()) {
-        kDebug() << "Saving password in wallet";
-        if (!m_wallet->hasFolder("telepathy-kde")) {
-            m_wallet->createFolder("telepathy-kde");
-        }
-        m_wallet->setFolder("telepathy-kde");
-        m_wallet->writePassword(m_account->uniqueIdentifier(), dialog.password());
-    }
+    m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), password.toUtf8());
 }
 
 #include "sasl-auth-op.moc"

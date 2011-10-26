@@ -34,8 +34,6 @@
 SaslHandler::SaslHandler(const Tp::ChannelClassSpecList &channelFilter)
     : Tp::AbstractClientHandler(channelFilter)
 {
-    m_wallet = KWallet::Wallet::openWallet(KWallet::Wallet::NetworkWallet(),
-            0, KWallet::Wallet::Asynchronous);
 }
 
 SaslHandler::~SaslHandler()
@@ -63,7 +61,7 @@ void SaslHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context
 
     KTelepathy::TelepathyHandlerApplication::newJob();
     SaslAuthOp *auth = new SaslAuthOp(
-            account, connection, channels.first(), m_wallet);
+            account, connection, channels.first());
     connect(auth,
             SIGNAL(ready(Tp::PendingOperation*)),
             SLOT(onAuthReady(Tp::PendingOperation*)));

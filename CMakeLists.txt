@@ -33,6 +33,7 @@ endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
 
 set (telepathy_kde_common_internals_SRCS
      common/telepathy-handler-application.cpp
+     common/wallet-interface.cpp
 )
 
 set(telepathy_kde_auth_handler_SRCS
