@@ -36,8 +36,14 @@ PasswordPrompt::PasswordPrompt(const Tp::AccountPtr &account, QWidget *parent)
     ui->title->setPixmap(KIcon(account->iconName()).pixmap(22,22));
 
     KTelepathy::WalletInterface wallet(this->effectiveWinId());
-    if (wallet.hasPassword(account)) {
-        ui->passwordLineEdit->setText(wallet.password(account));
+
+    if (wallet.isOpen()) {
+        ui->savePassword->setChecked(true);
+        if (wallet.hasPassword(account)) {
+            ui->passwordLineEdit->setText(wallet.password(account));
+        }
+    } else {
+        ui->savePassword->setDisabled(true);
     }
 }
 
