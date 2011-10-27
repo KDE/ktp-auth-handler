@@ -110,8 +110,16 @@ void SaslAuthOp::onSASLStatusChanged(uint status, const QString &reason,
         } else {
             kWarning() << "Authentication failed and cannot try again";
             wallet.setEntry(m_account, QLatin1String("lastLoginFailed"), QLatin1String("true"));
+            // We cannot try again, but we can request again to set the account
+            // online. A new channel will be created, but since we set the
+            // lastLoginFailed entry, next time we will prompt for password
+            // and the user won't see any difference except for an
+            // authentication error notification
+            Tp::Presence requestedPresence = m_account->requestedPresence();
             m_channel->requestClose();
             QString errorMessage = details[QLatin1String("server-message")].toString();
+            m_account->setRequestedPresence(requestedPresence);
+
             setFinishedWithError(reason, errorMessage.isEmpty() ? i18n("Authentication error") : errorMessage);
         }
     }
