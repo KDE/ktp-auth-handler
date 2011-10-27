@@ -85,14 +85,18 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 void SaslAuthOp::onSASLStatusChanged(uint status, const QString &reason,
         const QVariantMap &details)
 {
+    KTelepathy::WalletInterface wallet(0);
     if (status == Tp::SASLStatusNotStarted) {
         kDebug() << "Requesting password";
-        promptUser(true);
+        promptUser (m_canTryAgain || !wallet.hasEntry(m_account, QLatin1String("lastLoginFailed")));
     } else if (status == Tp::SASLStatusServerSucceeded) {
         kDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
     } else if (status == Tp::SASLStatusSucceeded) {
         kDebug() << "Authentication succeeded";
+        if (wallet.hasEntry(m_account, QLatin1String("lastLoginFailed"))) {
+            wallet.removeEntry(m_account, QLatin1String("lastLoginFailed"));
+        }
         m_channel->requestClose();
         setFinished();
     } else if (status == Tp::SASLStatusInProgress) {
@@ -105,6 +109,7 @@ void SaslAuthOp::onSASLStatusChanged(uint status, const QString &reason,
             promptUser(false);
         } else {
             kWarning() << "Authentication failed and cannot try again";
+            wallet.setEntry(m_account, QLatin1String("lastLoginFailed"), QLatin1String("true"));
             m_channel->requestClose();
             QString errorMessage = details[QLatin1String("server-message")].toString();
             setFinishedWithError(reason, errorMessage.isEmpty() ? i18n("Authentication error") : errorMessage);
