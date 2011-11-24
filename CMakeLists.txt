@@ -5,9 +5,11 @@ set (CMAKE_MODULE_PATH
      ${CMAKE_MODULE_PATH}
 )
 
+set(IS_TELEPATHY_KDE_INTERNAL_MODULE TRUE)
 set(KDE_MIN_VERSION "4.4.75")
 find_package (KDE4 4.4.75 REQUIRED)
 find_package (TelepathyQt4 0.7.3 REQUIRED)
+find_package (KTelepathy REQUIRED)
 
 include (KDE4Defaults)
 include (MacroLibrary)
@@ -17,23 +19,7 @@ add_definitions (${KDE4_DEFINITIONS}
 
 include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
-)
-
-
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
-execute_process(COMMAND git submodule init
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-execute_process(COMMAND git submodule update
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
-endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.gitmodules)
-
-
-set (telepathy_kde_common_internals_SRCS
-     common/telepathy-handler-application.cpp
-     common/wallet-interface.cpp
+                     ${KTELEPATHY_INCLUDE_DIR}
 )
 
 set(telepathy_kde_auth_handler_SRCS
@@ -56,6 +42,7 @@ target_link_libraries(telepathy-kde-auth-handler
     ${QT_QTXML_LIBRARY}
     ${QT_QTCORE_LIBRARY}
     ${TELEPATHY_QT4_LIBRARIES}
+    ${KTELEPATHY_LIBRARIES}
     ${KDE4_KDECORE_LIBS}
     ${KDE4_KDEUI_LIBS}
 )

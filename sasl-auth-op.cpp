@@ -26,7 +26,8 @@
 #include <KLocalizedString>
 
 #include "password-prompt.h"
-#include "common/wallet-interface.h"
+
+#include <KTelepathy/wallet-interface.h>
 
 SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
         const Tp::ConnectionPtr &connection,
@@ -85,7 +86,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 void SaslAuthOp::onSASLStatusChanged(uint status, const QString &reason,
         const QVariantMap &details)
 {
-    KTelepathy::WalletInterface wallet(0);
+    KTp::WalletInterface wallet(0);
     if (status == Tp::SASLStatusNotStarted) {
         kDebug() << "Requesting password";
         promptUser (m_canTryAgain || !wallet.hasEntry(m_account, QLatin1String("lastLoginFailed")));
@@ -130,7 +131,7 @@ void SaslAuthOp::promptUser(bool isFirstRun)
     QString password;
 
     kDebug() << "Trying to load from wallet";
-    KTelepathy::WalletInterface wallet(0);
+    KTp::WalletInterface wallet(0);
     if (wallet.hasPassword(m_account) && isFirstRun) {
         password = wallet.password(m_account);
     } else {

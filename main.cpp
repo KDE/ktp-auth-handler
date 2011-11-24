@@ -34,7 +34,8 @@
 
 #include "sasl-handler.h"
 #include "tls-handler.h"
-#include "common/telepathy-handler-application.h"
+
+#include <KTelepathy/telepathy-handler-application.h>
 
 // FIXME: Move this to tp-qt4 itself
 #include "types.h"
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
     aboutData.setProductName("telepathy/auth-handler");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
-    KTelepathy::TelepathyHandlerApplication app;
+    KTp::TelepathyHandlerApplication app;
 
     // FIXME: Move this to tp-qt4 itself
     registerTypes();
