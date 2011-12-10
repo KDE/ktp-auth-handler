@@ -21,7 +21,7 @@
 
 #include <KDialog>
 
-#include <TelepathyQt4/Account>
+#include <TelepathyQt/Account>
 
 namespace Ui
 {

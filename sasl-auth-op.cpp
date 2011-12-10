@@ -20,7 +20,7 @@
 
 #include "sasl-auth-op.h"
 
-#include <TelepathyQt4/PendingVariantMap>
+#include <TelepathyQt/PendingVariantMap>
 
 #include <KDebug>
 #include <KLocalizedString>
@@ -65,7 +65,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
         kWarning() << "X-TELEPATHY-PASSWORD is the only supported SASL mechanism and "
             "is not available";
         m_channel->requestClose();
-        setFinishedWithError(TP_QT4_ERROR_NOT_IMPLEMENTED,
+        setFinishedWithError(TP_QT_ERROR_NOT_IMPLEMENTED,
                 QLatin1String("X-TELEPATHY-PASSWORD is the only supported SASL mechanism and "
                     " is not available"));
         return;

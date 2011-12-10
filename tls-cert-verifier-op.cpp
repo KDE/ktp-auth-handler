@@ -19,7 +19,7 @@
 
 #include "tls-cert-verifier-op.h"
 
-#include <TelepathyQt4/PendingVariantMap>
+#include <TelepathyQt/PendingVariantMap>
 
 #include <KDebug>
 
@@ -32,11 +32,11 @@ TlsCertVerifierOp::TlsCertVerifierOp(const Tp::AccountPtr &account,
       m_channel(channel)
 {
     QString certificatePath = qdbus_cast<QString>(channel->immutableProperties().value(
-                TP_QT4_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".ServerCertificate"));
+                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".ServerCertificate"));
     m_hostname = qdbus_cast<QString>(channel->immutableProperties().value(
-                TP_QT4_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".Hostname"));
+                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".Hostname"));
     m_referenceIdentities = qdbus_cast<QStringList>(channel->immutableProperties().value(
-                TP_QT4_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".ReferenceIdentities"));
+                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".ReferenceIdentities"));
 
     m_authTLSCertificateIface = new Tp::Client::AuthenticationTLSCertificateInterface(
             channel->dbusConnection(), channel->busName(), certificatePath);

@@ -21,12 +21,12 @@
 #ifndef TLSCERTVERIFIEROP_H
 #define TLSCERTVERIFIEROP_H
 
-#include <TelepathyQt4/Account>
-#include <TelepathyQt4/AuthenticationTLSCertificateInterface>
-#include <TelepathyQt4/Channel>
-#include <TelepathyQt4/Connection>
-#include <TelepathyQt4/PendingOperation>
-#include <TelepathyQt4/Types>
+#include <TelepathyQt/Account>
+#include <TelepathyQt/AuthenticationTLSCertificateInterface>
+#include <TelepathyQt/Channel>
+#include <TelepathyQt/Connection>
+#include <TelepathyQt/PendingOperation>
+#include <TelepathyQt/Types>
 
 // FIXME: Move this to tp-qt4 itself
 #include "types.h"
