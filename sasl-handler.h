@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-#include <TelepathyQt4/AbstractClientHandler>
+#include <TelepathyQt/AbstractClientHandler>
 
 namespace Tp
 {

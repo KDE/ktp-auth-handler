@@ -26,9 +26,9 @@
 
 #include <QDBusConnection>
 
-#include <TelepathyQt4/Channel>
-#include <TelepathyQt4/ChannelDispatchOperation>
-#include <TelepathyQt4/MethodInvocationContext>
+#include <TelepathyQt/Channel>
+#include <TelepathyQt/ChannelDispatchOperation>
+#include <TelepathyQt/MethodInvocationContext>
 
 #include <KDebug>
 

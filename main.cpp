@@ -22,15 +22,15 @@
 #include <KApplication>
 #include <KDebug>
 
-#include <TelepathyQt4/AccountFactory>
-#include <TelepathyQt4/AccountManager>
-#include <TelepathyQt4/ConnectionFactory>
-#include <TelepathyQt4/ChannelClassSpec>
-#include <TelepathyQt4/ChannelFactory>
-#include <TelepathyQt4/ClientRegistrar>
-#include <TelepathyQt4/ContactFactory>
-#include <TelepathyQt4/Debug>
-#include <TelepathyQt4/Types>
+#include <TelepathyQt/AccountFactory>
+#include <TelepathyQt/AccountManager>
+#include <TelepathyQt/ConnectionFactory>
+#include <TelepathyQt/ChannelClassSpec>
+#include <TelepathyQt/ChannelFactory>
+#include <TelepathyQt/ClientRegistrar>
+#include <TelepathyQt/ContactFactory>
+#include <TelepathyQt/Debug>
+#include <TelepathyQt/Types>
 
 #include "sasl-handler.h"
 #include "tls-handler.h"
@@ -70,9 +70,9 @@ int main(int argc, char *argv[])
     Tp::ChannelClassSpecList saslFilter;
     QVariantMap saslOtherProperties;
     saslOtherProperties.insert(
-            QLatin1String(TELEPATHY_INTERFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION ".AuthenticationMethod"),
-            TP_QT4_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION);
-    saslFilter.append(Tp::ChannelClassSpec(TP_QT4_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION,
+            TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION + QLatin1String(".AuthenticationMethod"),
+            TP_QT_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION);
+    saslFilter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION,
                 Tp::HandleTypeNone, false, saslOtherProperties));
     Tp::SharedPtr<SaslHandler> saslHandler = Tp::SharedPtr<SaslHandler>(new SaslHandler(saslFilter));
     if (!clientRegistrar->registerClient(
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     }
 
     Tp::ChannelClassSpecList tlsFilter;
-    tlsFilter.append(Tp::ChannelClassSpec(TP_QT4_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION,
+    tlsFilter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION,
                 Tp::HandleTypeNone, false));
     Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler(tlsFilter));
     if (!clientRegistrar->registerClient(
