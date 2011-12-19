@@ -135,19 +135,26 @@ void SaslAuthOp::promptUser(bool isFirstRun)
     if (wallet.hasPassword(m_account) && isFirstRun) {
         password = wallet.password(m_account);
     } else {
-        PasswordPrompt dialog(m_account);
-        if (dialog.exec() == QDialog::Rejected) {
+        QWeakPointer<PasswordPrompt> dialog = new PasswordPrompt(m_account);
+        if (dialog.data()->exec() == QDialog::Rejected) {
             kDebug() << "Authentication cancelled";
             m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
             m_channel->requestClose();
             setFinished();
+            if (!dialog.isNull()) {
+                dialog.data()->deleteLater();
+            }
             return;
         }
-        password = dialog.password();
+        password = dialog.data()->password();
         // save password in kwallet if necessary...
-        if (dialog.savePassword()) {
+        if (dialog.data()->savePassword()) {
             kDebug() << "Saving password in wallet";
-            wallet.setPassword(m_account, dialog.password());
+            wallet.setPassword(m_account, dialog.data()->password());
+        }
+
+        if (!dialog.isNull()) {
+            dialog.data()->deleteLater();
         }
     }
 
