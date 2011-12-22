@@ -30,6 +30,7 @@ set(ktp_auth_handler_SRCS
     tls-cert-verifier-op.cpp
     tls-handler.cpp
     types.cpp
+    x-telepathy-password-auth-operation.cpp
     ${ktp_common_internals_SRCS}
 )
 
