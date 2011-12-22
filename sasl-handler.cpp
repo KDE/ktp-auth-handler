@@ -54,6 +54,7 @@ void SaslHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context
         const QDateTime &userActionTime,
         const Tp::AbstractClientHandler::HandlerInfo &handlerInfo)
 {
+    Q_UNUSED(connection);
     Q_UNUSED(requestsSatisfied);
     Q_UNUSED(userActionTime);
     Q_UNUSED(handlerInfo);
@@ -62,7 +63,7 @@ void SaslHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context
 
     KTp::TelepathyHandlerApplication::newJob();
     SaslAuthOp *auth = new SaslAuthOp(
-            account, connection, channels.first());
+            account, channels.first());
     connect(auth,
             SIGNAL(ready(Tp::PendingOperation*)),
             SLOT(onAuthReady(Tp::PendingOperation*)));

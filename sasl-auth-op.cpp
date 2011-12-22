@@ -30,11 +30,9 @@
 #include <KTp/wallet-interface.h>
 
 SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
-        const Tp::ConnectionPtr &connection,
         const Tp::ChannelPtr &channel)
     : Tp::PendingOperation(channel),
       m_account(account),
-      m_connection(connection),
       m_channel(channel),
       m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthenticationInterface>()),
       m_canTryAgain(false)

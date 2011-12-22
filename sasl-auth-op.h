@@ -33,7 +33,6 @@ class SaslAuthOp : public Tp::PendingOperation
 
 public:
     SaslAuthOp(const Tp::AccountPtr &account,
-            const Tp::ConnectionPtr &connection,
             const Tp::ChannelPtr &channel);
     ~SaslAuthOp();
 
@@ -48,7 +47,6 @@ private:
     void promptUser(bool isFirstPrompt);
 
     Tp::AccountPtr m_account;
-    Tp::ConnectionPtr m_connection;
     Tp::ChannelPtr m_channel;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
     bool m_canTryAgain;
