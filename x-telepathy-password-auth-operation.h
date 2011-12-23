@@ -22,6 +22,7 @@
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/Channel>
 #include <TelepathyQt/Types>
+#include "x-telepathy-password-prompt.h"
 
 class XTelepathyPasswordAuthOperation : public Tp::PendingOperation
 {
@@ -37,6 +38,7 @@ public:
 
 private Q_SLOTS:
     void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
+    void onDialogFinished(int result);
 
 private:
     void promptUser(bool isFirstPrompt);
@@ -44,6 +46,7 @@ private:
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
     bool m_canTryAgain;
+    QWeakPointer<XTelepathyPasswordPrompt> m_dialog;
 
     friend class SaslAuthOp;
 };

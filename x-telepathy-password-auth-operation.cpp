@@ -87,36 +87,42 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
 
 void XTelepathyPasswordAuthOperation::promptUser(bool isFirstRun)
 {
-    QString password;
-
-    kDebug() << "Trying to load from wallet";
     KTp::WalletInterface wallet(0);
     if (wallet.hasPassword(m_account) && isFirstRun) {
-        password = wallet.password(m_account);
+        m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"),
+                                            wallet.password(m_account).toUtf8());
     } else {
-        QWeakPointer<XTelepathyPasswordPrompt> dialog = new XTelepathyPasswordPrompt(m_account);
-        if (dialog.data()->exec() == QDialog::Rejected) {
+        m_dialog = new XTelepathyPasswordPrompt(m_account);
+        connect(m_dialog.data(),
+                    SIGNAL(finished(int)),
+                    SLOT(onDialogFinished(int)));
+        m_dialog.data()->show();
+    }
+}
+
+void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
+{
+    KTp::WalletInterface wallet(0);
+    switch (result) {
+        case QDialog::Rejected:
             kDebug() << "Authentication cancelled";
             m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
             setFinished();
-            if (!dialog.isNull()) {
-                dialog.data()->deleteLater();
+            if (!m_dialog.isNull()) {
+                m_dialog.data()->deleteLater();
             }
             return;
-        }
-        password = dialog.data()->password();
-        // save password in kwallet if necessary...
-        if (dialog.data()->savePassword()) {
-            kDebug() << "Saving password in wallet";
-            wallet.setPassword(m_account, dialog.data()->password());
-        }
-
-        if (!dialog.isNull()) {
-            dialog.data()->deleteLater();
-        }
+        case QDialog::Accepted:
+            // save password in kwallet if necessary...
+            if (m_dialog.data()->savePassword()) {
+                kDebug() << "Saving password in wallet";
+                wallet.setPassword(m_account, m_dialog.data()->password());
+                m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());
+                if (!m_dialog.isNull()) {
+                    m_dialog.data()->deleteLater();
+                }
+            }
     }
-
-    m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), password.toUtf8());
 }
 
 #include "x-telepathy-password-auth-operation.moc"
