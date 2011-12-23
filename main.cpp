@@ -42,7 +42,7 @@
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("telepathy-kde-auth-handler",
+    KAboutData aboutData("ktp-auth-handler",
                          "telepathy-auth-handler",
                          ki18n("Telepathy Authentication Handler"),
                          "0.1");
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
                 Tp::HandleTypeNone, false, saslOtherProperties));
     Tp::SharedPtr<SaslHandler> saslHandler = Tp::SharedPtr<SaslHandler>(new SaslHandler(saslFilter));
     if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(saslHandler), QLatin1String("KDE.SASLHandler"))) {
+                Tp::AbstractClientPtr(saslHandler), QLatin1String("KTp.SASLHandler"))) {
         handlers -= 1;
     }
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
                 Tp::HandleTypeNone, false));
     Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler(tlsFilter));
     if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(tlsHandler), QLatin1String("KDE.TLSHandler"))) {
+                Tp::AbstractClientPtr(tlsHandler), QLatin1String("KTp.TLSHandler"))) {
         handlers -= 1;
     }
 
