@@ -22,7 +22,7 @@
 
 #include "sasl-auth-op.h"
 
-#include <KTelepathy/telepathy-handler-application.h>
+#include <KTp/telepathy-handler-application.h>
 
 #include <QDBusConnection>
 

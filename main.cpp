@@ -35,7 +35,7 @@
 #include "sasl-handler.h"
 #include "tls-handler.h"
 
-#include <KTelepathy/telepathy-handler-application.h>
+#include <KTp/telepathy-handler-application.h>
 
 // FIXME: Move this to tp-qt4 itself
 #include "types.h"

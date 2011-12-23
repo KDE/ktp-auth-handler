@@ -27,7 +27,7 @@
 
 #include "password-prompt.h"
 
-#include <KTelepathy/wallet-interface.h>
+#include <KTp/wallet-interface.h>
 
 SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
         const Tp::ConnectionPtr &connection,

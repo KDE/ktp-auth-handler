@@ -19,7 +19,7 @@
 #include "password-prompt.h"
 #include "ui_password-prompt.h"
 
-#include <KTelepathy/wallet-interface.h>
+#include <KTp/wallet-interface.h>
 
 #include <KIcon>
 #include <KDebug>
