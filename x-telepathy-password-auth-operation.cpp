@@ -20,7 +20,7 @@
  */
 
 #include "x-telepathy-password-auth-operation.h"
-#include "password-prompt.h"
+#include "x-telepathy-password-prompt.h"
 
 #include <KDebug>
 #include <KLocalizedString>
@@ -94,7 +94,7 @@ void XTelepathyPasswordAuthOperation::promptUser(bool isFirstRun)
     if (wallet.hasPassword(m_account) && isFirstRun) {
         password = wallet.password(m_account);
     } else {
-        QWeakPointer<PasswordPrompt> dialog = new PasswordPrompt(m_account);
+        QWeakPointer<XTelepathyPasswordPrompt> dialog = new XTelepathyPasswordPrompt(m_account);
         if (dialog.data()->exec() == QDialog::Rejected) {
             kDebug() << "Authentication cancelled";
             m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
@@ -118,3 +118,5 @@ void XTelepathyPasswordAuthOperation::promptUser(bool isFirstRun)
 
     m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), password.toUtf8());
 }
+
+#include "x-telepathy-password-auth-operation.moc"

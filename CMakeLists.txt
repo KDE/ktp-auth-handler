@@ -24,17 +24,17 @@ include_directories (${KDE4_INCLUDES}
 
 set(ktp_auth_handler_SRCS
     main.cpp
-    password-prompt.cpp
     sasl-handler.cpp
     sasl-auth-op.cpp
     tls-cert-verifier-op.cpp
     tls-handler.cpp
     types.cpp
     x-telepathy-password-auth-operation.cpp
+    x-telepathy-password-prompt.cpp
     ${ktp_common_internals_SRCS}
 )
 
-kde4_add_ui_files(ktp_auth_handler_SRCS password-prompt.ui)
+kde4_add_ui_files(ktp_auth_handler_SRCS x-telepathy-password-prompt.ui)
 kde4_add_executable(ktp-auth-handler ${ktp_auth_handler_SRCS})
 
 target_link_libraries(ktp-auth-handler

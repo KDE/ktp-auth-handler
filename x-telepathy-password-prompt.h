@@ -25,22 +25,22 @@
 
 namespace Ui
 {
-    class PasswordPrompt;
+    class XTelepathyPasswordPrompt;
 }
 
-class PasswordPrompt : public KDialog
+class XTelepathyPasswordPrompt : public KDialog
 {
     Q_OBJECT
 
 public:
-    explicit PasswordPrompt(const Tp::AccountPtr &account, QWidget *parent = 0);
-    ~PasswordPrompt();
+    explicit XTelepathyPasswordPrompt(const Tp::AccountPtr &account, QWidget *parent = 0);
+    ~XTelepathyPasswordPrompt();
 
     QString password() const;
     bool savePassword() const;
 
 private:
-    Ui::PasswordPrompt *ui;
+    Ui::XTelepathyPasswordPrompt *ui;
 };
 
 #endif // PASSWORDPROMPT_H
