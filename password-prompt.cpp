@@ -62,3 +62,5 @@ bool PasswordPrompt::savePassword() const
 {
     return ui->savePassword->isChecked();
 }
+
+#include "password-prompt.moc"
