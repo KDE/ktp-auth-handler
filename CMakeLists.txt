@@ -31,6 +31,8 @@ set(ktp_auth_handler_SRCS
     types.cpp
     x-telepathy-password-auth-operation.cpp
     x-telepathy-password-prompt.cpp
+    x-messenger-oauth2-auth-operation.cpp
+    x-messenger-oauth2-prompt.cpp
     ${ktp_common_internals_SRCS}
 )
 
@@ -42,6 +44,7 @@ target_link_libraries(ktp-auth-handler
     ${QT_QTGUI_LIBRARY}
     ${QT_QTXML_LIBRARY}
     ${QT_QTCORE_LIBRARY}
+    ${QT_QTWEBKIT_LIBRARY}
     ${TELEPATHY_QT4_LIBRARIES}
     ${KTP_LIBRARIES}
     ${KDE4_KDECORE_LIBS}

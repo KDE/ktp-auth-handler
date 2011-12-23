@@ -20,6 +20,7 @@
 
 #include "sasl-auth-op.h"
 #include "x-telepathy-password-auth-operation.h"
+#include "x-messenger-oauth2-auth-operation.h"
 
 #include <TelepathyQt/PendingVariantMap>
 
@@ -68,11 +69,22 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
         QString error = qdbus_cast<QString>(props.value("SASLError"));
         QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
         authop->onSASLStatusChanged(status, error, errorDetails);
+    } else if (mechanisms.contains(QLatin1String("X-MESSENGER-OAUTH2"))) {
+        // everything ok, we can return from handleChannels now
+        emit ready(this);
+        XMessengerOAuth2AuthOperation *authop = new XMessengerOAuth2AuthOperation(m_account, m_saslIface);
+        connect (authop,
+                 SIGNAL(finished(Tp::PendingOperation*)),
+                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
+        uint status = qdbus_cast<uint>(props.value("SASLStatus"));
+        QString error = qdbus_cast<QString>(props.value("SASLError"));
+        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
+        authop->onSASLStatusChanged(status, error, errorDetails);
     } else {
-        kWarning() << "X-TELEPATHY-PASSWORD is the only supported SASL mechanism and is not available:" << mechanisms;
+        kWarning() << "X-TELEPATHY-PASSWORD and X-MESSENGER-OAUTH2 are the only supported SASL mechanism and are not available:" << mechanisms;
         m_channel->requestClose();
         setFinishedWithError(TP_QT_ERROR_NOT_IMPLEMENTED,
-                QLatin1String("X-TELEPATHY-PASSWORD is the only supported SASL mechanism and is not available"));
+                QLatin1String("X-TELEPATHY-PASSWORD and X-MESSENGER-OAUTH2 are the only supported SASL mechanism and are not available"));
         return;
     }
 }
