@@ -35,7 +35,7 @@ public:
             bool canTryAgain);
     ~XTelepathyPasswordAuthOperation();
 
-protected Q_SLOTS:
+private Q_SLOTS:
     void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
 
 private:

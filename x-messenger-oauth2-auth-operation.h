@@ -36,10 +36,8 @@ public:
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);
     ~XMessengerOAuth2AuthOperation();
 
-protected Q_SLOTS:
-    void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
-
 private Q_SLOTS:
+    void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
     void onDialogFinished(int result);
 
 private:
