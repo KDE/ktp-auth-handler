@@ -23,6 +23,7 @@
 #include <KToolInvocation>
 #include <KDebug>
 #include <KWebView>
+#include <KWebPage>
 
 #include <QtWebKit/QWebSettings>
 #include <QtGui/QProgressBar>
@@ -83,10 +84,12 @@ XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
             SIGNAL(linkClicked(QUrl)),
             SLOT(onLinkClicked(QUrl)));
 
-    m_webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    m_webView->page()->setForwardUnsupportedContent(true);
+    KWebPage *page = reinterpret_cast<KWebPage*>(m_webView->page());
 
-    connect(m_webView->page(),
+    page->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    page->setForwardUnsupportedContent(true);
+
+    connect(page,
             SIGNAL(unsupportedContent(QNetworkReply*)),
             SLOT(onUnsupportedContent(QNetworkReply*)));
 
