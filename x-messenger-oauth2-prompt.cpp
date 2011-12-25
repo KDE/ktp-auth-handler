@@ -22,8 +22,8 @@
 #include <KIcon>
 #include <KToolInvocation>
 #include <KDebug>
+#include <KWebView>
 
-#include <QtWebKit/QWebView>
 #include <QtWebKit/QWebSettings>
 #include <QtGui/QProgressBar>
 #include <QtGui/QBoxLayout>
@@ -36,7 +36,7 @@ const QLatin1String redirectUri("https://oauth.live.com/desktop");
 
 XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
     KDialog(parent),
-    m_webView(new QWebView()),
+    m_webView(new KWebView()),
     m_ProgressBar(new QProgressBar()),
     m_loginPageLoaded(false)
 {

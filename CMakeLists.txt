@@ -44,11 +44,11 @@ target_link_libraries(ktp-auth-handler
     ${QT_QTGUI_LIBRARY}
     ${QT_QTXML_LIBRARY}
     ${QT_QTCORE_LIBRARY}
-    ${QT_QTWEBKIT_LIBRARY}
     ${TELEPATHY_QT4_LIBRARIES}
     ${KTP_LIBRARIES}
     ${KDE4_KDECORE_LIBS}
     ${KDE4_KDEUI_LIBS}
+    ${KDE4_KDEWEBKIT_LIBS}
 )
 
 configure_file(org.freedesktop.Telepathy.Client.KTp.SASLHandler.service.in

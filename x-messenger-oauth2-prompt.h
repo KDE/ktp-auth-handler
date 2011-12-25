@@ -22,7 +22,7 @@
 #include <KDialog>
 
 class QProgressBar;
-class QWebView;
+class KWebView;
 class QNetworkReply;
 
 class XMessengerOAuth2Prompt : public KDialog
@@ -49,7 +49,7 @@ private Q_SLOTS:
     void onUnsupportedContent(QNetworkReply* reply);
 
 private:
-    QWebView *m_webView;
+    KWebView *m_webView;
     QProgressBar *m_ProgressBar;
     bool m_loginPageLoaded;
     QByteArray m_accessToken;
