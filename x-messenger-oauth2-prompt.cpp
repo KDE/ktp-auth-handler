@@ -34,6 +34,8 @@
 
 const QLatin1String msnClientID("000000004C070A47");
 const QLatin1String redirectUri("https://oauth.live.com/desktop");
+const QLatin1String request("https://oauth.live.com/authorize?response_type=token&redirect_uri=%1&client_id=%2&scope=wl.messenger");
+const QLatin1String tokenParameter("access_token=");
 
 XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
     KDialog(parent),
@@ -94,7 +96,7 @@ XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
             SLOT(onUnsupportedContent(QNetworkReply*)));
 
     // start loading the login URL
-    KUrl url(QString(QLatin1String("https://oauth.live.com/authorize?response_type=token&redirect_uri=%1&client_id=%2&scope=wl.messenger")).arg(redirectUri).arg(msnClientID));
+    KUrl url(QString(request).arg(redirectUri).arg(msnClientID));
     m_webView->load(url.url());
 }
 
@@ -114,9 +116,12 @@ QSize XMessengerOAuth2Prompt::sizeHint() const
 
 void XMessengerOAuth2Prompt::onUrlChanged(const QUrl &url)
 {
-    // FIXME: This method is left for debugging purpose
     kDebug() << url;
-    kDebug() << m_webView->url();
+    if (url.toString().indexOf(redirectUri) != 0) {
+        // This is not the url containing the token
+        return;
+    }
+    extractToken(url);
 }
 
 void XMessengerOAuth2Prompt::onLinkClicked(const QUrl& url)
@@ -135,26 +140,42 @@ void XMessengerOAuth2Prompt::onLoadFinished(bool ok)
 
 void XMessengerOAuth2Prompt::onUnsupportedContent(QNetworkReply* reply)
 {
-    // For some reason the request for the token is unsupported, but we
-    // Can extract the token from the url of the failing request
-    // FIXME: In the future this might need to be fixed
+    // With QtWebkit < 2.2, for some reason the request for the token is
+    // unsupported, but we can extract the token from the url of the failing
+    // request
+    // FIXME: In the future this might want to remove this
     QUrl url =  reply->url();
     if (url.toString().indexOf(redirectUri) != 0) {
         // This is not the url containing the token
         return;
     }
-    QString accessToken = url.encodedFragment();   // Get the URL fragment part
-    accessToken = accessToken.split("&").first();  // Remove the "expires_in" part.
+    extractToken(url);
+}
+
+void XMessengerOAuth2Prompt::extractToken(const QUrl &url)
+{
+    QString accessToken;
+    Q_FOREACH(QString token, QString(url.encodedFragment()).split("&")) {
+        // Get the URL fragment part and iterate over the parameters of the request
+        if (token.indexOf(tokenParameter == 0)) {
+            // This is the token that we are looking for (we are not interested
+            // in the "expires_in" part, etc.)
+            accessToken = token;
+            break;
+        }
+    }
+    if (accessToken.isEmpty()) {
+        // Could not find the token
+        kWarning() << "Token not found";
+        return;
+    }
+
+    accessToken = accessToken.split("&").first();  //
     accessToken = accessToken.split("=").at(1);    // Split by "access_token=..." and take latter part
 
     // Wocky will base64 encode, but token actually already is base64, so we
     // decode now and it will be re-encoded.
     m_accessToken = QByteArray::fromBase64(QByteArray::fromPercentEncoding(accessToken.toUtf8()));
-    kDebug() << "size = " << m_accessToken.size();
-    char* data = QByteArray::fromBase64(QByteArray::fromPercentEncoding(accessToken.toUtf8())).data();
-    for (int i = 0; i < m_accessToken.size(); i++, data++) {
-     kDebug() << i << "[" << *data << "]" << endl;
-    }
     Q_EMIT accessTokenTaken(m_accessToken);
     accept();
 }

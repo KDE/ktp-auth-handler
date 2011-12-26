@@ -49,6 +49,8 @@ private Q_SLOTS:
     void onUnsupportedContent(QNetworkReply* reply);
 
 private:
+    void extractToken(const QUrl &url);
+
     KWebView *m_webView;
     QProgressBar *m_ProgressBar;
     bool m_loginPageLoaded;
