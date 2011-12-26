@@ -88,7 +88,7 @@ XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
 
     KWebPage *page = reinterpret_cast<KWebPage*>(m_webView->page());
 
-    page->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    page->setLinkDelegationPolicy(QWebPage::DontDelegateLinks);
     page->setForwardUnsupportedContent(true);
 
     connect(page,
