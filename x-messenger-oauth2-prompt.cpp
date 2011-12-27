@@ -170,8 +170,7 @@ void XMessengerOAuth2Prompt::extractToken(const QUrl &url)
         return;
     }
 
-    accessToken = accessToken.split("&").first();  //
-    accessToken = accessToken.split("=").at(1);    // Split by "access_token=..." and take latter part
+    accessToken = accessToken.split('=').at(1);    // Split by "access_token=..." and take latter part
 
     // Wocky will base64 encode, but token actually already is base64, so we
     // decode now and it will be re-encoded.
