@@ -157,7 +157,7 @@ void XMessengerOAuth2Prompt::extractToken(const QUrl &url)
     QString accessToken;
     Q_FOREACH(const QString &token, QString(url.encodedFragment()).split('&')) {
         // Get the URL fragment part and iterate over the parameters of the request
-        if (token.indexOf(tokenParameter == 0)) {
+        if (token.indexOf(tokenParameter) == 0) {
             // This is the token that we are looking for (we are not interested
             // in the "expires_in" part, etc.)
             accessToken = token;
