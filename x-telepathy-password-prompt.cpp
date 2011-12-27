@@ -16,17 +16,17 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "password-prompt.h"
-#include "ui_password-prompt.h"
+#include "x-telepathy-password-prompt.h"
+#include "ui_x-telepathy-password-prompt.h"
 
 #include <KTp/wallet-interface.h>
 
 #include <KIcon>
 #include <KDebug>
 
-PasswordPrompt::PasswordPrompt(const Tp::AccountPtr &account, QWidget *parent)
+XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account, QWidget *parent)
     : KDialog(parent),
-      ui(new Ui::PasswordPrompt)
+      ui(new Ui::XTelepathyPasswordPrompt)
 {
     ui->setupUi(mainWidget());
 
@@ -48,17 +48,19 @@ PasswordPrompt::PasswordPrompt(const Tp::AccountPtr &account, QWidget *parent)
     }
 }
 
-PasswordPrompt::~PasswordPrompt()
+XTelepathyPasswordPrompt::~XTelepathyPasswordPrompt()
 {
     delete ui;
 }
 
-QString PasswordPrompt::password() const
+QString XTelepathyPasswordPrompt::password() const
 {
     return ui->passwordLineEdit->text();
 }
 
-bool PasswordPrompt::savePassword() const
+bool XTelepathyPasswordPrompt::savePassword() const
 {
     return ui->savePassword->isChecked();
 }
+
+#include "x-telepathy-password-prompt.moc"

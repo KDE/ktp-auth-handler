@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2011 Collabora Ltd. <http://www.collabora.co.uk/>
- *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
- * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
+ * Copyright (C) 2011 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,35 +16,37 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef SASL_AUTH_OP_H
-#define SASL_AUTH_OP_H
+#ifndef X_MESSENGER_OAUTH2_AUTH_OPERATION_H
+#define X_MESSENGER_OAUTH2_AUTH_OPERATION_H
 
-#include <TelepathyQt/Account>
-#include <TelepathyQt/Channel>
-#include <TelepathyQt/Connection>
 #include <TelepathyQt/PendingOperation>
+#include <TelepathyQt/Channel>
 #include <TelepathyQt/Types>
 
-class SaslAuthOp : public Tp::PendingOperation
+#include "x-messenger-oauth2-prompt.h"
+
+class XMessengerOAuth2AuthOperation : public Tp::PendingOperation
 {
     Q_OBJECT
+    Q_DISABLE_COPY(XMessengerOAuth2AuthOperation)
 
 public:
-    SaslAuthOp(const Tp::AccountPtr &account,
-            const Tp::ChannelPtr &channel);
-    ~SaslAuthOp();
-
-Q_SIGNALS:
-    void ready(Tp::PendingOperation *self);
+    explicit XMessengerOAuth2AuthOperation(
+            const Tp::AccountPtr &account,
+            Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);
+    ~XMessengerOAuth2AuthOperation();
 
 private Q_SLOTS:
-    void gotProperties(Tp::PendingOperation *op);
-    void onAuthOperationFinished(Tp::PendingOperation *op);
+    void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
+    void onDialogFinished(int result);
 
 private:
     Tp::AccountPtr m_account;
-    Tp::ChannelPtr m_channel;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
+    QWeakPointer<XMessengerOAuth2Prompt> m_dialog;
+
+    friend class SaslAuthOp;
 };
 
-#endif // SASL_AUTH_OP_H
+
+#endif // X_MESSENGER_OAUTH2_AUTH_OPERATION_H

@@ -19,25 +19,21 @@
  */
 
 #include "sasl-auth-op.h"
+#include "x-telepathy-password-auth-operation.h"
+#include "x-messenger-oauth2-auth-operation.h"
 
 #include <TelepathyQt/PendingVariantMap>
 
 #include <KDebug>
 #include <KLocalizedString>
 
-#include "password-prompt.h"
-
-#include <KTp/wallet-interface.h>
 
 SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
-        const Tp::ConnectionPtr &connection,
         const Tp::ChannelPtr &channel)
     : Tp::PendingOperation(channel),
       m_account(account),
-      m_connection(connection),
       m_channel(channel),
-      m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthenticationInterface>()),
-      m_canTryAgain(false)
+      m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthenticationInterface>())
 {
     connect(m_saslIface->requestAllProperties(),
             SIGNAL(finished(Tp::PendingOperation*)),
@@ -59,106 +55,48 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
     Tp::PendingVariantMap *pvm = qobject_cast<Tp::PendingVariantMap*>(op);
     QVariantMap props = qdbus_cast<QVariantMap>(pvm->result());
-    m_canTryAgain = qdbus_cast<bool>(props.value("CanTryAgain"));
     QStringList mechanisms = qdbus_cast<QStringList>(props.value("AvailableMechanisms"));
-    if (!mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
-        kWarning() << "X-TELEPATHY-PASSWORD is the only supported SASL mechanism and "
-            "is not available";
+    kDebug() << mechanisms;
+
+    if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
+        // everything ok, we can return from handleChannels now
+        emit ready(this);
+        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, qdbus_cast<bool>(props.value("CanTryAgain")));
+        connect (authop,
+                 SIGNAL(finished(Tp::PendingOperation*)),
+                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
+        uint status = qdbus_cast<uint>(props.value("SASLStatus"));
+        QString error = qdbus_cast<QString>(props.value("SASLError"));
+        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
+        authop->onSASLStatusChanged(status, error, errorDetails);
+    } else if (mechanisms.contains(QLatin1String("X-MESSENGER-OAUTH2"))) {
+        // everything ok, we can return from handleChannels now
+        emit ready(this);
+        XMessengerOAuth2AuthOperation *authop = new XMessengerOAuth2AuthOperation(m_account, m_saslIface);
+        connect (authop,
+                 SIGNAL(finished(Tp::PendingOperation*)),
+                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
+        uint status = qdbus_cast<uint>(props.value("SASLStatus"));
+        QString error = qdbus_cast<QString>(props.value("SASLError"));
+        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
+        authop->onSASLStatusChanged(status, error, errorDetails);
+    } else {
+        kWarning() << "X-TELEPATHY-PASSWORD and X-MESSENGER-OAUTH2 are the only supported SASL mechanism and are not available:" << mechanisms;
         m_channel->requestClose();
         setFinishedWithError(TP_QT_ERROR_NOT_IMPLEMENTED,
-                QLatin1String("X-TELEPATHY-PASSWORD is the only supported SASL mechanism and "
-                    " is not available"));
+                QLatin1String("X-TELEPATHY-PASSWORD and X-MESSENGER-OAUTH2 are the only supported SASL mechanism and are not available"));
         return;
     }
-
-    // everything ok, we can return from handleChannels now
-    emit ready(this);
-
-    connect(m_saslIface,
-            SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)),
-            SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
-    uint status = qdbus_cast<uint>(props.value("SASLStatus"));
-    QString error = qdbus_cast<QString>(props.value("SASLError"));
-    QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
-    onSASLStatusChanged(status, error, errorDetails);
 }
 
-void SaslAuthOp::onSASLStatusChanged(uint status, const QString &reason,
-        const QVariantMap &details)
+void SaslAuthOp::onAuthOperationFinished(Tp::PendingOperation *op)
 {
-    KTp::WalletInterface wallet(0);
-    if (status == Tp::SASLStatusNotStarted) {
-        kDebug() << "Requesting password";
-        promptUser (m_canTryAgain || !wallet.hasEntry(m_account, QLatin1String("lastLoginFailed")));
-    } else if (status == Tp::SASLStatusServerSucceeded) {
-        kDebug() << "Authentication handshake";
-        m_saslIface->AcceptSASL();
-    } else if (status == Tp::SASLStatusSucceeded) {
-        kDebug() << "Authentication succeeded";
-        if (wallet.hasEntry(m_account, QLatin1String("lastLoginFailed"))) {
-            wallet.removeEntry(m_account, QLatin1String("lastLoginFailed"));
-        }
-        m_channel->requestClose();
-        setFinished();
-    } else if (status == Tp::SASLStatusInProgress) {
-        kDebug() << "Authenticating...";
-    } else if (status == Tp::SASLStatusServerFailed) {
-        kDebug() << "Error authenticating - reason:" << reason << "- details:" << details;
-
-        if (m_canTryAgain) {
-            kDebug() << "Retrying...";
-            promptUser(false);
-        } else {
-            kWarning() << "Authentication failed and cannot try again";
-            wallet.setEntry(m_account, QLatin1String("lastLoginFailed"), QLatin1String("true"));
-            // We cannot try again, but we can request again to set the account
-            // online. A new channel will be created, but since we set the
-            // lastLoginFailed entry, next time we will prompt for password
-            // and the user won't see any difference except for an
-            // authentication error notification
-            Tp::Presence requestedPresence = m_account->requestedPresence();
-            m_channel->requestClose();
-            QString errorMessage = details[QLatin1String("server-message")].toString();
-            m_account->setRequestedPresence(requestedPresence);
-
-            setFinishedWithError(reason, errorMessage.isEmpty() ? i18n("Authentication error") : errorMessage);
-        }
-    }
-}
-
-void SaslAuthOp::promptUser(bool isFirstRun)
-{
-    QString password;
-
-    kDebug() << "Trying to load from wallet";
-    KTp::WalletInterface wallet(0);
-    if (wallet.hasPassword(m_account) && isFirstRun) {
-        password = wallet.password(m_account);
+    m_channel->requestClose();
+    if(op->isError()) {
+        setFinishedWithError(op->errorName(), op->errorMessage());
     } else {
-        QWeakPointer<PasswordPrompt> dialog = new PasswordPrompt(m_account);
-        if (dialog.data()->exec() == QDialog::Rejected) {
-            kDebug() << "Authentication cancelled";
-            m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
-            m_channel->requestClose();
-            setFinished();
-            if (!dialog.isNull()) {
-                dialog.data()->deleteLater();
-            }
-            return;
-        }
-        password = dialog.data()->password();
-        // save password in kwallet if necessary...
-        if (dialog.data()->savePassword()) {
-            kDebug() << "Saving password in wallet";
-            wallet.setPassword(m_account, dialog.data()->password());
-        }
-
-        if (!dialog.isNull()) {
-            dialog.data()->deleteLater();
-        }
+        setFinished();
     }
-
-    m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), password.toUtf8());
 }
 
 #include "sasl-auth-op.moc"
