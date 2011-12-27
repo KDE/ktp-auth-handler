@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
     KAboutData aboutData("ktp-auth-handler",
                          "ktp-auth-handler",
                          ki18n("Telepathy Authentication Handler"),
-                         "0.1");
+                         "0.2.60");
     aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
     aboutData.setProductName("telepathy/auth-handler");
 
