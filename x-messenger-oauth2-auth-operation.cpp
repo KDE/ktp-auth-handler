@@ -106,7 +106,7 @@ void XMessengerOAuth2AuthOperation::onDialogFinished(int result)
         return;
     case QDialog::Accepted:
         kDebug() << QLatin1String(m_dialog.data()->accessToken());
-        wallet.setEntry(m_account, XMessengerOAuth2TokenWalletEntry, m_dialog.data()->accessToken().toBase64());
+        wallet.setEntry(m_account, XMessengerOAuth2TokenWalletEntry, QLatin1String(m_dialog.data()->accessToken().toBase64()));
         m_saslIface->StartMechanismWithData(QLatin1String("X-MESSENGER-OAUTH2"), m_dialog.data()->accessToken());
         if (!m_dialog.isNull()) {
             m_dialog.data()->deleteLater();

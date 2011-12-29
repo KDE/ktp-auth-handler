@@ -55,19 +55,19 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
     Tp::PendingVariantMap *pvm = qobject_cast<Tp::PendingVariantMap*>(op);
     QVariantMap props = qdbus_cast<QVariantMap>(pvm->result());
-    QStringList mechanisms = qdbus_cast<QStringList>(props.value("AvailableMechanisms"));
+    QStringList mechanisms = qdbus_cast<QStringList>(props.value(QLatin1String("AvailableMechanisms")));
     kDebug() << mechanisms;
 
     if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
         // everything ok, we can return from handleChannels now
         Q_EMIT ready(this);
-        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, qdbus_cast<bool>(props.value("CanTryAgain")));
+        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, qdbus_cast<bool>(props.value(QLatin1String("CanTryAgain"))));
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
-        uint status = qdbus_cast<uint>(props.value("SASLStatus"));
-        QString error = qdbus_cast<QString>(props.value("SASLError"));
-        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
+        uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
+        QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
+        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else if (mechanisms.contains(QLatin1String("X-MESSENGER-OAUTH2"))) {
         // everything ok, we can return from handleChannels now
@@ -76,9 +76,9 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
-        uint status = qdbus_cast<uint>(props.value("SASLStatus"));
-        QString error = qdbus_cast<QString>(props.value("SASLError"));
-        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
+        uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
+        QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
+        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else {
         kWarning() << "X-TELEPATHY-PASSWORD and X-MESSENGER-OAUTH2 are the only supported SASL mechanism and are not available:" << mechanisms;

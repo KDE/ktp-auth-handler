@@ -32,11 +32,11 @@ TlsCertVerifierOp::TlsCertVerifierOp(const Tp::AccountPtr &account,
       m_channel(channel)
 {
     QString certificatePath = qdbus_cast<QString>(channel->immutableProperties().value(
-                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".ServerCertificate"));
+                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + QLatin1String(".ServerCertificate")));
     m_hostname = qdbus_cast<QString>(channel->immutableProperties().value(
-                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".Hostname"));
+                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + QLatin1String(".Hostname")));
     m_referenceIdentities = qdbus_cast<QStringList>(channel->immutableProperties().value(
-                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + ".ReferenceIdentities"));
+                TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + QLatin1String(".ReferenceIdentities")));
 
     m_authTLSCertificateIface = new Tp::Client::AuthenticationTLSCertificateInterface(
             channel->dbusConnection(), channel->busName(), certificatePath);
@@ -64,8 +64,8 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
 
     Tp::PendingVariantMap *pvm = qobject_cast<Tp::PendingVariantMap*>(op);
     QVariantMap props = qdbus_cast<QVariantMap>(pvm->result());
-    m_certType = qdbus_cast<QString>(props.value("CertificateType"));
-    m_certData = qdbus_cast<CertificateDataList>(props.value("certificateChainData"));
+    m_certType = qdbus_cast<QString>(props.value(QLatin1String("CertificateType")));
+    m_certData = qdbus_cast<CertificateDataList>(props.value(QLatin1String("certificateChainData")));
 
     // FIXME: verify cert
     setFinished();
