@@ -51,7 +51,7 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
     KTp::WalletInterface wallet(0);
     if (status == Tp::SASLStatusNotStarted) {
         kDebug() << "Requesting password";
-        promptUser (m_canTryAgain || !wallet.hasEntry(m_account, QLatin1String("lastLoginFailed")));
+        promptUser(m_canTryAgain || !wallet.hasEntry(m_account, QLatin1String("lastLoginFailed")));
     } else if (status == Tp::SASLStatusServerSucceeded) {
         kDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
@@ -94,8 +94,8 @@ void XTelepathyPasswordAuthOperation::promptUser(bool isFirstRun)
     } else {
         m_dialog = new XTelepathyPasswordPrompt(m_account);
         connect(m_dialog.data(),
-                    SIGNAL(finished(int)),
-                    SLOT(onDialogFinished(int)));
+                SIGNAL(finished(int)),
+                SLOT(onDialogFinished(int)));
         m_dialog.data()->show();
     }
 }
@@ -104,24 +104,24 @@ void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
 {
     KTp::WalletInterface wallet(0);
     switch (result) {
-        case QDialog::Rejected:
-            kDebug() << "Authentication cancelled";
-            m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
-            setFinished();
+    case QDialog::Rejected:
+        kDebug() << "Authentication cancelled";
+        m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
+        setFinished();
+        if (!m_dialog.isNull()) {
+            m_dialog.data()->deleteLater();
+        }
+        return;
+    case QDialog::Accepted:
+        // save password in kwallet if necessary...
+        if (m_dialog.data()->savePassword()) {
+            kDebug() << "Saving password in wallet";
+            wallet.setPassword(m_account, m_dialog.data()->password());
+            m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());
             if (!m_dialog.isNull()) {
                 m_dialog.data()->deleteLater();
             }
-            return;
-        case QDialog::Accepted:
-            // save password in kwallet if necessary...
-            if (m_dialog.data()->savePassword()) {
-                kDebug() << "Saving password in wallet";
-                wallet.setPassword(m_account, m_dialog.data()->password());
-                m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());
-                if (!m_dialog.isNull()) {
-                    m_dialog.data()->deleteLater();
-                }
-            }
+        }
     }
 }
 

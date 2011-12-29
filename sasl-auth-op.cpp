@@ -62,9 +62,9 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
         // everything ok, we can return from handleChannels now
         emit ready(this);
         XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, qdbus_cast<bool>(props.value("CanTryAgain")));
-        connect (authop,
-                 SIGNAL(finished(Tp::PendingOperation*)),
-                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
+        connect(authop,
+                SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
         uint status = qdbus_cast<uint>(props.value("SASLStatus"));
         QString error = qdbus_cast<QString>(props.value("SASLError"));
         QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
@@ -73,9 +73,9 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
         // everything ok, we can return from handleChannels now
         emit ready(this);
         XMessengerOAuth2AuthOperation *authop = new XMessengerOAuth2AuthOperation(m_account, m_saslIface);
-        connect (authop,
-                 SIGNAL(finished(Tp::PendingOperation*)),
-                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
+        connect(authop,
+                SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
         uint status = qdbus_cast<uint>(props.value("SASLStatus"));
         QString error = qdbus_cast<QString>(props.value("SASLError"));
         QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value("SASLErrorDetails"));
@@ -92,7 +92,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 void SaslAuthOp::onAuthOperationFinished(Tp::PendingOperation *op)
 {
     m_channel->requestClose();
-    if(op->isError()) {
+    if (op->isError()) {
         setFinishedWithError(op->errorName(), op->errorMessage());
     } else {
         setFinished();
