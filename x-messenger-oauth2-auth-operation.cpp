@@ -98,7 +98,7 @@ void XMessengerOAuth2AuthOperation::onDialogFinished(int result)
     switch (result) {
     case QDialog::Rejected:
         kDebug() << "Authentication cancelled";
-        m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, "User cancelled auth");
+        m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, i18n("User cancelled auth"));
         setFinished();
         if (!m_dialog.isNull()) {
             m_dialog.data()->deleteLater();
