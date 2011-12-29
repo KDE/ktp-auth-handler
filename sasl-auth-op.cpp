@@ -60,7 +60,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
     if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
         // everything ok, we can return from handleChannels now
-        emit ready(this);
+        Q_EMIT ready(this);
         XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, qdbus_cast<bool>(props.value("CanTryAgain")));
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
@@ -71,7 +71,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else if (mechanisms.contains(QLatin1String("X-MESSENGER-OAUTH2"))) {
         // everything ok, we can return from handleChannels now
-        emit ready(this);
+        Q_EMIT ready(this);
         XMessengerOAuth2AuthOperation *authop = new XMessengerOAuth2AuthOperation(m_account, m_saslIface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),

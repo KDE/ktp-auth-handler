@@ -60,7 +60,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     }
 
     // everything ok, we can return from handleChannels now
-    emit ready(this);
+    Q_EMIT ready(this);
 
     Tp::PendingVariantMap *pvm = qobject_cast<Tp::PendingVariantMap*>(op);
     QVariantMap props = qdbus_cast<QVariantMap>(pvm->result());
