@@ -30,11 +30,11 @@ XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account
 {
     ui->setupUi(mainWidget());
 
-    setWindowIcon(KIcon("telepathy-kde"));
+    setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
 
     ui->accountName->setText(account->displayName());
-    ui->accountIcon->setPixmap(KIcon("dialog-password").pixmap(60,60));
-    ui->title->setPixmap(KIcon(account->iconName()).pixmap(22,22));
+    ui->accountIcon->setPixmap(KIcon(QLatin1String("dialog-password")).pixmap(60, 60));
+    ui->title->setPixmap(KIcon(account->iconName()).pixmap(22, 22));
 
     KTp::WalletInterface wallet(this->effectiveWinId());
 

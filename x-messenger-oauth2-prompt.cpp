@@ -58,7 +58,7 @@ XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
     widget->setContentsMargins(0, 0, 0, 0);
 
     setMainWidget(widget);
-    setWindowIcon(KIcon("telepathy-kde"));
+    setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
     setButtons(Cancel);
 
     // connect progress bar
@@ -155,7 +155,7 @@ void XMessengerOAuth2Prompt::onUnsupportedContent(QNetworkReply* reply)
 void XMessengerOAuth2Prompt::extractToken(const QUrl &url)
 {
     QString accessToken;
-    Q_FOREACH(const QString &token, QString(url.encodedFragment()).split('&')) {
+    Q_FOREACH (const QString &token, QString::fromLatin1(url.encodedFragment()).split(QLatin1Char('&'))) {
         // Get the URL fragment part and iterate over the parameters of the request
         if (token.indexOf(tokenParameter) == 0) {
             // This is the token that we are looking for (we are not interested
@@ -170,7 +170,7 @@ void XMessengerOAuth2Prompt::extractToken(const QUrl &url)
         return;
     }
 
-    accessToken = accessToken.split('=').at(1);    // Split by "access_token=..." and take latter part
+    accessToken = accessToken.split(QLatin1Char('=')).at(1);    // Split by "access_token=..." and take latter part
 
     // Wocky will base64 encode, but token actually already is base64, so we
     // decode now and it will be re-encoded.

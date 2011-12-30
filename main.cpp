@@ -90,8 +90,7 @@ int main(int argc, char *argv[])
         handlers -= 1;
     }
 
-    if (!handlers)
-    {
+    if (!handlers) {
         kDebug() << "No handlers registered. Exiting";
         return 1;
     }
