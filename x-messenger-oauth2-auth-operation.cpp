@@ -81,6 +81,19 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
     case Tp::SASLStatusServerFailed:
     {
         kDebug() << "Error authenticating - reason:" << reason << "- details:" << details;
+        if (wallet.hasEntry(m_account, XMessengerOAuth2TokenWalletEntry)) {
+            // We cannot try again (TODO canTryAgain seems to be always false for
+            // X-MESSENGER-OAUTH but we should insert a check here)
+            // but we can remove the token and request again to set the account
+            // online like we do for X-TELEPATHY-PASSWORD.
+            // A new channel will be created, but since we deleted the token entry,
+            // next time we will prompt for password and the user won't see any
+            // difference except for an authentication error notification
+            // TODO There should be a way to renew the token if it is expired.
+            wallet.removeEntry(m_account, XMessengerOAuth2TokenWalletEntry);
+            Tp::Presence requestedPresence = m_account->requestedPresence();
+            m_account->setRequestedPresence(requestedPresence);
+        }
         QString errorMessage = details[QLatin1String("server-message")].toString();
         setFinishedWithError(reason, errorMessage.isEmpty() ? i18n("Authentication error") : errorMessage);
         break;
