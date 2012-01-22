@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     Tp::ClientRegistrarPtr clientRegistrar = Tp::ClientRegistrar::create(
             accountFactory, connectionFactory, channelFactory);
 
-    int handlers = 2;
+    int handlers = 1;
 
     Tp::ChannelClassSpecList saslFilter;
     QVariantMap saslOtherProperties;
@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
         handlers -= 1;
     }
 
+#if 0
     Tp::ChannelClassSpecList tlsFilter;
     tlsFilter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION,
                 Tp::HandleTypeNone, false));
@@ -88,6 +89,7 @@ int main(int argc, char *argv[])
                 Tp::AbstractClientPtr(tlsHandler), QLatin1String("KTp.TLSHandler"))) {
         handlers -= 1;
     }
+#endif
 
     if (!handlers) {
         kDebug() << "No handlers registered. Exiting";
