@@ -34,6 +34,7 @@
 
 #include "sasl-handler.h"
 #include "tls-handler.h"
+#include "version.h"
 
 #include <KTp/telepathy-handler-application.h>
 
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
 {
     KAboutData aboutData("ktp-auth-handler", 0,
                          ki18n("Telepathy Authentication Handler"),
-                         "0.3");
+                         KTP_AUTH_HANDLER_VERSION);
     aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
     aboutData.addAuthor(ki18n("Daniele E. Domenichelli"), ki18n("Developer"), "daniele.domenichelli@gmail.com");
     aboutData.setProductName("telepathy/auth-handler");

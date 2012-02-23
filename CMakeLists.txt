@@ -1,5 +1,7 @@
 project(ktp-auth-handler)
 
+set(KTP_AUTH_HANDLER_VERSION "0.3.60")
+
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
      ${CMAKE_MODULE_PATH}
@@ -37,6 +39,8 @@ set(ktp_auth_handler_SRCS
     x-messenger-oauth2-prompt.cpp
     ${ktp_common_internals_SRCS}
 )
+
+configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 kde4_add_ui_files(ktp_auth_handler_SRCS x-telepathy-password-prompt.ui)
 kde4_add_executable(ktp-auth-handler ${ktp_auth_handler_SRCS})
