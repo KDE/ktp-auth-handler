@@ -45,6 +45,7 @@ XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
 {
     // TODO Use .ui file
     m_webView->setContextMenuPolicy(Qt::NoContextMenu);
+    m_webView->setAcceptDrops(false);
 //    QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     m_ProgressBar->setRange(0, 100);
 
