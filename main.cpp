@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2011 Collabora Ltd. <http://www.collabora.co.uk/>
+ * Copyright (C) 2011-2012 Collabora Ltd. <http://www.collabora.co.uk/>
  *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
+ *   @author Jeremy Whiting <jeremy.whiting@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,6 +35,7 @@
 
 #include "sasl-handler.h"
 #include "tls-handler.h"
+#include "captcha-handler.h"
 #include "version.h"
 
 #include <KTp/telepathy-handler-application.h>
@@ -48,6 +50,7 @@ int main(int argc, char *argv[])
                          KTP_AUTH_HANDLER_VERSION);
     aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
     aboutData.addAuthor(ki18n("Daniele E. Domenichelli"), ki18n("Developer"), "daniele.domenichelli@gmail.com");
+    aboutData.addAuthor(ki18n("Jeremy Whiting"), ki18n("Developer"), "jpwhiting@kde.org");
     aboutData.setProductName("telepathy/auth-handler");
 
     KCmdLineArgs::init(argc, argv, &aboutData);
@@ -66,7 +69,8 @@ int main(int argc, char *argv[])
     Tp::ClientRegistrarPtr clientRegistrar = Tp::ClientRegistrar::create(
             accountFactory, connectionFactory, channelFactory);
 
-    int handlers = 1;
+
+    int handlers = 2;
 
     Tp::ChannelClassSpecList saslFilter;
     QVariantMap saslOtherProperties;
@@ -79,6 +83,13 @@ int main(int argc, char *argv[])
     if (!clientRegistrar->registerClient(
                 Tp::AbstractClientPtr(saslHandler), QLatin1String("KTp.SASLHandler"))) {
         handlers -= 1;
+    }
+
+    Tp::SharedPtr<CaptchaHandler> captchaHandler = Tp::SharedPtr<CaptchaHandler>(new CaptchaHandler());
+    if (!clientRegistrar->registerClient(
+                Tp::AbstractClientPtr(captchaHandler), QLatin1String("KTp.CaptchaHandler"))) {
+        handlers -= 1;
+        kDebug() << "failed to register captcha handler";
     }
 
 #if 0

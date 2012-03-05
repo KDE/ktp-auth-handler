@@ -32,9 +32,11 @@ set(ktp_auth_handler_SRCS
     sasl-auth-op.cpp
     tls-cert-verifier-op.cpp
     tls-handler.cpp
+    captcha-handler.cpp
     types.cpp
     x-telepathy-password-auth-operation.cpp
     x-telepathy-password-prompt.cpp
+    x-telepathy-captcha-prompt.cpp
     x-messenger-oauth2-auth-operation.cpp
     x-messenger-oauth2-prompt.cpp
     ${ktp_common_internals_SRCS}
@@ -42,7 +44,7 @@ set(ktp_auth_handler_SRCS
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
-kde4_add_ui_files(ktp_auth_handler_SRCS x-telepathy-password-prompt.ui)
+kde4_add_ui_files(ktp_auth_handler_SRCS x-telepathy-password-prompt.ui x-telepathy-captcha-prompt.ui)
 kde4_add_executable(ktp-auth-handler ${ktp_auth_handler_SRCS})
 
 target_link_libraries(ktp-auth-handler
@@ -69,5 +71,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.S
         DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.TLSHandler.service
 #        DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
-install(FILES KTp.SASLHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
+install(FILES KTp.SASLHandler.client KTp.CaptchaHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
 #install(FILES KTp.TLSHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
