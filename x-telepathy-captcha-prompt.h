@@ -42,7 +42,6 @@ protected Q_SLOTS:
 
 private Q_SLOTS:
     void onRequestCaptchasFinished(Tp::PendingOperation *operation);
-    void onCaptchaAuthFinished(Tp::PendingOperation *operation);
     void onAnswerFinished(Tp::PendingOperation *operation);
     void onCancelFinished(Tp::PendingOperation *operation);
 
@@ -50,7 +49,7 @@ private:
     void requestCaptcha();
 
     Ui::XTelepathyCaptchaPrompt *ui;
-    Tp::ChannelPtr m_channel;
+    Tp::ServerAuthenticationChannelPtr m_channel;
     unsigned int m_currentCaptchaId;
 };
 

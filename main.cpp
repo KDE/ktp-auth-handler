@@ -30,6 +30,7 @@
 #include <TelepathyQt/ChannelFactory>
 #include <TelepathyQt/ClientRegistrar>
 #include <TelepathyQt/ContactFactory>
+#include <TelepathyQt/ServerAuthenticationChannel>
 #include <TelepathyQt/Debug>
 #include <TelepathyQt/Types>
 
@@ -66,6 +67,7 @@ int main(int argc, char *argv[])
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(
             QDBusConnection::sessionBus());
     channelFactory->addCommonFeatures(Tp::Channel::FeatureCore);
+    channelFactory->addFeaturesForServerAuthentication(Tp::ServerAuthenticationChannel::FeatureCore);
     Tp::ClientRegistrarPtr clientRegistrar = Tp::ClientRegistrar::create(
             accountFactory, connectionFactory, channelFactory);
 

@@ -24,15 +24,16 @@
 #include <TelepathyQt/Captcha>
 #include <TelepathyQt/PendingCaptchas>
 #include <TelepathyQt/PendingReady>
+#include <TelepathyQt/ServerAuthenticationChannel>
 
 #include <KIcon>
 #include <KDebug>
 
 XTelepathyCaptchaPrompt::XTelepathyCaptchaPrompt(const Tp::ChannelPtr &channel, QWidget *parent)
     : KDialog(parent),
-      ui(new Ui::XTelepathyCaptchaPrompt),
-      m_channel(channel)
+      ui(new Ui::XTelepathyCaptchaPrompt)
 {
+    m_channel = Tp::ServerAuthenticationChannelPtr::qObjectCast(channel);
     ui->setupUi(mainWidget());
 
     setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
@@ -41,8 +42,8 @@ XTelepathyCaptchaPrompt::XTelepathyCaptchaPrompt(const Tp::ChannelPtr &channel, 
 
     ui->accountIcon->setPixmap(KIcon(QLatin1String("dialog-password")).pixmap(60, 60));
 
-    connect(m_channel->becomeReady(Tp::Channel::FeatureCaptcha), SIGNAL(finished(Tp::PendingOperation *)),
-            this, SLOT(onCaptchaAuthFinished(Tp::PendingOperation*)));
+    requestCaptcha();
+    KDialog::show();
 }
 
 XTelepathyCaptchaPrompt::~XTelepathyCaptchaPrompt()
@@ -76,18 +77,6 @@ void XTelepathyCaptchaPrompt::onRequestCaptchasFinished(Tp::PendingOperation *op
     ui->captchaLineEdit->clear();
 
     // Enable the buttons.
-}
-
-void XTelepathyCaptchaPrompt::onCaptchaAuthFinished(Tp::PendingOperation *operation)
-{
-    if (operation->isError()) {
-        qWarning() << "Captchas feature ready error: " << operation->errorMessage() << operation->errorName();
-        return;
-    }
-
-    requestCaptcha();
-
-    KDialog::show();
 }
 
 void XTelepathyCaptchaPrompt::requestCaptcha()
