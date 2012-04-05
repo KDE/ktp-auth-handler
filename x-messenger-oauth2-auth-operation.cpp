@@ -34,6 +34,13 @@ XMessengerOAuth2AuthOperation::XMessengerOAuth2AuthOperation(
     m_account(account),
     m_saslIface(saslIface)
 {
+    // NOTE Remove old "token" wallet entry
+    // This entry was used in ktp 0.3, and it is now replaced by "access_token"
+    // FIXME We might want to remove this in a later ktp version
+    if (KTp::WalletInterface::hasEntry(m_account, QLatin1String("token"))) {
+        KTp::WalletInterface::removeEntry(m_account, QLatin1String("token"));
+    }
+
     connect(m_saslIface,
             SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)),
             SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
