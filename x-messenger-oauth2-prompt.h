@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
+ * Copyright (C) 2011, 2012 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@ public:
     ~XMessengerOAuth2Prompt();
 
     QByteArray accessToken() const;
+    QByteArray refreshToken() const;
 
 protected:
     virtual QSize sizeHint() const;
@@ -41,6 +42,7 @@ protected:
 Q_SIGNALS:
     void loginPageLoaded(bool ok);
     void accessTokenTaken(const QByteArray &accessToken);
+    void refreshTokenTaken(const QByteArray &refreshToken);
 
 private Q_SLOTS:
     void onUrlChanged(const QUrl &url);
@@ -49,12 +51,14 @@ private Q_SLOTS:
     void onUnsupportedContent(QNetworkReply* reply);
 
 private:
-    void extractToken(const QUrl &url);
+    void extractCode(const QUrl &url);
+    void extractTokens(const QString &text);
 
     KWebView *m_webView;
     QProgressBar *m_ProgressBar;
     bool m_loginPageLoaded;
     QByteArray m_accessToken;
+    QByteArray m_refreshToken;
 };
 
 #endif // X_MESSENGER_OAUTH2_PROMPT_H

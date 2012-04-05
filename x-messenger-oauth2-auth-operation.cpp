@@ -24,7 +24,8 @@
 #include <TelepathyQt/Account>
 #include <KTp/wallet-interface.h>
 
-const QLatin1String XMessengerOAuth2TokenWalletEntry("token");
+const QLatin1String XMessengerOAuth2AccessTokenWalletEntry("access_token");
+const QLatin1String XMessengerOAuth2RefreshTokenWalletEntry("refresh_token");
 
 XMessengerOAuth2AuthOperation::XMessengerOAuth2AuthOperation(
         const Tp::AccountPtr &account,
@@ -47,9 +48,9 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
 {
     switch (status) {
     case Tp::SASLStatusNotStarted :
-        if (KTp::WalletInterface::hasEntry(m_account, XMessengerOAuth2TokenWalletEntry)) {
+        if (KTp::WalletInterface::hasEntry(m_account, XMessengerOAuth2AccessTokenWalletEntry)) {
             m_saslIface->StartMechanismWithData(QLatin1String("X-MESSENGER-OAUTH2"),
-                                                QByteArray::fromBase64(KTp::WalletInterface::entry(m_account, XMessengerOAuth2TokenWalletEntry).toLatin1()));
+                                                QByteArray::fromBase64(KTp::WalletInterface::entry(m_account, XMessengerOAuth2AccessTokenWalletEntry).toLatin1()));
             return;
         }
 
@@ -79,7 +80,7 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
     case Tp::SASLStatusServerFailed:
     {
         kDebug() << "Error authenticating - reason:" << reason << "- details:" << details;
-        if (KTp::WalletInterface::hasEntry(m_account, XMessengerOAuth2TokenWalletEntry)) {
+        if (KTp::WalletInterface::hasEntry(m_account, XMessengerOAuth2AccessTokenWalletEntry)) {
             // We cannot try again (TODO canTryAgain seems to be always false for
             // X-MESSENGER-OAUTH but we should insert a check here)
             // but we can remove the token and request again to set the account
@@ -88,7 +89,7 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
             // next time we will prompt for password and the user won't see any
             // difference except for an authentication error notification
             // TODO There should be a way to renew the token if it is expired.
-            KTp::WalletInterface::removeEntry(m_account, XMessengerOAuth2TokenWalletEntry);
+            KTp::WalletInterface::removeEntry(m_account, XMessengerOAuth2AccessTokenWalletEntry);
             Tp::Presence requestedPresence = m_account->requestedPresence();
             m_account->setRequestedPresence(requestedPresence);
         }
@@ -116,7 +117,8 @@ void XMessengerOAuth2AuthOperation::onDialogFinished(int result)
         return;
     case QDialog::Accepted:
         kDebug() << QLatin1String(m_dialog.data()->accessToken());
-        KTp::WalletInterface::setEntry(m_account, XMessengerOAuth2TokenWalletEntry, QLatin1String(m_dialog.data()->accessToken().toBase64()));
+        KTp::WalletInterface::setEntry(m_account, XMessengerOAuth2AccessTokenWalletEntry, QLatin1String(m_dialog.data()->accessToken().toBase64()));
+        KTp::WalletInterface::setEntry(m_account, XMessengerOAuth2RefreshTokenWalletEntry, QLatin1String(m_dialog.data()->refreshToken().toBase64()));
         m_saslIface->StartMechanismWithData(QLatin1String("X-MESSENGER-OAUTH2"), m_dialog.data()->accessToken());
         if (!m_dialog.isNull()) {
             m_dialog.data()->deleteLater();

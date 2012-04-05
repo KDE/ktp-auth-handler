@@ -12,6 +12,7 @@ set(KDE_MIN_VERSION "4.4.75")
 find_package (KDE4 4.4.75 REQUIRED)
 find_package (TelepathyQt4 0.8.9 REQUIRED)
 find_package (KTp REQUIRED)
+find_package (QJSON REQUIRED)
 
 include (KDE4Defaults)
 include (MacroLibrary)
@@ -24,6 +25,7 @@ add_definitions (${KDE4_DEFINITIONS}
 include_directories (${KDE4_INCLUDES}
                      ${TELEPATHY_QT4_INCLUDE_DIR}
                      ${KTP_INCLUDE_DIR}
+                     ${QJSON_INCLUDE_DIR}
 )
 
 set(ktp_auth_handler_SRCS
@@ -56,6 +58,7 @@ target_link_libraries(ktp-auth-handler
     ${KDE4_KDECORE_LIBS}
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KDEWEBKIT_LIBS}
+    ${QJSON_LIBRARIES}
 )
 
 configure_file(org.freedesktop.Telepathy.Client.KTp.SASLHandler.service.in
