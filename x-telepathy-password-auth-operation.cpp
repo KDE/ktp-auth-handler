@@ -114,13 +114,13 @@ void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
         return;
     case QDialog::Accepted:
         // save password in kwallet if necessary...
-        if (m_dialog.data()->savePassword()) {
-            kDebug() << "Saving password in wallet";
-            wallet.setPassword(m_account, m_dialog.data()->password());
-            m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());
-            if (!m_dialog.isNull()) {
-                m_dialog.data()->deleteLater();
+        if (!m_dialog.isNull()) {
+            if (m_dialog.data()->savePassword()) {
+                kDebug() << "Saving password in wallet";
+                wallet.setPassword(m_account, m_dialog.data()->password());
             }
+            m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());
+            m_dialog.data()->deleteLater();
         }
     }
 }
