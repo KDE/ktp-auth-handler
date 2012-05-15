@@ -48,17 +48,16 @@ XTelepathyPasswordAuthOperation::~XTelepathyPasswordAuthOperation()
 void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QString &reason,
         const QVariantMap &details)
 {
-    KTp::WalletInterface wallet(0);
     if (status == Tp::SASLStatusNotStarted) {
         kDebug() << "Requesting password";
-        promptUser(m_canTryAgain || !wallet.hasEntry(m_account, QLatin1String("lastLoginFailed")));
+        promptUser(m_canTryAgain || !KTp::WalletInterface::hasEntry(m_account, QLatin1String("lastLoginFailed")));
     } else if (status == Tp::SASLStatusServerSucceeded) {
         kDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
     } else if (status == Tp::SASLStatusSucceeded) {
         kDebug() << "Authentication succeeded";
-        if (wallet.hasEntry(m_account, QLatin1String("lastLoginFailed"))) {
-            wallet.removeEntry(m_account, QLatin1String("lastLoginFailed"));
+        if (KTp::WalletInterface::hasEntry(m_account, QLatin1String("lastLoginFailed"))) {
+            KTp::WalletInterface::removeEntry(m_account, QLatin1String("lastLoginFailed"));
         }
         setFinished();
     } else if (status == Tp::SASLStatusInProgress) {
@@ -71,7 +70,7 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
             promptUser(false);
         } else {
             kWarning() << "Authentication failed and cannot try again";
-            wallet.setEntry(m_account, QLatin1String("lastLoginFailed"), QLatin1String("true"));
+            KTp::WalletInterface::setEntry(m_account, QLatin1String("lastLoginFailed"), QLatin1String("true"));
             // We cannot try again, but we can request again to set the account
             // online. A new channel will be created, but since we set the
             // lastLoginFailed entry, next time we will prompt for password
@@ -87,10 +86,9 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
 
 void XTelepathyPasswordAuthOperation::promptUser(bool isFirstRun)
 {
-    KTp::WalletInterface wallet(0);
-    if (wallet.hasPassword(m_account) && isFirstRun) {
+    if (KTp::WalletInterface::hasPassword(m_account) && isFirstRun) {
         m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"),
-                                            wallet.password(m_account).toUtf8());
+                                            KTp::WalletInterface::password(m_account).toUtf8());
     } else {
         m_dialog = new XTelepathyPasswordPrompt(m_account);
         connect(m_dialog.data(),
@@ -102,7 +100,6 @@ void XTelepathyPasswordAuthOperation::promptUser(bool isFirstRun)
 
 void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
 {
-    KTp::WalletInterface wallet(0);
     switch (result) {
     case QDialog::Rejected:
         kDebug() << "Authentication cancelled";
@@ -117,7 +114,7 @@ void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
         if (!m_dialog.isNull()) {
             if (m_dialog.data()->savePassword()) {
                 kDebug() << "Saving password in wallet";
-                wallet.setPassword(m_account, m_dialog.data()->password());
+                KTp::WalletInterface::setPassword(m_account, m_dialog.data()->password());
             }
             m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());
             m_dialog.data()->deleteLater();

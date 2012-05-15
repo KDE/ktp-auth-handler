@@ -45,13 +45,11 @@ XMessengerOAuth2AuthOperation::~XMessengerOAuth2AuthOperation()
 void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QString &reason,
         const QVariantMap &details)
 {
-    KTp::WalletInterface wallet(0);
-
     switch (status) {
     case Tp::SASLStatusNotStarted :
-        if (wallet.hasEntry(m_account, XMessengerOAuth2TokenWalletEntry)) {
+        if (KTp::WalletInterface::hasEntry(m_account, XMessengerOAuth2TokenWalletEntry)) {
             m_saslIface->StartMechanismWithData(QLatin1String("X-MESSENGER-OAUTH2"),
-                                                QByteArray::fromBase64(wallet.entry(m_account, XMessengerOAuth2TokenWalletEntry).toLatin1()));
+                                                QByteArray::fromBase64(KTp::WalletInterface::entry(m_account, XMessengerOAuth2TokenWalletEntry).toLatin1()));
             return;
         }
 
@@ -81,7 +79,7 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
     case Tp::SASLStatusServerFailed:
     {
         kDebug() << "Error authenticating - reason:" << reason << "- details:" << details;
-        if (wallet.hasEntry(m_account, XMessengerOAuth2TokenWalletEntry)) {
+        if (KTp::WalletInterface::hasEntry(m_account, XMessengerOAuth2TokenWalletEntry)) {
             // We cannot try again (TODO canTryAgain seems to be always false for
             // X-MESSENGER-OAUTH but we should insert a check here)
             // but we can remove the token and request again to set the account
@@ -90,7 +88,7 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
             // next time we will prompt for password and the user won't see any
             // difference except for an authentication error notification
             // TODO There should be a way to renew the token if it is expired.
-            wallet.removeEntry(m_account, XMessengerOAuth2TokenWalletEntry);
+            KTp::WalletInterface::removeEntry(m_account, XMessengerOAuth2TokenWalletEntry);
             Tp::Presence requestedPresence = m_account->requestedPresence();
             m_account->setRequestedPresence(requestedPresence);
         }
@@ -107,7 +105,6 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
 
 void XMessengerOAuth2AuthOperation::onDialogFinished(int result)
 {
-    KTp::WalletInterface wallet(0);
     switch (result) {
     case QDialog::Rejected:
         kDebug() << "Authentication cancelled";
@@ -119,7 +116,7 @@ void XMessengerOAuth2AuthOperation::onDialogFinished(int result)
         return;
     case QDialog::Accepted:
         kDebug() << QLatin1String(m_dialog.data()->accessToken());
-        wallet.setEntry(m_account, XMessengerOAuth2TokenWalletEntry, QLatin1String(m_dialog.data()->accessToken().toBase64()));
+        KTp::WalletInterface::setEntry(m_account, XMessengerOAuth2TokenWalletEntry, QLatin1String(m_dialog.data()->accessToken().toBase64()));
         m_saslIface->StartMechanismWithData(QLatin1String("X-MESSENGER-OAUTH2"), m_dialog.data()->accessToken());
         if (!m_dialog.isNull()) {
             m_dialog.data()->deleteLater();

@@ -36,12 +36,10 @@ XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account
     ui->accountIcon->setPixmap(KIcon(QLatin1String("dialog-password")).pixmap(60, 60));
     ui->title->setPixmap(KIcon(account->iconName()).pixmap(22, 22));
 
-    KTp::WalletInterface wallet(this->effectiveWinId());
-
-    if (wallet.isOpen()) {
+    if (KTp::WalletInterface::isOpen()) {
         ui->savePassword->setChecked(true);
-        if (wallet.hasPassword(account)) {
-            ui->passwordLineEdit->setText(wallet.password(account));
+        if (KTp::WalletInterface::hasPassword(account)) {
+            ui->passwordLineEdit->setText(KTp::WalletInterface::password(account));
         }
     } else {
         ui->savePassword->setDisabled(true);
