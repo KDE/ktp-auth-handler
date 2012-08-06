@@ -27,6 +27,10 @@
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/Types>
 
+namespace KTp {
+    class WalletInterface;
+}
+
 class SaslAuthOp : public Tp::PendingOperation
 {
     Q_OBJECT
@@ -41,9 +45,11 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void gotProperties(Tp::PendingOperation *op);
+    void onOpenWalletOperationFinished(Tp::PendingOperation *op);
     void onAuthOperationFinished(Tp::PendingOperation *op);
 
 private:
+    KTp::WalletInterface *m_walletInterface;
     Tp::AccountPtr m_account;
     Tp::ChannelPtr m_channel;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;

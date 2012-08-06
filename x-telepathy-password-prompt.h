@@ -28,12 +28,17 @@ namespace Ui
     class XTelepathyPasswordPrompt;
 }
 
+namespace KTp
+{
+    class WalletInterface;
+}
+
 class XTelepathyPasswordPrompt : public KDialog
 {
     Q_OBJECT
 
 public:
-    explicit XTelepathyPasswordPrompt(const Tp::AccountPtr &account, QWidget *parent = 0);
+    explicit XTelepathyPasswordPrompt(const Tp::AccountPtr &account, KTp::WalletInterface *walletInterface, QWidget *parent=0);
     ~XTelepathyPasswordPrompt();
 
     QString password() const;

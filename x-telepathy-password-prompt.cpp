@@ -24,7 +24,7 @@
 #include <KIcon>
 #include <KDebug>
 
-XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account, QWidget *parent)
+XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account, KTp::WalletInterface *walletInterface, QWidget *parent)
     : KDialog(parent),
       ui(new Ui::XTelepathyPasswordPrompt)
 {
@@ -36,10 +36,10 @@ XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account
     ui->accountIcon->setPixmap(KIcon(QLatin1String("dialog-password")).pixmap(60, 60));
     ui->title->setPixmap(KIcon(account->iconName()).pixmap(22, 22));
 
-    if (KTp::WalletInterface::isOpen()) {
+    if (walletInterface->isOpen()) {
         ui->savePassword->setChecked(true);
-        if (KTp::WalletInterface::hasPassword(account)) {
-            ui->passwordLineEdit->setText(KTp::WalletInterface::password(account));
+        if (walletInterface->hasPassword(account)) {
+            ui->passwordLineEdit->setText(walletInterface->password(account));
         }
     } else {
         ui->savePassword->setDisabled(true);

@@ -25,6 +25,11 @@
 
 #include "x-messenger-oauth2-prompt.h"
 
+namespace KTp
+{
+    class WalletInterface;
+}
+
 class XMessengerOAuth2AuthOperation : public Tp::PendingOperation
 {
     Q_OBJECT
@@ -33,7 +38,8 @@ class XMessengerOAuth2AuthOperation : public Tp::PendingOperation
 public:
     explicit XMessengerOAuth2AuthOperation(
             const Tp::AccountPtr &account,
-            Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);
+            Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
+            KTp::WalletInterface *walletInterface);
     ~XMessengerOAuth2AuthOperation();
 
 private Q_SLOTS:
@@ -43,6 +49,7 @@ private Q_SLOTS:
 private:
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
+    KTp::WalletInterface *m_walletInterface;
     QWeakPointer<XMessengerOAuth2Prompt> m_dialog;
 
     friend class SaslAuthOp;

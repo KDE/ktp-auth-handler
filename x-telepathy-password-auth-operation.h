@@ -24,6 +24,8 @@
 #include <TelepathyQt/Types>
 #include "x-telepathy-password-prompt.h"
 
+#include <KTp/wallet-interface.h>
+
 class XTelepathyPasswordAuthOperation : public Tp::PendingOperation
 {
     Q_OBJECT
@@ -33,6 +35,7 @@ public:
     explicit XTelepathyPasswordAuthOperation(
             const Tp::AccountPtr &account,
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
+            KTp::WalletInterface *walletInterface,
             bool canTryAgain);
     ~XTelepathyPasswordAuthOperation();
 
@@ -45,6 +48,7 @@ private:
 
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
+    KTp::WalletInterface *m_walletInterface;
     bool m_canTryAgain;
     QWeakPointer<XTelepathyPasswordPrompt> m_dialog;
 

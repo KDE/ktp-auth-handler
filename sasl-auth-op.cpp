@@ -27,17 +27,18 @@
 #include <KDebug>
 #include <KLocalizedString>
 
+#include <KTp/wallet-interface.h>
+#include <KTp/pending-wallet.h>
 
 SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
         const Tp::ChannelPtr &channel)
     : Tp::PendingOperation(channel),
+      m_walletInterface(0),
       m_account(account),
       m_channel(channel),
       m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthenticationInterface>())
 {
-    connect(m_saslIface->requestAllProperties(),
-            SIGNAL(finished(Tp::PendingOperation*)),
-            SLOT(gotProperties(Tp::PendingOperation*)));
+    connect(KTp::WalletInterface::openWallet(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onOpenWalletOperationFinished(Tp::PendingOperation*)));
 }
 
 SaslAuthOp::~SaslAuthOp()
@@ -61,7 +62,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
     if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
         // everything ok, we can return from handleChannels now
         Q_EMIT ready(this);
-        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, qdbus_cast<bool>(props.value(QLatin1String("CanTryAgain"))));
+        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, m_walletInterface, qdbus_cast<bool>(props.value(QLatin1String("CanTryAgain"))));
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
@@ -72,7 +73,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
     } else if (mechanisms.contains(QLatin1String("X-MESSENGER-OAUTH2"))) {
         // everything ok, we can return from handleChannels now
         Q_EMIT ready(this);
-        XMessengerOAuth2AuthOperation *authop = new XMessengerOAuth2AuthOperation(m_account, m_saslIface);
+        XMessengerOAuth2AuthOperation *authop = new XMessengerOAuth2AuthOperation(m_account, m_saslIface, m_walletInterface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
@@ -87,6 +88,18 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
                 QLatin1String("X-TELEPATHY-PASSWORD and X-MESSENGER-OAUTH2 are the only supported SASL mechanism and are not available"));
         return;
     }
+}
+
+void SaslAuthOp::onOpenWalletOperationFinished(Tp::PendingOperation *op)
+{
+    KTp::PendingWallet *walletOp = qobject_cast<KTp::PendingWallet*>(op);
+    Q_ASSERT(walletOp);
+
+    m_walletInterface = walletOp->walletInterface();
+
+    connect(m_saslIface->requestAllProperties(),
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(gotProperties(Tp::PendingOperation*)));
 }
 
 void SaslAuthOp::onAuthOperationFinished(Tp::PendingOperation *op)
