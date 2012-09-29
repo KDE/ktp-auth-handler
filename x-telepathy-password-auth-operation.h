@@ -20,7 +20,6 @@
 #define X_TELEPATHY_PASSWORD_AUTH_OPERATION_H
 
 #include <TelepathyQt/PendingOperation>
-#include <TelepathyQt/Channel>
 #include <TelepathyQt/Types>
 #include "x-telepathy-password-prompt.h"
 

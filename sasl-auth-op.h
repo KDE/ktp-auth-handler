@@ -21,8 +21,6 @@
 #ifndef SASL_AUTH_OP_H
 #define SASL_AUTH_OP_H
 
-#include <TelepathyQt/Account>
-#include <TelepathyQt/Channel>
 #include <TelepathyQt/Connection>
 #include <TelepathyQt/PendingOperation>
 #include <TelepathyQt/Types>
