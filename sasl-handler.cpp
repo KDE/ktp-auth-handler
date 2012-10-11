@@ -27,13 +27,26 @@
 #include <QDBusConnection>
 
 #include <TelepathyQt/Channel>
+#include <TelepathyQt/ChannelClassSpecList>
 #include <TelepathyQt/ChannelDispatchOperation>
 #include <TelepathyQt/MethodInvocationContext>
 
 #include <KDebug>
 
-SaslHandler::SaslHandler(const Tp::ChannelClassSpecList &channelFilter)
-    : Tp::AbstractClientHandler(channelFilter)
+static inline Tp::ChannelClassSpecList channelFilter() {
+    Tp::ChannelClassSpecList filter;
+    QVariantMap saslOtherProperties;
+    saslOtherProperties.insert(
+            TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION + QLatin1String(".AuthenticationMethod"),
+            TP_QT_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION);
+    filter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION,
+                Tp::HandleTypeNone, false, saslOtherProperties));
+    return filter;
+}
+
+
+SaslHandler::SaslHandler()
+    : Tp::AbstractClientHandler(channelFilter())
 {
 }
 

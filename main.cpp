@@ -68,24 +68,14 @@ int main(int argc, char *argv[])
 
     int handlers = 1;
 
-    Tp::ChannelClassSpecList saslFilter;
-    QVariantMap saslOtherProperties;
-    saslOtherProperties.insert(
-            TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION + QLatin1String(".AuthenticationMethod"),
-            TP_QT_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION);
-    saslFilter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION,
-                Tp::HandleTypeNone, false, saslOtherProperties));
-    Tp::SharedPtr<SaslHandler> saslHandler = Tp::SharedPtr<SaslHandler>(new SaslHandler(saslFilter));
+    Tp::SharedPtr<SaslHandler> saslHandler = Tp::SharedPtr<SaslHandler>(new SaslHandler);
     if (!clientRegistrar->registerClient(
                 Tp::AbstractClientPtr(saslHandler), QLatin1String("KTp.SASLHandler"))) {
         handlers -= 1;
     }
 
 #if 0
-    Tp::ChannelClassSpecList tlsFilter;
-    tlsFilter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION,
-                Tp::HandleTypeNone, false));
-    Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler(tlsFilter));
+    Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler);
     if (!clientRegistrar->registerClient(
                 Tp::AbstractClientPtr(tlsHandler), QLatin1String("KTp.TLSHandler"))) {
         handlers -= 1;

@@ -36,7 +36,7 @@ class TlsHandler : public QObject, public Tp::AbstractClientHandler
     Q_OBJECT
 
 public:
-    explicit TlsHandler(const Tp::ChannelClassSpecList &channelFilter);
+    explicit TlsHandler();
     ~TlsHandler();
 
     bool bypassApproval() const;

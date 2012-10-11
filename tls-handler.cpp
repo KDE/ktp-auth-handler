@@ -26,13 +26,21 @@
 #include <QDBusConnection>
 
 #include <TelepathyQt/Channel>
+#include <TelepathyQt/ChannelClassSpecList>
 #include <TelepathyQt/ChannelDispatchOperation>
 #include <TelepathyQt/MethodInvocationContext>
 
 #include <KDebug>
 
-TlsHandler::TlsHandler(const Tp::ChannelClassSpecList &channelFilter)
-    : Tp::AbstractClientHandler(channelFilter)
+static inline Tp::ChannelClassSpecList channelFilter() {
+    Tp::ChannelClassSpecList filter;
+    filter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION,
+                Tp::HandleTypeNone, false));
+    return filter;
+}
+
+TlsHandler::TlsHandler()
+    : Tp::AbstractClientHandler(channelFilter())
 {
 }
 

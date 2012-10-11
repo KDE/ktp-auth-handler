@@ -37,7 +37,7 @@ class SaslHandler : public QObject, public Tp::AbstractClientHandler
     Q_OBJECT
 
 public:
-    explicit SaslHandler(const Tp::ChannelClassSpecList &channelFilter);
+    explicit SaslHandler();
     ~SaslHandler();
 
     bool bypassApproval() const;
