@@ -65,7 +65,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     Tp::PendingVariantMap *pvm = qobject_cast<Tp::PendingVariantMap*>(op);
     QVariantMap props = qdbus_cast<QVariantMap>(pvm->result());
     m_certType = qdbus_cast<QString>(props.value(QLatin1String("CertificateType")));
-    m_certData = qdbus_cast<CertificateDataList>(props.value(QLatin1String("certificateChainData")));
+    m_certData = qdbus_cast<CertificateDataList>(props.value(QLatin1String("CertificateChainData")));
 
     // FIXME: verify cert
     setFinished();
