@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
     aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
     aboutData.addAuthor(ki18n("Daniele E. Domenichelli"), ki18n("Developer"), "daniele.domenichelli@gmail.com");
     aboutData.setProductName("telepathy/auth-handler");
+    aboutData.setProgramIconName(QLatin1String("telepathy-kde"));
 
     KCmdLineArgs::init(argc, argv, &aboutData);
     KTp::TelepathyHandlerApplication app;
