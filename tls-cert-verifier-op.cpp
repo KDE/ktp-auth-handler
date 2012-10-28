@@ -31,7 +31,7 @@ TlsCertVerifierOp::TlsCertVerifierOp(const Tp::AccountPtr &account,
       m_connection(connection),
       m_channel(channel)
 {
-    QString certificatePath = qdbus_cast<QString>(channel->immutableProperties().value(
+    QDBusObjectPath certificatePath = qdbus_cast<QDBusObjectPath>(channel->immutableProperties().value(
                 TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + QLatin1String(".ServerCertificate")));
     m_hostname = qdbus_cast<QString>(channel->immutableProperties().value(
                 TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + QLatin1String(".Hostname")));
@@ -39,7 +39,7 @@ TlsCertVerifierOp::TlsCertVerifierOp(const Tp::AccountPtr &account,
                 TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION + QLatin1String(".ReferenceIdentities")));
 
     m_authTLSCertificateIface = new Tp::Client::AuthenticationTLSCertificateInterface(
-            channel->dbusConnection(), channel->busName(), certificatePath);
+            channel->dbusConnection(), channel->busName(), certificatePath.path());
     connect(m_authTLSCertificateIface->requestAllProperties(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(gotProperties(Tp::PendingOperation*)));
