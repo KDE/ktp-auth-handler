@@ -104,7 +104,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
 
     //TODO Show a nice dialog
     if (KMessageBox::questionYesNo(0,
-                                   i18n("Accept this certificate from <b>%1?</b><br />%2<br />").arg(m_hostname).arg(QString::fromLatin1(m_certData.first().toHex())),
+                                   i18n("Accept this certificate from <b>%1?</b><br />%2<br />", m_hostname, QString::fromLatin1(m_certData.first().toHex())),
                                    i18n("Untrusted certificate")) == KMessageBox::Yes) {
         // TODO Remember value
         m_authTLSCertificateIface->Accept().waitForFinished();
