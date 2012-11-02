@@ -26,6 +26,7 @@
 #include <KDebug>
 
 #include <QSslCertificate>
+#include <QSslKey>
 
 TlsCertVerifierOp::TlsCertVerifierOp(const Tp::AccountPtr &account,
         const Tp::ConnectionPtr &connection,
