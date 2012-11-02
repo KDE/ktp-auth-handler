@@ -80,12 +80,30 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
         QList<QSslCertificate> certs = QSslCertificate::fromData(data, QSsl::Der);
         Q_FOREACH (const QSslCertificate &cert, certs) {
             kDebug() << cert;
+            kDebug() << "Issuer Organization:" << cert.issuerInfo(QSslCertificate::Organization);
+            kDebug() << "Issuer Common Name:" << cert.issuerInfo(QSslCertificate::CommonName);
+            kDebug() << "Issuer Locality Name:" << cert.issuerInfo(QSslCertificate::LocalityName);
+            kDebug() << "Issuer Organizational Unit Name:" << cert.issuerInfo(QSslCertificate::OrganizationalUnitName);
+            kDebug() << "Issuer Country Name:" << cert.issuerInfo(QSslCertificate::CountryName);
+            kDebug() << "Issuer State or Province Name:" << cert.issuerInfo(QSslCertificate::StateOrProvinceName);
+            kDebug() << "Subject Organization:" << cert.subjectInfo(QSslCertificate::Organization);
+            kDebug() << "Subject Common Name:" << cert.subjectInfo(QSslCertificate::CommonName);
+            kDebug() << "Subject Locality Name:" << cert.subjectInfo(QSslCertificate::LocalityName);
+            kDebug() << "Subject Organizational Unit Name:" << cert.subjectInfo(QSslCertificate::OrganizationalUnitName);
+            kDebug() << "Subject Country Name:" << cert.subjectInfo(QSslCertificate::CountryName);
+            kDebug() << "Subject State Or Province Name:" << cert.subjectInfo(QSslCertificate::StateOrProvinceName);
+            kDebug() << "Effective Date:" << cert.effectiveDate();
+            kDebug() << "Expiry Date:" << cert.expiryDate();
+            kDebug() << "Public Key:" << cert.publicKey();
+            kDebug() << "Serial Number:" << cert.serialNumber();
+            kDebug() << "Version" << cert.version();
+            kDebug() << "Is Valid?" << cert.isValid();
         }
     }
 
     //TODO Show a nice dialog
     if (KMessageBox::questionYesNo(0,
-                                   i18n("<b>Accept this certificate?</b><br />%1").arg(QString::fromLatin1(m_certData.first().toHex())),
+                                   i18n("Accept this certificate from <b>%1?</b><br />%2<br />").arg(m_hostname).arg(QString::fromLatin1(m_certData.first().toHex())),
                                    i18n("Untrusted certificate")) == KMessageBox::Yes) {
         // TODO Remember value
         m_authTLSCertificateIface->Accept().waitForFinished();
