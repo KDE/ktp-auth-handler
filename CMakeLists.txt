@@ -39,6 +39,8 @@ set(ktp_auth_handler_SRCS
     x-telepathy-password-prompt.cpp
     x-messenger-oauth2-auth-operation.cpp
     x-messenger-oauth2-prompt.cpp
+    conference-auth-op.cpp
+    conference-auth-observer.cpp
     ${ktp_common_internals_SRCS}
 )
 
@@ -66,11 +68,15 @@ configure_file(org.freedesktop.Telepathy.Client.KTp.SASLHandler.service.in
 #configure_file(org.freedesktop.Telepathy.Client.KTp.TLSHandler.service.in
 #               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.TLSHandler.service)
 
+configure_file(org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service.in
+	${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service)
 
 install(TARGETS ktp-auth-handler DESTINATION ${LIBEXEC_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.SASLHandler.service
+	      ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service
         DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.TLSHandler.service
 #        DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
 install(FILES KTp.SASLHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
 #install(FILES KTp.TLSHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
+install(FILES KTp.ConfAuthObserver.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)

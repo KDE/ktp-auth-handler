@@ -34,6 +34,7 @@
 
 #include "sasl-handler.h"
 #include "tls-handler.h"
+#include "conference-auth-observer.h"
 #include "version.h"
 
 #include <KTp/telepathy-handler-application.h>
@@ -74,6 +75,14 @@ int main(int argc, char *argv[])
                 Tp::AbstractClientPtr(saslHandler), QLatin1String("KTp.SASLHandler"))) {
         handlers -= 1;
     }
+
+    Tp::ChannelClassSpecList confAuthFilter =  Tp::ChannelClassSpecList() << Tp::ChannelClassSpec::textChatroom();
+    Tp::SharedPtr<ConferenceAuthObserver> confAuthObserver = Tp::SharedPtr<ConferenceAuthObserver>(new ConferenceAuthObserver(confAuthFilter));
+    if (!clientRegistrar->registerClient(
+                Tp::AbstractClientPtr(confAuthObserver), QLatin1String("KTp.ConfAuthObserver"))) {
+	    kWarning() << "Could not register the room auth observer!";
+    }
+
 
 #if 0
     Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler);
