@@ -41,7 +41,6 @@ set(ktp_auth_handler_SRCS
     x-messenger-oauth2-prompt.cpp
     conference-auth-op.cpp
     conference-auth-observer.cpp
-    ${ktp_common_internals_SRCS}
 )
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
