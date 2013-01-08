@@ -39,7 +39,6 @@ set(ktp_auth_handler_SRCS
     x-telepathy-password-prompt.cpp
     x-messenger-oauth2-auth-operation.cpp
     x-messenger-oauth2-prompt.cpp
-    ${ktp_common_internals_SRCS}
 )
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
