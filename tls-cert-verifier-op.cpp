@@ -27,7 +27,6 @@
 #include <KDebug>
 
 #include <QSslCertificate>
-#include <QSslKey>
 #include <QSslCipher>
 
 #include "kssl/ksslcertificatemanager.h"

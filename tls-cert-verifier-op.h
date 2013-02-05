@@ -2,6 +2,7 @@
  * Copyright (C) 2011 Collabora Ltd. <http://www.collabora.co.uk/>
  *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
+ * Copyright (C) 2013 Dan Vrátil <dvratil@redhat.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +33,6 @@
 #include "types.h"
 
 #include <QtCrypto/QtCrypto>
-#include <QSslError>
 #include <ktcpsocket.h>
 
 class QSslCertificate;
