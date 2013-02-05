@@ -31,6 +31,11 @@
 // FIXME: Move this to tp-qt4 itself
 #include "types.h"
 
+#include <QtCrypto/QtCrypto>
+#include <QSslError>
+#include <ktcpsocket.h>
+
+class QSslCertificate;
 class TlsCertVerifierOp : public Tp::PendingOperation
 {
     Q_OBJECT
@@ -48,6 +53,13 @@ private Q_SLOTS:
     void gotProperties(Tp::PendingOperation *op);
 
 private:
+    bool verifyCertChain(const QCA::CertificateChain &chain);
+    void showSslDialog(const QCA::CertificateChain &chain, const QList<KSslError> &errors) const;
+    KSslError::Error validityToError(QCA::Validity validity) const;
+
+    QCA::CertificateCollection CACollection() const;
+    QList<QSslCertificate> chainToList(const QCA::CertificateChain &chain) const;
+
     Tp::AccountPtr m_account;
     Tp::ConnectionPtr m_connection;
     Tp::ChannelPtr m_channel;

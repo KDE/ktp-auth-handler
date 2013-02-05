@@ -83,14 +83,11 @@ int main(int argc, char *argv[])
 	    kWarning() << "Could not register the room auth observer!";
     }
 
-
-#if 0
     Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler);
     if (!clientRegistrar->registerClient(
                 Tp::AbstractClientPtr(tlsHandler), QLatin1String("KTp.TLSHandler"))) {
         handlers -= 1;
     }
-#endif
 
     if (!handlers) {
         kDebug() << "No handlers registered. Exiting";
