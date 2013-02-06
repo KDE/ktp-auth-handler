@@ -79,7 +79,12 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     m_certData = qdbus_cast<CertificateDataList>(props.value(QLatin1String("CertificateChainData")));
 
     if(m_certType.compare(QLatin1String("x509"), Qt::CaseInsensitive)) {
-        kWarning() << "This is not an x509 certificate";
+        Tp::TLSCertificateRejectionList rejections;
+        m_authTLSCertificateIface->Reject(rejections);
+        m_channel->requestClose();
+        setFinishedWithError(QLatin1String("Cert.Unknown"),
+                             QLatin1String("Invalid certificate type"));
+        return;
     }
 
     // Initialize QCA module
@@ -87,7 +92,6 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
 
     QCA::CertificateChain chain;
     Q_FOREACH (const QByteArray &data, m_certData) {
-        // FIXME How to check if it is QSsl::Pem or QSsl::Der? QSsl::Der works for kdetalk
         chain << QCA::Certificate::fromDER(data);
     }
 
