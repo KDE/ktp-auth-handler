@@ -2,6 +2,7 @@
  * Copyright (C) 2011 Collabora Ltd. <http://www.collabora.co.uk/>
  *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
+ * Copyright (C) 2013 Dan Vrátil <dvratil@redhat.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,6 +32,10 @@
 // FIXME: Move this to tp-qt4 itself
 #include "types.h"
 
+#include <QtCrypto/QtCrypto>
+#include <ktcpsocket.h>
+
+class QSslCertificate;
 class TlsCertVerifierOp : public Tp::PendingOperation
 {
     Q_OBJECT
@@ -48,6 +53,13 @@ private Q_SLOTS:
     void gotProperties(Tp::PendingOperation *op);
 
 private:
+    bool verifyCertChain(const QCA::CertificateChain &chain);
+    void showSslDialog(const QCA::CertificateChain &chain, const QList<KSslError> &errors) const;
+    KSslError::Error validityToError(QCA::Validity validity) const;
+
+    QCA::CertificateCollection CACollection() const;
+    QList<QSslCertificate> chainToList(const QCA::CertificateChain &chain) const;
+
     Tp::AccountPtr m_account;
     Tp::ConnectionPtr m_connection;
     Tp::ChannelPtr m_channel;
