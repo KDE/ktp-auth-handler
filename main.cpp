@@ -68,30 +68,24 @@ int main(int argc, char *argv[])
     Tp::ClientRegistrarPtr clientRegistrar = Tp::ClientRegistrar::create(
             accountFactory, connectionFactory, channelFactory);
 
-    int handlers = 1;
-
-    Tp::SharedPtr<SaslHandler> saslHandler = Tp::SharedPtr<SaslHandler>(new SaslHandler);
-    if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(saslHandler), QLatin1String("KTp.SASLHandler"))) {
-        handlers -= 1;
-    }
-
+    QMap<QString,Tp::AbstractClientPtr> handlers;
+    handlers.insert(QLatin1String("KTp.SASLHandler"), Tp::SharedPtr<SaslHandler>(new SaslHandler));
+    handlers.insert(QLatin1String("KTp.TLSHandler"), Tp::SharedPtr<TlsHandler>(new TlsHandler));
     Tp::ChannelClassSpecList confAuthFilter =  Tp::ChannelClassSpecList() << Tp::ChannelClassSpec::textChatroom();
-    Tp::SharedPtr<ConferenceAuthObserver> confAuthObserver = Tp::SharedPtr<ConferenceAuthObserver>(new ConferenceAuthObserver(confAuthFilter));
-    if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(confAuthObserver), QLatin1String("KTp.ConfAuthObserver"))) {
-	    kWarning() << "Could not register the room auth observer!";
+    handlers.insert(QLatin1String("KTp.ConfAuthObserver"), Tp::SharedPtr<ConferenceAuthObserver>(new ConferenceAuthObserver(confAuthFilter)));
+
+    int loadedHandlers = handlers.count();
+    QMap<QString,Tp::AbstractClientPtr>::ConstIterator iter = handlers.constBegin();
+    for (; iter != handlers.constEnd(); ++iter) {
+        if (!clientRegistrar->registerClient(iter.value(), iter.key())) {
+            loadedHandlers--;
+        }
     }
 
-    Tp::SharedPtr<TlsHandler> tlsHandler = Tp::SharedPtr<TlsHandler>(new TlsHandler);
-    if (!clientRegistrar->registerClient(
-                Tp::AbstractClientPtr(tlsHandler), QLatin1String("KTp.TLSHandler"))) {
-        handlers -= 1;
-    }
-
-    if (!handlers) {
+    if (loadedHandlers == 0) {
         kDebug() << "No handlers registered. Exiting";
         return 1;
     }
+
     return app.exec();
 }
