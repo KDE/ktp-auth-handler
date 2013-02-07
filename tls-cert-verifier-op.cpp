@@ -78,7 +78,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     m_certType = qdbus_cast<QString>(props.value(QLatin1String("CertificateType")));
     m_certData = qdbus_cast<CertificateDataList>(props.value(QLatin1String("CertificateChainData")));
 
-    if(m_certType.compare(QLatin1String("x509"), Qt::CaseInsensitive)) {
+    if(m_certType.compare(QLatin1String("\"x509\""), Qt::CaseInsensitive)) {
         Tp::TLSCertificateRejectionList rejections;
         m_authTLSCertificateIface->Reject(rejections);
         m_channel->requestClose();
@@ -92,7 +92,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
 
     QCA::CertificateChain chain;
     Q_FOREACH (const QByteArray &data, m_certData) {
-        chain << QCA::Certificate::fromDER(data);
+       chain << QCA::Certificate::fromDER(data);
     }
 
     if (verifyCertChain(chain)) {
