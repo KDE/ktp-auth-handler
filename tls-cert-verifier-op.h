@@ -32,7 +32,7 @@
 // FIXME: Move this to tp-qt4 itself
 #include "types.h"
 
-#include <QtCrypto/QtCrypto>
+#include <QtCrypto>
 #include <ktcpsocket.h>
 
 class QSslCertificate;

@@ -32,7 +32,7 @@
 #include "kssl/ksslcertificatemanager.h"
 #include "kssl/ksslinfodialog.h"
 
-#include <QtCrypto/QtCrypto>
+#include <QtCrypto>
 
 TlsCertVerifierOp::TlsCertVerifierOp(const Tp::AccountPtr &account,
         const Tp::ConnectionPtr &connection,
