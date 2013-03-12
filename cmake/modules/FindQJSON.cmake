@@ -13,6 +13,12 @@
 # QJSON v0.7.2+ provides a QJSONConfig.cmake, which should be used if found.
 find_package(QJSON QUIET NO_MODULE)
 
+# QJSON <=0.7.1 provide variables with lower case prefix
+if (${QJSON_VERSION} VERSION_LESS "0.7.2")
+    set (QJSON_LIBRARIES   ${qjson_LIBRARIES})
+    set (QJSON_INCLUDE_DIR ${qjson_INCLUDE_DIR})
+endif()
+
 if (QJSON_FOUND)
     set(REQUIRED_LIBS QJSON_CONFIG)
 else (QJSON_FOUND)
