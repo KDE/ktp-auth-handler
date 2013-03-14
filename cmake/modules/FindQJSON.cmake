@@ -14,9 +14,15 @@
 find_package(QJSON QUIET NO_MODULE)
 
 # QJSON <=0.7.1 provide variables with lower case prefix
+# This happens only on some distribution, so we check if the lowercase
+# variable is set, before setting the uppercase one.
 if (${QJSON_VERSION} VERSION_LESS "0.7.2")
-    set (QJSON_LIBRARIES   ${qjson_LIBRARIES})
-    set (QJSON_INCLUDE_DIR ${qjson_INCLUDE_DIR})
+    if (qtjson_LIBRARIES)
+        set (QJSON_LIBRARIES ${qjson_LIBRARIES})
+    endif()
+    if (qjson_INCLUDE_DIR)
+        set (QJSON_INCLUDE_DIR ${qjson_INCLUDE_DIR})
+    endif()
 endif()
 
 if (QJSON_FOUND)
