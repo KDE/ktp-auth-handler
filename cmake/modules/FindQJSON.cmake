@@ -17,7 +17,7 @@ find_package(QJSON QUIET NO_MODULE)
 # This happens only on some distribution, so we check if the lowercase
 # variable is set, before setting the uppercase one.
 if (${QJSON_VERSION} VERSION_LESS "0.7.2")
-    if (qtjson_LIBRARIES)
+    if (qjson_LIBRARIES)
         set (QJSON_LIBRARIES ${qjson_LIBRARIES})
     endif()
     if (qjson_INCLUDE_DIR)
