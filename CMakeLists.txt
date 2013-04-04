@@ -15,6 +15,8 @@ find_package (TelepathyQt4 0.8.9 REQUIRED)
 find_package (KTp REQUIRED)
 find_package (QJSON REQUIRED)
 find_package (QCA2 REQUIRED)
+find_package(AccountsQt REQUIRED)
+find_package(SignOnQt REQUIRED)
 
 include (KDE4Defaults)
 include (MacroLibrary)
@@ -26,16 +28,20 @@ include_directories (${KDE4_INCLUDES}
                      ${KTP_INCLUDE_DIR}
                      ${QJSON_INCLUDE_DIR}
                      ${QCA2_INCLUDE_DIR}
+                     ${ACCOUNTSQT_INCLUDE_DIRS}
+                     ${SIGNONQT_INCLUDE_DIRS}
                      ${CMAKE_CURRENT_SOURCE_DIR}/kssl
 )
 
 set(ktp_auth_handler_SRCS
+    getcredentialsjob.cpp
     main.cpp
     sasl-handler.cpp
     sasl-auth-op.cpp
     tls-cert-verifier-op.cpp
     tls-handler.cpp
     types.cpp
+    x-telepathy-sso-operation.cpp
     x-telepathy-password-auth-operation.cpp
     x-telepathy-password-prompt.cpp
     x-messenger-oauth2-auth-operation.cpp
@@ -60,6 +66,8 @@ target_link_libraries(ktp-auth-handler
     ${KDE4_KDECORE_LIBS}
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KDEWEBKIT_LIBS}
+    ${ACCOUNTSQT_LIBRARIES}
+    ${SIGNONQT_LIBRARIES}
     ${QJSON_LIBRARIES}
     ${QCA2_LIBRARIES}
 )
