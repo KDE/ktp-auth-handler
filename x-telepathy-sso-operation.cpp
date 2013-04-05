@@ -16,15 +16,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "x-telepathy-sso-operation.h"
+
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ChannelInterfaceSASLAuthenticationInterface>
+#include <TelepathyQt/AccountInterfaceStorageInterface>
+
+#include <TelepathyQt/PendingVariantMap>
 
 #include <Accounts/Account>
 
 #include <KDebug>
 #include <KUrl>
 
-#include "x-telepathy-sso-operation.h"
 #include "getcredentialsjob.h"
 
 XTelepathySSOOperation::XTelepathySSOOperation(const Tp::AccountPtr& account, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
@@ -43,8 +47,14 @@ void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &rea
     qDebug() << "details" << details;
     switch (status){
     case Tp::SASLStatusNotStarted:
-        kDebug() << "starting credentials job";     
-        m_saslIface->StartMechanism(QLatin1String("X-FACEBOOK-PLATFORM"));
+    {
+        kDebug() << "starting credentials job";
+        //FIXME this leaks.
+        Tp::Client::AccountInterfaceStorageInterface *accountStorageInterface = new Tp::Client::AccountInterfaceStorageInterface(m_account->busName(), m_account->objectPath());
+        Tp::PendingVariantMap *pendingMap = accountStorageInterface->requestAllProperties();
+        connect(pendingMap, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGetAccountStorageFetched(Tp::PendingOperation*)));
+        break;
+    }
     case Tp::SASLStatusServerSucceeded:
         kDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
@@ -54,16 +64,16 @@ void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &rea
 
 void XTelepathySSOOperation::onNewChallenge(const QByteArray& array)
 {
-    kDebug() << "new challenge" << array;  
+    kDebug() << "new challenge" << array;
     kDebug() << "responding again";
-    
-    GetCredentialsJob *job = new GetCredentialsJob(11, this);
+
+    GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
     kDebug() << "made new credentials job..starting";
     job->exec();
-    
+
     KUrl fbRequestUrl;
     KUrl fbResponseUrl;
-    
+
     fbRequestUrl.setQuery(array);
     kDebug() << fbRequestUrl.queryItemValue("version");
 
@@ -73,11 +83,19 @@ void XTelepathySSOOperation::onNewChallenge(const QByteArray& array)
     fbResponseUrl.addQueryItem("api_key", job->credentialsData()["ClientId"].toString());
     fbResponseUrl.addQueryItem("call_id", "0");
     fbResponseUrl.addQueryItem("v", "1.0");
-    
+
     //.mid(1) trims leading '?' char
     kDebug() << fbResponseUrl.query().mid(1);
     m_saslIface->Respond(fbResponseUrl.query().mid(1).toUtf8());
 }
 
+void XTelepathySSOOperation::onGetAccountStorageFetched(Tp::PendingOperation *op)
+{
+    kDebug() << "DAVE LOOK HERE";
+    Tp::PendingVariantMap *pendingMap = qobject_cast<Tp::PendingVariantMap*>(op);
+
+    m_accountStorageId = pendingMap->result()["StorageIdentifier"].value<QDBusVariant>().variant().toInt();
+    m_saslIface->StartMechanism(QLatin1String("X-FACEBOOK-PLATFORM"));
+}
 
 

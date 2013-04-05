@@ -29,7 +29,7 @@
 class GetCredentialsJob;
 
 class XTelepathySSOOperation : public Tp::PendingOperation
-{    
+{
     Q_OBJECT
     Q_DISABLE_COPY(XTelepathySSOOperation)
 
@@ -42,11 +42,18 @@ public:
 private Q_SLOTS:
     void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
     void onNewChallenge(const QByteArray &array);
-  
+
+    //FIXME this is a wordaround until Tp::Client::AccountInterfaceStorageInterface is merged into Tp::Account
+    void onGetAccountStorageFetched(Tp::PendingOperation *op);
+
 private:
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
-    
+
+    //FIXME hack as part of above
+    int m_accountStorageId;
+
+
     friend class SaslAuthOp;
 };
 
