@@ -43,8 +43,8 @@ XTelepathySSOOperation::XTelepathySSOOperation(const Tp::AccountPtr& account, Tp
 
 void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details)
 {
-    qDebug() << "new status is " << status;
-    qDebug() << "details" << details;
+    kDebug() << "new status is " << status;
+    kDebug() << "details" << details;
     switch (status){
     case Tp::SASLStatusNotStarted:
     {
@@ -91,7 +91,7 @@ void XTelepathySSOOperation::onNewChallenge(const QByteArray& array)
 
 void XTelepathySSOOperation::onGetAccountStorageFetched(Tp::PendingOperation *op)
 {
-    kDebug() << "DAVE LOOK HERE";
+    kDebug();
     Tp::PendingVariantMap *pendingMap = qobject_cast<Tp::PendingVariantMap*>(op);
 
     m_accountStorageId = pendingMap->result()["StorageIdentifier"].value<QDBusVariant>().variant().toInt();
