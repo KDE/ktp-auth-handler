@@ -37,7 +37,6 @@ public:
             const Tp::AccountPtr &account,
             int accountStorageId,
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);
-//     ~XTelepathySSOOperation();
 
 private Q_SLOTS:
     void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
