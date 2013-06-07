@@ -28,8 +28,6 @@ include_directories (${KDE4_INCLUDES}
                      ${KTP_INCLUDE_DIR}
                      ${QJSON_INCLUDE_DIR}
                      ${QCA2_INCLUDE_DIR}
-                     ${ACCOUNTSQT_INCLUDE_DIRS}
-                     ${SIGNONQT_INCLUDE_DIRS}
                      ${CMAKE_CURRENT_SOURCE_DIR}/kssl
 )
 
@@ -76,6 +74,11 @@ if(ACCOUNTSQT_FOUND AND SIGNONQT_FOUND)
         ${ACCOUNTSQT_LIBRARIES}
         ${SIGNONQT_LIBRARIES}
     )
+
+    include_directories(${ACCOUNTSQT_INCLUDE_DIRS}
+                        ${SIGNONQT_INCLUDE_DIRS}
+    )
+    
 endif(ACCOUNTSQT_FOUND AND SIGNONQT_FOUND)
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
