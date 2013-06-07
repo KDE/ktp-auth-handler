@@ -74,7 +74,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
         uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
         QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
         QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
-        authop->onSASLStatusChanged(status, error, errorDetails);   
+        authop->onSASLStatusChanged(status, error, errorDetails);
     } else if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
         // everything ok, we can return from handleChannels now
         Q_EMIT ready(this);
