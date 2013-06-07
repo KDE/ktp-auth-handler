@@ -24,6 +24,8 @@
 #include "x-messenger-oauth2-auth-operation.h"
 #include "x-telepathy-sso-operation.h"
 
+#include <QtCore/QScopedPointer>
+
 #include <TelepathyQt/PendingVariantMap>
 
 #include <KDebug>
@@ -113,7 +115,9 @@ void SaslAuthOp::onOpenWalletOperationFinished(Tp::PendingOperation *op)
 
     //Check if the account has any StorageIdentifier, in which case we will
     //prioritize those mechanism related with KDE Accounts integration
-    Tp::Client::AccountInterfaceStorageInterface *accountStorageInterface = new Tp::Client::AccountInterfaceStorageInterface(m_account->busName(), m_account->objectPath());
+    QScopedPointer<Tp::Client::AccountInterfaceStorageInterface> accountStorageInterface(
+        new Tp::Client::AccountInterfaceStorageInterface(m_account->busName(), m_account->objectPath()));
+
     Tp::PendingVariantMap *pendingMap = accountStorageInterface->requestAllProperties();
     connect(pendingMap, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGetAccountStorageFetched(Tp::PendingOperation*)));
 }
