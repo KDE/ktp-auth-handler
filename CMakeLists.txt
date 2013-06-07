@@ -15,8 +15,8 @@ find_package (TelepathyQt4 0.8.9 REQUIRED)
 find_package (KTp REQUIRED)
 find_package (QJSON REQUIRED)
 find_package (QCA2 REQUIRED)
-find_package(AccountsQt REQUIRED)
-find_package(SignOnQt REQUIRED)
+find_package(AccountsQt)
+find_package(SignOnQt)
 
 include (KDE4Defaults)
 include (MacroLibrary)
@@ -34,14 +34,12 @@ include_directories (${KDE4_INCLUDES}
 )
 
 set(ktp_auth_handler_SRCS
-    getcredentialsjob.cpp
     main.cpp
     sasl-handler.cpp
     sasl-auth-op.cpp
     tls-cert-verifier-op.cpp
     tls-handler.cpp
     types.cpp
-    x-telepathy-sso-operation.cpp
     x-telepathy-password-auth-operation.cpp
     x-telepathy-password-prompt.cpp
     x-messenger-oauth2-auth-operation.cpp
@@ -50,12 +48,7 @@ set(ktp_auth_handler_SRCS
     conference-auth-observer.cpp
 )
 
-configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
-
-kde4_add_ui_files(ktp_auth_handler_SRCS x-telepathy-password-prompt.ui)
-kde4_add_executable(ktp-auth-handler ${ktp_auth_handler_SRCS})
-
-target_link_libraries(ktp-auth-handler
+set(ktp_auth_handler_LIBS
     ${QT_QTDBUS_LIBRARY}
     ${QT_QTGUI_LIBRARY}
     ${QT_QTXML_LIBRARY}
@@ -66,10 +59,32 @@ target_link_libraries(ktp-auth-handler
     ${KDE4_KDECORE_LIBS}
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KDEWEBKIT_LIBS}
-    ${ACCOUNTSQT_LIBRARIES}
-    ${SIGNONQT_LIBRARIES}
     ${QJSON_LIBRARIES}
     ${QCA2_LIBRARIES}
+)
+
+#If we find Accounts-SSO frameworks, add support for it
+if(ACCOUNTSQT_FOUND AND SIGNONQT_FOUND)
+    add_definitions(-DHAVE_SSO)
+    set(ktp_auth_handler_SRCS
+        ${ktp_auth_handler_SRCS}
+        x-telepathy-sso-operation.cpp
+        getcredentialsjob.cpp
+    )
+    set(ktp_auth_handler_LIBS
+        ${ktp_auth_handler_LIBS}
+        ${ACCOUNTSQT_LIBRARIES}
+        ${SIGNONQT_LIBRARIES}
+    )
+endif(ACCOUNTSQT_FOUND AND SIGNONQT_FOUND)
+
+configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
+
+kde4_add_ui_files(ktp_auth_handler_SRCS x-telepathy-password-prompt.ui)
+kde4_add_executable(ktp-auth-handler ${ktp_auth_handler_SRCS})
+
+target_link_libraries(ktp-auth-handler
+    ${ktp_auth_handler_LIBS}
 )
 
 configure_file(org.freedesktop.Telepathy.Client.KTp.SASLHandler.service.in
