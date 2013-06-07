@@ -62,8 +62,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
     QStringList mechanisms = qdbus_cast<QStringList>(props.value(QLatin1String("AvailableMechanisms")));
     kDebug() << mechanisms;
 
-    if (mechanisms.contains(QLatin1String("X-FACEBOOK-PLATFORM"))) {
-        XTelepathySSOOperation *authop = new XTelepathySSOOperation(m_account, m_saslIface);
+    if (mechanisms.contains(QLatin1String("X-FACEBOOK-PLATFORM")) && m_accountStorageId) {
         XTelepathySSOOperation *authop = new XTelepathySSOOperation(m_account, m_accountStorageId, m_saslIface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
