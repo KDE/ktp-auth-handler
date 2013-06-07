@@ -49,6 +49,7 @@ SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
     m_accountStorageId = 0;
 #endif
 
+    //FIXME: We should open the wallet only when required (not required for X-FACEBOOK-PLATFORM)
     connect(KTp::WalletInterface::openWallet(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onOpenWalletOperationFinished(Tp::PendingOperation*)));
 }
 
