@@ -156,6 +156,7 @@ void SaslAuthOp::onGetAccountStorageFetched(Tp::PendingOperation* op)
     m_accountStorageId = pendingMap->result()["StorageIdentifier"].value<QDBusVariant>().variant().toInt();
     kDebug() << m_accountStorageId;
 
+    setReady();
 }
 
 void SaslAuthOp::fetchAccountStorage()
@@ -167,8 +168,6 @@ void SaslAuthOp::fetchAccountStorage()
 
     Tp::PendingVariantMap *pendingMap = accountStorageInterface->requestAllProperties();
     connect(pendingMap, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGetAccountStorageFetched(Tp::PendingOperation*)));
-
-    setReady();
 }
 #endif
 
