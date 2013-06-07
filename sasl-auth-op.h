@@ -47,7 +47,7 @@ private Q_SLOTS:
     void onAuthOperationFinished(Tp::PendingOperation *op);
 
 #ifdef HAVE_SSO
-    //FIXME this is a wordaround until Tp::Client::AccountInterfaceStorageInterface is merged into Tp::Account
+    //FIXME this is a workaround until Tp::Client::AccountInterfaceStorageInterface is merged into Tp::Account
     //https://bugs.freedesktop.org/show_bug.cgi?id=63191
     void onGetAccountStorageFetched(Tp::PendingOperation *op);
 #endif
