@@ -36,15 +36,13 @@ class XTelepathySSOOperation : public Tp::PendingOperation
 public:
     explicit XTelepathySSOOperation(
             const Tp::AccountPtr &account,
+            int accountStorageId,
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);
 //     ~XTelepathySSOOperation();
 
 private Q_SLOTS:
     void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
     void onNewChallenge(const QByteArray &array);
-
-    //FIXME this is a wordaround until Tp::Client::AccountInterfaceStorageInterface is merged into Tp::Account
-    void onGetAccountStorageFetched(Tp::PendingOperation *op);
 
 private:
     Tp::AccountPtr m_account;

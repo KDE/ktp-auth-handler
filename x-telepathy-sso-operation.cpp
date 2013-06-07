@@ -31,11 +31,13 @@
 
 #include "getcredentialsjob.h"
 
-XTelepathySSOOperation::XTelepathySSOOperation(const Tp::AccountPtr& account, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
+XTelepathySSOOperation::XTelepathySSOOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
     PendingOperation(account),
     m_account(account),
+    m_accountStorageId(accountStorageId),
     m_saslIface(saslIface)
 {
+    Q_ASSERT(m_accountStorageId);
     connect(m_saslIface, SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)), SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
     connect(m_saslIface, SIGNAL(NewChallenge(QByteArray)), SLOT(onNewChallenge(QByteArray)));
 }
@@ -50,9 +52,7 @@ void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &rea
     {
         kDebug() << "starting credentials job";
         //FIXME this leaks.
-        Tp::Client::AccountInterfaceStorageInterface *accountStorageInterface = new Tp::Client::AccountInterfaceStorageInterface(m_account->busName(), m_account->objectPath());
-        Tp::PendingVariantMap *pendingMap = accountStorageInterface->requestAllProperties();
-        connect(pendingMap, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGetAccountStorageFetched(Tp::PendingOperation*)));
+        m_saslIface->StartMechanism(QLatin1String("X-FACEBOOK-PLATFORM"));
         break;
     }
     case Tp::SASLStatusServerSucceeded:
@@ -87,15 +87,6 @@ void XTelepathySSOOperation::onNewChallenge(const QByteArray& array)
     //.mid(1) trims leading '?' char
     kDebug() << fbResponseUrl.query().mid(1);
     m_saslIface->Respond(fbResponseUrl.query().mid(1).toUtf8());
-}
-
-void XTelepathySSOOperation::onGetAccountStorageFetched(Tp::PendingOperation *op)
-{
-    kDebug();
-    Tp::PendingVariantMap *pendingMap = qobject_cast<Tp::PendingVariantMap*>(op);
-
-    m_accountStorageId = pendingMap->result()["StorageIdentifier"].value<QDBusVariant>().variant().toInt();
-    m_saslIface->StartMechanism(QLatin1String("X-FACEBOOK-PLATFORM"));
 }
 
 

@@ -44,12 +44,16 @@ Q_SIGNALS:
 private Q_SLOTS:
     void gotProperties(Tp::PendingOperation *op);
     void onOpenWalletOperationFinished(Tp::PendingOperation *op);
+    //FIXME this is a wordaround until Tp::Client::AccountInterfaceStorageInterface is merged into Tp::Account
+    //https://bugs.freedesktop.org/show_bug.cgi?id=63191
+    void onGetAccountStorageFetched(Tp::PendingOperation *op);
     void onAuthOperationFinished(Tp::PendingOperation *op);
 
 private:
     KTp::WalletInterface *m_walletInterface;
     Tp::AccountPtr m_account;
     Tp::ChannelPtr m_channel;
+    int m_accountStorageId;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
 };
 

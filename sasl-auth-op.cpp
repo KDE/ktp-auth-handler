@@ -38,6 +38,7 @@ SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
       m_walletInterface(0),
       m_account(account),
       m_channel(channel),
+      m_accountStorageId(0),
       m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthenticationInterface>())
 {
     connect(KTp::WalletInterface::openWallet(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onOpenWalletOperationFinished(Tp::PendingOperation*)));
@@ -63,6 +64,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
     if (mechanisms.contains(QLatin1String("X-FACEBOOK-PLATFORM"))) {
         XTelepathySSOOperation *authop = new XTelepathySSOOperation(m_account, m_saslIface);
+        XTelepathySSOOperation *authop = new XTelepathySSOOperation(m_account, m_accountStorageId, m_saslIface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
@@ -110,6 +112,20 @@ void SaslAuthOp::onOpenWalletOperationFinished(Tp::PendingOperation *op)
 
     m_walletInterface = walletOp->walletInterface();
 
+    //Check if the account has any StorageIdentifier, in which case we will
+    //prioritize those mechanism related with KDE Accounts integration
+    Tp::Client::AccountInterfaceStorageInterface *accountStorageInterface = new Tp::Client::AccountInterfaceStorageInterface(m_account->busName(), m_account->objectPath());
+    Tp::PendingVariantMap *pendingMap = accountStorageInterface->requestAllProperties();
+    connect(pendingMap, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGetAccountStorageFetched(Tp::PendingOperation*)));
+}
+
+void SaslAuthOp::onGetAccountStorageFetched(Tp::PendingOperation* op)
+{
+    kDebug();
+    Tp::PendingVariantMap *pendingMap = qobject_cast<Tp::PendingVariantMap*>(op);
+
+    m_accountStorageId = pendingMap->result()["StorageIdentifier"].value<QDBusVariant>().variant().toInt();
+    kDebug() << m_accountStorageId;
     connect(m_saslIface->requestAllProperties(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(gotProperties(Tp::PendingOperation*)));
