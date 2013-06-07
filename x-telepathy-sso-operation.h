@@ -25,8 +25,7 @@
 #include <TelepathyQt/Channel>
 #include <TelepathyQt/Account>
 
-
-class GetCredentialsJob;
+class KJob;
 
 class XTelepathySSOOperation : public Tp::PendingOperation
 {
@@ -42,11 +41,14 @@ public:
 
 private Q_SLOTS:
     void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
-    void onNewChallenge(const QByteArray &array);
+    void onNewChallenge(const QByteArray &challengeData);
+    void gotCredentials(KJob *kjob);
 
 private:
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
+
+    QByteArray m_challengeData;
 
     //FIXME hack as part of above
     int m_accountStorageId;

@@ -62,25 +62,34 @@ void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &rea
     }
 }
 
-void XTelepathySSOOperation::onNewChallenge(const QByteArray& array)
+void XTelepathySSOOperation::onNewChallenge(const QByteArray& challengeData)
 {
-    kDebug() << "new challenge" << array;
+    kDebug() << "new challenge" << challengeData;
     kDebug() << "responding again";
 
-    GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
-    kDebug() << "made new credentials job..starting";
-    job->exec();
+    m_challengeData = challengeData;
 
+    kDebug() << "made new credentials job..starting: " << m_accountStorageId;
+    GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
+    connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob *)));
+    job->start();
+}
+
+void XTelepathySSOOperation::gotCredentials(KJob *kJob)
+{
+    kDebug();
     KUrl fbRequestUrl;
     KUrl fbResponseUrl;
 
-    fbRequestUrl.setQuery(array);
+    fbRequestUrl.setQuery(m_challengeData);
     kDebug() << fbRequestUrl.queryItemValue("version");
 
+    GetCredentialsJob *job = qobject_cast< GetCredentialsJob* >(kJob);
+    QVariantMap credentialsData = job->credentialsData();
     fbResponseUrl.addQueryItem("method", fbRequestUrl.queryItemValue("method"));
     fbResponseUrl.addQueryItem("nonce", fbRequestUrl.queryItemValue("nonce"));
-    fbResponseUrl.addQueryItem("access_token", job->credentialsData()["AccessToken"].toString());
-    fbResponseUrl.addQueryItem("api_key", job->credentialsData()["ClientId"].toString());
+    fbResponseUrl.addQueryItem("access_token", credentialsData["AccessToken"].toString());
+    fbResponseUrl.addQueryItem("api_key", credentialsData["ClientId"].toString());
     fbResponseUrl.addQueryItem("call_id", "0");
     fbResponseUrl.addQueryItem("v", "1.0");
 
@@ -88,5 +97,3 @@ void XTelepathySSOOperation::onNewChallenge(const QByteArray& array)
     kDebug() << fbResponseUrl.query().mid(1);
     m_saslIface->Respond(fbResponseUrl.query().mid(1).toUtf8());
 }
-
-
