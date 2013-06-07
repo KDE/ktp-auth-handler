@@ -18,13 +18,13 @@
 
 #include "getcredentialsjob.h"
 
-#include <QtCore/QDebug>
-
 #include <Accounts/Manager>
 #include <Accounts/Account>
 #include <Accounts/AccountService>
 
 #include <SignOn/Identity>
+
+#include <KDebug>
 
 GetCredentialsJob::GetCredentialsJob(const Accounts::AccountId& id, QObject* parent)
 : KJob(parent)
@@ -46,12 +46,18 @@ void GetCredentialsJob::setServiceType(const QString& serviceType)
 
 void GetCredentialsJob::getCredentials()
 {
-    Accounts::Account* acc = m_manager->account(m_id);
+    Accounts::Account *acc = m_manager->account(m_id);
+    if (!acc) {
+        setError(-1);
+        setErrorText("Could not find account");
+        emitResult();
+        return;
+    }
     Accounts::AccountService *service = new Accounts::AccountService(acc, m_manager->service(m_serviceType), this);
 
     Accounts::AuthData authData = service->authData();
     m_authData = authData.parameters();
-    SignOn::Identity* identity = SignOn::Identity::existingIdentity(acc->credentialsId(), this);
+    SignOn::Identity* identity = SignOn::Identity::existingIdentity(authData.credentialsId(), this);
 
     if (!identity) {
         setError(-1);
@@ -59,7 +65,7 @@ void GetCredentialsJob::getCredentials()
         emitResult();
         return;
     }
-    
+
     QPointer<SignOn::AuthSession> authSession = identity->createSession(authData.method());
 
     connect(authSession, SIGNAL(response(SignOn::SessionData)),
@@ -67,25 +73,24 @@ void GetCredentialsJob::getCredentials()
     connect(authSession, SIGNAL(error(SignOn::Error)),
             SLOT(sessionError(SignOn::Error)));
 
-    qDebug() << authData.parameters();
-    qDebug() << authData.mechanism();
+    kDebug() << authData.parameters();
+    kDebug() << authData.mechanism();
     authSession->process(authData.parameters(), authData.mechanism());
-}
-
-void GetCredentialsJob::info(const SignOn::IdentityInfo& info)
-{
 }
 
 void GetCredentialsJob::sessionResponse(const SignOn::SessionData& data)
 {
-    qDebug() << data.toMap();
+    kDebug() << data.toMap();
     m_sessionData = data;
     emitResult();
 }
 
 void GetCredentialsJob::sessionError(const SignOn::Error& error)
 {
-    qDebug() << error.message();
+    kDebug() << error.message();
+    setError(-1);
+    setErrorText(error.message());
+    emitResult();
 }
 
 Accounts::AccountId GetCredentialsJob::accountId() const
