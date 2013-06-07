@@ -51,7 +51,6 @@ void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &rea
     case Tp::SASLStatusNotStarted:
     {
         kDebug() << "starting credentials job";
-        //FIXME this leaks.
         m_saslIface->StartMechanism(QLatin1String("X-FACEBOOK-PLATFORM"));
         break;
     }

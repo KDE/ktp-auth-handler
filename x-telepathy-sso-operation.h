@@ -49,8 +49,6 @@ private:
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
 
     QByteArray m_challengeData;
-
-    //FIXME hack as part of above
     int m_accountStorageId;
 
 
