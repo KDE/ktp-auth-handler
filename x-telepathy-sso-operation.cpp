@@ -34,8 +34,8 @@
 XTelepathySSOOperation::XTelepathySSOOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
     PendingOperation(account),
     m_account(account),
-    m_accountStorageId(accountStorageId),
-    m_saslIface(saslIface)
+    m_saslIface(saslIface),
+    m_accountStorageId(accountStorageId)
 {
     Q_ASSERT(m_accountStorageId);
     connect(m_saslIface, SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)), SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
@@ -45,8 +45,10 @@ XTelepathySSOOperation::XTelepathySSOOperation(const Tp::AccountPtr& account, in
 
 void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details)
 {
-    kDebug() << "new status is " << status;
-    kDebug() << "details" << details;
+    kDebug() << "New status is: " << status;
+    kDebug() << "Details: " << details;
+    kDebug() << "Reason: " << reason;
+
     switch (status){
     case Tp::SASLStatusNotStarted:
     {
@@ -63,12 +65,11 @@ void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &rea
 
 void XTelepathySSOOperation::onNewChallenge(const QByteArray& challengeData)
 {
-    kDebug() << "new challenge" << challengeData;
-    kDebug() << "responding again";
+    kDebug() << "New Challenge" << challengeData;
 
     m_challengeData = challengeData;
 
-    kDebug() << "made new credentials job..starting: " << m_accountStorageId;
+    kDebug() << "GetCredentialsJob on account: " << m_accountStorageId;
     GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
     connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob *)));
     job->start();

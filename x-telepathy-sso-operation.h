@@ -47,9 +47,8 @@ private:
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
 
-    QByteArray m_challengeData;
     int m_accountStorageId;
-
+    QByteArray m_challengeData;
 
     friend class SaslAuthOp;
 };
