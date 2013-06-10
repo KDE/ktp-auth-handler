@@ -24,7 +24,7 @@
 #include "x-messenger-oauth2-auth-operation.h"
 
 #ifdef HAVE_SSO
-    #include "x-telepathy-sso-operation.h"
+    #include "x-telepathy-sso-facebook-operation.h"
     #include "x-telepathy-sso-google-operation.h"
 #endif
 

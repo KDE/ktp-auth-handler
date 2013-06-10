@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "x-telepathy-sso-operation.h"
+#include "x-telepathy-sso-facebook-operation.h"
 
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ChannelInterfaceSASLAuthenticationInterface>
