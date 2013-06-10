@@ -25,6 +25,7 @@
 
 #ifdef HAVE_SSO
     #include "x-telepathy-sso-operation.h"
+    #include "x-telepathy-sso-google-operation.h"
 #endif
 
 #include <QtCore/QScopedPointer>
@@ -71,6 +72,10 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
     QStringList mechanisms = qdbus_cast<QStringList>(props.value(QLatin1String("AvailableMechanisms")));
     kDebug() << mechanisms;
 
+    uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
+    QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
+    QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
+
 #ifdef HAVE_SSO
     if (mechanisms.contains(QLatin1String("X-FACEBOOK-PLATFORM")) && m_accountStorageId) {
         XTelepathySSOOperation *authop = new XTelepathySSOOperation(m_account, m_accountStorageId, m_saslIface);
@@ -78,41 +83,38 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
 
-        //FIXME this is repeated code...move it outside the if???
-        uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
-        QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
-        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
         authop->onSASLStatusChanged(status, error, errorDetails);
     }
-    else //if...
+    else if(mechanisms.contains(QLatin1String("X-OAUTH2")) && m_accountStorageId) {
+        XTelepathySSOGoogleOperation *authop = new XTelepathySSOGoogleOperation(m_account, m_accountStorageId, m_saslIface);
+        connect(authop,
+                SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
+
+        authop->onSASLStatusChanged(status, error, errorDetails);
+    } else //if...
 #endif
     if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
-        // everything ok, we can return from handleChannels now
         Q_EMIT ready(this);
         XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, m_walletInterface, qdbus_cast<bool>(props.value(QLatin1String("CanTryAgain"))));
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
-        uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
-        QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
-        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
+
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else if (mechanisms.contains(QLatin1String("X-MESSENGER-OAUTH2"))) {
-        // everything ok, we can return from handleChannels now
         Q_EMIT ready(this);
         XMessengerOAuth2AuthOperation *authop = new XMessengerOAuth2AuthOperation(m_account, m_saslIface, m_walletInterface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
-        uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
-        QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
-        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
+
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else {
-        kWarning() << "X-TELEPATHY-PASSWORD and X-MESSENGER-OAUTH2 are the only supported SASL mechanism and are not available:" << mechanisms;
+        kWarning() << "X-TELEPATHY-PASSWORD, X-MESSENGER-OAUTH2, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:" << mechanisms;
         m_channel->requestClose();
         setFinishedWithError(TP_QT_ERROR_NOT_IMPLEMENTED,
-                QLatin1String("X-TELEPATHY-PASSWORD and X-MESSENGER-OAUTH2 are the only supported SASL mechanism and are not available"));
+                QLatin1String("X-TELEPATHY-PASSWORD, X-MESSENGER-OAUTH2, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:"));
         return;
     }
 }

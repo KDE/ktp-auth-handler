@@ -72,6 +72,7 @@ if(ACCOUNTSQT_FOUND AND SIGNONQT_FOUND)
     set(ktp_auth_handler_SRCS
         ${ktp_auth_handler_SRCS}
         x-telepathy-sso-operation.cpp
+        x-telepathy-sso-google-operation.cpp
         getcredentialsjob.cpp
     )
 
