@@ -31,7 +31,7 @@
 
 #include "getcredentialsjob.h"
 
-XTelepathySSOOperation::XTelepathySSOOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
+XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
     PendingOperation(account),
     m_account(account),
     m_saslIface(saslIface),
@@ -43,7 +43,7 @@ XTelepathySSOOperation::XTelepathySSOOperation(const Tp::AccountPtr& account, in
 }
 
 
-void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details)
+void XTelepathySSOFacebookOperation::onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details)
 {
     kDebug() << "New status is: " << status;
     kDebug() << "Details: " << details;
@@ -63,7 +63,7 @@ void XTelepathySSOOperation::onSASLStatusChanged(uint status, const QString &rea
     }
 }
 
-void XTelepathySSOOperation::onNewChallenge(const QByteArray& challengeData)
+void XTelepathySSOFacebookOperation::onNewChallenge(const QByteArray& challengeData)
 {
     kDebug() << "New Challenge" << challengeData;
 
@@ -75,7 +75,7 @@ void XTelepathySSOOperation::onNewChallenge(const QByteArray& challengeData)
     job->start();
 }
 
-void XTelepathySSOOperation::gotCredentials(KJob *kJob)
+void XTelepathySSOFacebookOperation::gotCredentials(KJob *kJob)
 {
     kDebug();
     KUrl fbRequestUrl;

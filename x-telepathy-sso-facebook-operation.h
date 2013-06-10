@@ -27,13 +27,13 @@
 
 class KJob;
 
-class XTelepathySSOOperation : public Tp::PendingOperation
+class XTelepathySSOFacebookOperation : public Tp::PendingOperation
 {
     Q_OBJECT
-    Q_DISABLE_COPY(XTelepathySSOOperation)
+    Q_DISABLE_COPY(XTelepathySSOFacebookOperation)
 
 public:
-    explicit XTelepathySSOOperation(
+    explicit XTelepathySSOFacebookOperation(
             const Tp::AccountPtr &account,
             int accountStorageId,
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);

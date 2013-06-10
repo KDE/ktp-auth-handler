@@ -78,7 +78,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
 #ifdef HAVE_SSO
     if (mechanisms.contains(QLatin1String("X-FACEBOOK-PLATFORM")) && m_accountStorageId) {
-        XTelepathySSOOperation *authop = new XTelepathySSOOperation(m_account, m_accountStorageId, m_saslIface);
+        XTelepathySSOFacebookOperation *authop = new XTelepathySSOFacebookOperation(m_account, m_accountStorageId, m_saslIface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
