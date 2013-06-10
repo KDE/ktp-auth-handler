@@ -25,6 +25,7 @@
 
 #ifdef HAVE_SSO
     #include "x-telepathy-sso-operation.h"
+    #include "x-telepathy-sso-google-operation.h"
 #endif
 
 #include <QtCore/QScopedPointer>
@@ -84,7 +85,18 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
         QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
         authop->onSASLStatusChanged(status, error, errorDetails);
     }
-    else //if...
+    else if(mechanisms.contains(QLatin1String("X-OAUTH2")) && m_accountStorageId) {
+        XTelepathySSOGoogleOperation *authop = new XTelepathySSOGoogleOperation(m_account, m_accountStorageId, m_saslIface);
+        connect(authop,
+                SIGNAL(finished(Tp::PendingOperation*)),
+                SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
+
+        //FIXME this is repeated code...move it outside the if???
+        uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
+        QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
+        QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
+        authop->onSASLStatusChanged(status, error, errorDetails);
+    } else //if...
 #endif
     if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
         // everything ok, we can return from handleChannels now
