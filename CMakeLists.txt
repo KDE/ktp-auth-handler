@@ -21,6 +21,10 @@ find_package(SignOnQt)
 include (KDE4Defaults)
 include (MacroLibrary)
 
+macro_log_feature(ACCOUNTSQT_FOUND "AccountsQt" "Support for Accounts-SSO" "https://code.google.com/p/accounts-sso/source/checkout?repo=libaccounts-qt" FALSE "" "")
+macro_log_feature(SIGNONQT_FOUND "SignonsQt" "Support for Accounts-SSO" "https://code.google.com/p/accounts-sso/source/checkout?repo=signond" FALSE "" "")
+macro_display_feature_log()
+
 add_definitions (${KDE4_DEFINITIONS})
 
 include_directories (${KDE4_INCLUDES}
