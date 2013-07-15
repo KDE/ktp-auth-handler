@@ -78,12 +78,15 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     m_certType = qdbus_cast<QString>(props.value(QLatin1String("CertificateType")));
     m_certData = qdbus_cast<CertificateDataList>(props.value(QLatin1String("CertificateChainData")));
 
-    if(m_certType.compare(QLatin1String("\"x509\""), Qt::CaseInsensitive)) {
+    //compare returns 0 on match. We run this if cert type does not match x509 or "x509"
+    //we also seem to need to check for "x509" and x509.
+    if (m_certType.compare(QLatin1String("\"x509\""), Qt::CaseInsensitive) != 0 &&
+        m_certType.compare(QLatin1String("x509"), Qt::CaseInsensitive) != 0) {
         Tp::TLSCertificateRejectionList rejections;
         m_authTLSCertificateIface->Reject(rejections);
         m_channel->requestClose();
         setFinishedWithError(QLatin1String("Cert.Unknown"),
-                             QLatin1String("Invalid certificate type"));
+                             QString::fromLatin1("Invalid certificate type %1").arg(m_certType));
         return;
     }
 
