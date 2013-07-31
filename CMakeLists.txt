@@ -1,6 +1,6 @@
 project(ktp-auth-handler)
 
-set(KTP_AUTH_HANDLER_VERSION "0.6.2")
+set(KTP_AUTH_HANDLER_VERSION "0.6.3")
 
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
