@@ -118,12 +118,9 @@ bool TlsCertVerifierOp::verifyCertChain(const QCA::CertificateChain& chain)
 
     // Find all errors then are not ignored by the rule
     QList<KSslError> errors;
-    Q_FOREACH(const QCA::Certificate &cert, chain) {
-        QCA::Validity validity = cert.validate(CACollection(), QCA::CertificateCollection(), QCA::UsageTLSClient, QCA::ValidateAll);
-        if (validity == QCA::ValidityGood) {
-            continue;
-        }
 
+    QCA::Validity validity = chain.validate(CACollection());
+    if (validity != QCA::ValidityGood) {
         KSslError::Error error = validityToError(validity);
         if (!rule.ignoredErrors().contains(error)) {
             errors << KSslError(error);
