@@ -93,9 +93,17 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     // Initialize QCA module
     QCA::Initializer initializer;
 
+    if(!QCA::isSupported("cert")) {
+      setFinishedWithError(
+          QLatin1String("Cert.NoPlugin"),
+          i18n("The SSL/TLS support plugin is not available. "
+               "Certificate validation cannot be done."));
+      return;
+    }
+
     QCA::CertificateChain chain;
     Q_FOREACH (const QByteArray &data, m_certData) {
-       chain << QCA::Certificate::fromDER(data);
+        chain << QCA::Certificate::fromDER(data);
     }
 
     if (verifyCertChain(chain)) {
