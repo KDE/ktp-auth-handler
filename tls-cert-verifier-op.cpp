@@ -94,6 +94,9 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     QCA::Initializer initializer;
 
     if(!QCA::isSupported("cert")) {
+      Tp::TLSCertificateRejectionList rejections;
+      m_authTLSCertificateIface->Reject(rejections);
+      m_channel->requestClose();
       setFinishedWithError(
           QLatin1String("Cert.NoPlugin"),
           i18n("The SSL/TLS support plugin is not available. "
