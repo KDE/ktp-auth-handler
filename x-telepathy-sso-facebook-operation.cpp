@@ -19,7 +19,7 @@
 #include "x-telepathy-sso-facebook-operation.h"
 
 #include <TelepathyQt/Account>
-#include <TelepathyQt/ChannelInterfaceSASLAuthenticationInterface>
+#include <TelepathyQt/ChannelInterfaceSASLAuthentication1Interface>
 #include <TelepathyQt/AccountInterfaceStorageInterface>
 
 #include <TelepathyQt/PendingVariantMap>
@@ -31,7 +31,7 @@
 
 #include "getcredentialsjob.h"
 
-XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
+XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthentication1Interface* saslIface) :
     PendingOperation(account),
     m_account(account),
     m_saslIface(saslIface),

@@ -36,7 +36,7 @@ public:
     explicit XTelepathySSOFacebookOperation(
             const Tp::AccountPtr &account,
             int accountStorageId,
-            Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);
+            Tp::Client::ChannelInterfaceSASLAuthentication1Interface *saslIface);
 
 private Q_SLOTS:
     void onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details);
@@ -45,7 +45,7 @@ private Q_SLOTS:
 
 private:
     Tp::AccountPtr m_account;
-    Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
+    Tp::Client::ChannelInterfaceSASLAuthentication1Interface *m_saslIface;
 
     int m_accountStorageId;
     QByteArray m_challengeData;

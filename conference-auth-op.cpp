@@ -35,7 +35,7 @@ ConferenceAuthOp::ConferenceAuthOp(const Tp::AccountPtr &account,
       m_walletInterface(0),
       m_account(account),
       m_channel(channel),
-      m_passwordIface(channel->interface<Tp::Client::ChannelInterfacePasswordInterface>())
+      m_passwordIface(channel->interface<Tp::Client::ChannelInterfacePassword1Interface>())
 {
     connect(KTp::WalletInterface::openWallet(), SIGNAL(finished(Tp::PendingOperation*)), SLOT(onOpenWalletOperationFinished(Tp::PendingOperation*)));
 }

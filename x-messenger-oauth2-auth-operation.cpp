@@ -29,7 +29,7 @@ const QLatin1String XMessengerOAuth2RefreshTokenWalletEntry("refresh_token");
 
 XMessengerOAuth2AuthOperation::XMessengerOAuth2AuthOperation(
         const Tp::AccountPtr &account,
-        Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
+        Tp::Client::ChannelInterfaceSASLAuthentication1Interface *saslIface,
         KTp::WalletInterface *walletInterface) :
     Tp::PendingOperation(account),
     m_account(account),

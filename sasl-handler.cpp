@@ -37,9 +37,9 @@ static inline Tp::ChannelClassSpecList channelFilter() {
     Tp::ChannelClassSpecList filter;
     QVariantMap saslOtherProperties;
     saslOtherProperties.insert(
-            TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION + QLatin1String(".AuthenticationMethod"),
-            TP_QT_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION);
-    filter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION,
+            TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION1 + QLatin1String(".AuthenticationMethod"),
+            TP_QT_IFACE_CHANNEL_INTERFACE_SASL_AUTHENTICATION1);
+    filter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_AUTHENTICATION1,
                 Tp::HandleTypeNone, false, saslOtherProperties));
     return filter;
 }

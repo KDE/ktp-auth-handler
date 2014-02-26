@@ -44,7 +44,7 @@ SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
       m_walletInterface(0),
       m_account(account),
       m_channel(channel),
-      m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthenticationInterface>())
+      m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthentication1Interface>())
 {
 #ifdef HAVE_SSO
     m_accountStorageId = 0;

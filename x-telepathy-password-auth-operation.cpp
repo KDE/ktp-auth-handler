@@ -29,7 +29,7 @@
 
 XTelepathyPasswordAuthOperation::XTelepathyPasswordAuthOperation(
         const Tp::AccountPtr &account,
-        Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
+        Tp::Client::ChannelInterfaceSASLAuthentication1Interface *saslIface,
         KTp::WalletInterface *walletInterface,
         bool canTryAgain) :
     Tp::PendingOperation(account),

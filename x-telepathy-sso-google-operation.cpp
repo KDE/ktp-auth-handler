@@ -22,7 +22,7 @@
 
 #include <KDebug>
 
-XTelepathySSOGoogleOperation::XTelepathySSOGoogleOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface)
+XTelepathySSOGoogleOperation::XTelepathySSOGoogleOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthentication1Interface* saslIface)
     : PendingOperation(account)
     , m_saslIface(saslIface)
     , m_accountStorageId(accountStorageId)

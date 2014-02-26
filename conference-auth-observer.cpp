@@ -54,7 +54,7 @@ void ConferenceAuthObserver::observeChannels(const Tp::MethodInvocationContextPt
     Q_UNUSED(dispatchOperation)
 
     Q_FOREACH (Tp::ChannelPtr channel, channels) {
-        if (!channel->hasInterface(TP_QT_IFACE_CHANNEL_INTERFACE_PASSWORD)) {
+        if (!channel->hasInterface(TP_QT_IFACE_CHANNEL_INTERFACE_PASSWORD1)) {
             kDebug() << "Channel does not have password interface, exiting ...";
             continue;
         }

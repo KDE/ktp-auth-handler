@@ -45,7 +45,7 @@ private:
     KTp::WalletInterface *m_walletInterface;
     Tp::AccountPtr m_account;
     Tp::ChannelPtr m_channel;
-    Tp::Client::ChannelInterfacePasswordInterface *m_passwordIface;
+    Tp::Client::ChannelInterfacePassword1Interface *m_passwordIface;
     QString m_password;
     void passwordDialog();
 

@@ -57,7 +57,7 @@ private:
     KTp::WalletInterface *m_walletInterface;
     Tp::AccountPtr m_account;
     Tp::ChannelPtr m_channel;
-    Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
+    Tp::Client::ChannelInterfaceSASLAuthentication1Interface *m_saslIface;
 
 #ifdef HAVE_SSO
     void fetchAccountStorage();

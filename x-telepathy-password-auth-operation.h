@@ -33,7 +33,7 @@ class XTelepathyPasswordAuthOperation : public Tp::PendingOperation
 public:
     explicit XTelepathyPasswordAuthOperation(
             const Tp::AccountPtr &account,
-            Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
+            Tp::Client::ChannelInterfaceSASLAuthentication1Interface *saslIface,
             KTp::WalletInterface *walletInterface,
             bool canTryAgain);
     ~XTelepathyPasswordAuthOperation();
@@ -46,7 +46,7 @@ private:
     void promptUser(bool isFirstPrompt);
 
     Tp::AccountPtr m_account;
-    Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
+    Tp::Client::ChannelInterfaceSASLAuthentication1Interface *m_saslIface;
     KTp::WalletInterface *m_walletInterface;
     bool m_canTryAgain;
     QWeakPointer<XTelepathyPasswordPrompt> m_dialog;
