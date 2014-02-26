@@ -102,19 +102,19 @@ target_link_libraries(ktp-auth-handler
     ${ktp_auth_handler_LIBS}
 )
 
-configure_file(org.freedesktop.Telepathy.Client.KTp.SASLHandler.service.in
-               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.SASLHandler.service)
-configure_file(org.freedesktop.Telepathy.Client.KTp.TLSHandler.service.in
-               ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.TLSHandler.service)
+configure_file(im.telepathy.v1.Client.KTp.SASLHandler.service.in
+               ${CMAKE_CURRENT_BINARY_DIR}/im.telepathy.v1.Client.KTp.SASLHandler.service)
+configure_file(im.telepathy.v1.Client.KTp.TLSHandler.service.in
+               ${CMAKE_CURRENT_BINARY_DIR}/im.telepathy.v1.Client.KTp.TLSHandler.service)
 
-configure_file(org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service.in
-    ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service)
+configure_file(im.telepathy.v1.Client.KTp.ConfAuthObserver.service.in
+    ${CMAKE_CURRENT_BINARY_DIR}/im.telepathy.v1.Client.KTp.ConfAuthObserver.service)
 
 install(TARGETS ktp-auth-handler DESTINATION ${LIBEXEC_INSTALL_DIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.SASLHandler.service
-    ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/im.telepathy.v1.Client.KTp.SASLHandler.service
+    ${CMAKE_CURRENT_BINARY_DIR}/im.telepathy.v1.Client.KTp.ConfAuthObserver.service
         DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.TLSHandler.service
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/im.telepathy.v1.Client.KTp.TLSHandler.service
         DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
 install(FILES KTp.SASLHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
 install(FILES KTp.TLSHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)

@@ -1,7 +1,7 @@
-[org.freedesktop.Telepathy.Client]
-Interfaces=org.freedesktop.Telepathy.Client.Observer;
+[im.telepathy.v1.Client]
+Interfaces=im.telepathy.v1.Client.Observer;
 
-[org.freedesktop.Telepathy.Client.Observer.ObserverChannelFilter 0]
-org.freedesktop.Telepathy.Channel.ChannelType s=org.freedesktop.Telepathy.Channel.Type.Text
-org.freedesktop.Telepathy.Channel.TargetHandleType u=2
+[im.telepathy.v1.Client.Observer.ObserverChannelFilter 0]
+im.telepathy.v1.Channel.ChannelType s=im.telepathy.v1.Channel.Type.Text
+im.telepathy.v1.Channel.TargetHandleType u=2
 

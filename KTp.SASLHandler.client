@@ -1,8 +1,8 @@
-[org.freedesktop.Telepathy.Client]
-Interfaces=org.freedesktop.Telepathy.Client.Handler
+[im.telepathy.v1.Client]
+Interfaces=im.telepathy.v1.Client.Handler
 
-[org.freedesktop.Telepathy.Client.Handler.HandlerChannelFilter 0]
-org.freedesktop.Telepathy.Channel.ChannelType s=org.freedesktop.Telepathy.Channel.Type.ServerAuthentication
-org.freedesktop.Telepathy.Channel.TargetHandleType u=0
-org.freedesktop.Telepathy.Channel.Requested b=false
-org.freedesktop.Telepathy.Channel.Type.ServerAuthentication.AuthenticationMethod s=org.freedesktop.Telepathy.Channel.Interface.SASLAuthentication
+[im.telepathy.v1.Client.Handler.HandlerChannelFilter 0]
+im.telepathy.v1.Channel.ChannelType s=im.telepathy.v1.Channel.Type.ServerAuthentication
+im.telepathy.v1.Channel.TargetHandleType u=0
+im.telepathy.v1.Channel.Requested b=false
+im.telepathy.v1.Channel.Type.ServerAuthentication.AuthenticationMethod s=im.telepathy.v1.Channel.Interface.SASLAuthentication
