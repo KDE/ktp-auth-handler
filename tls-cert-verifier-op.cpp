@@ -82,7 +82,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     //we also seem to need to check for "x509" and x509.
     if (m_certType.compare(QLatin1String("\"x509\""), Qt::CaseInsensitive) != 0 &&
         m_certType.compare(QLatin1String("x509"), Qt::CaseInsensitive) != 0) {
-        Tp::TLSCertificateRejectionList rejections;
+        TpDBus::TLSCertificateRejectionList rejections;
         m_authTLSCertificateIface->Reject(rejections);
         m_channel->requestClose();
         setFinishedWithError(QLatin1String("Cert.Unknown"),
@@ -94,7 +94,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     QCA::Initializer initializer;
 
     if(!QCA::isSupported("cert")) {
-      Tp::TLSCertificateRejectionList rejections;
+      TpDBus::TLSCertificateRejectionList rejections;
       m_authTLSCertificateIface->Reject(rejections);
       m_channel->requestClose();
       setFinishedWithError(
@@ -113,7 +113,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
         m_authTLSCertificateIface->Accept().waitForFinished();
         setFinished();
     } else {
-        Tp::TLSCertificateRejectionList rejections;
+        TpDBus::TLSCertificateRejectionList rejections;
         m_authTLSCertificateIface->Reject(rejections);
         m_channel->requestClose();
         setFinishedWithError(QLatin1String("Cert.Untrusted"),
