@@ -53,10 +53,11 @@ bool TlsHandler::bypassApproval() const
     return true;
 }
 
-void TlsHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
+void TlsHandler::handleChannel(const Tp::MethodInvocationContextPtr<> &context,
         const Tp::AccountPtr &account,
         const Tp::ConnectionPtr &connection,
-        const QList<Tp::ChannelPtr> &channels,
+        const Tp::ChannelPtr &channel,
+        const QVariantMap &channelProperties,
         const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
         const QDateTime &userActionTime,
         const Tp::AbstractClientHandler::HandlerInfo &handlerInfo)
@@ -64,12 +65,11 @@ void TlsHandler::handleChannels(const Tp::MethodInvocationContextPtr<> &context,
     Q_UNUSED(requestsSatisfied);
     Q_UNUSED(userActionTime);
     Q_UNUSED(handlerInfo);
-
-    Q_ASSERT(channels.size() == 1);
+    Q_UNUSED(channelProperties);
 
     KTp::TelepathyHandlerApplication::newJob();
     TlsCertVerifierOp *verifier = new TlsCertVerifierOp(
-            account, connection, channels.first());
+            account, connection, channel);
     connect(verifier,
             SIGNAL(ready(Tp::PendingOperation*)),
             SLOT(onCertVerifierReady(Tp::PendingOperation*)));
