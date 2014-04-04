@@ -35,7 +35,7 @@
 static inline Tp::ChannelClassSpecList channelFilter() {
     Tp::ChannelClassSpecList filter;
     filter.append(Tp::ChannelClassSpec(TP_QT_IFACE_CHANNEL_TYPE_SERVER_TLS_CONNECTION1,
-                Tp::HandleTypeNone, false));
+                Tp::EntityTypeNone, false));
     return filter;
 }
 

@@ -3,5 +3,5 @@ Interfaces=im.telepathy.v1.Client.Handler
 
 [im.telepathy.v1.Client.Handler.HandlerChannelFilter 0]
 im.telepathy.v1.Channel.ChannelType s=im.telepathy.v1.Channel.Type.ServerTLSConnection
-im.telepathy.v1.Channel.TargetHandleType u=0
+im.telepathy.v1.Channel.TargetEntityType u=0
 im.telepathy.v1.Channel.Requested b=false
