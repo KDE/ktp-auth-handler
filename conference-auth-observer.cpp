@@ -40,32 +40,30 @@ ConferenceAuthObserver::~ConferenceAuthObserver()
 {
 }
 
-void ConferenceAuthObserver::observeChannels(const Tp::MethodInvocationContextPtr<> &context,
-                                             const Tp::AccountPtr &account,
-                                             const Tp::ConnectionPtr &connection,
-                                             const QList<Tp::ChannelPtr> &channels,
-                                             const Tp::ChannelDispatchOperationPtr &dispatchOperation,
-                                             const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                                             const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
+void ConferenceAuthObserver::observeChannel(const Tp::MethodInvocationContextPtr<> &context,
+                                            const Tp::AccountPtr &account,
+                                            const Tp::ConnectionPtr &connection,
+                                            const Tp::ChannelPtr &channel,
+                                            const Tp::ChannelDispatchOperationPtr &dispatchOperation,
+                                            const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
+                                            const Tp::AbstractClientObserver::ObserverInfo &observerInfo)
 {
     Q_UNUSED(connection);
     Q_UNUSED(requestsSatisfied);
     Q_UNUSED(observerInfo);
     Q_UNUSED(dispatchOperation)
 
-    Q_FOREACH (Tp::ChannelPtr channel, channels) {
-        if (!channel->hasInterface(TP_QT_IFACE_CHANNEL_INTERFACE_PASSWORD1)) {
-            kDebug() << "Channel does not have password interface, exiting ...";
-            continue;
-        }
-
-        KTp::TelepathyHandlerApplication::newJob();
-        ConferenceAuthOp *auth = new ConferenceAuthOp(
-                    account, channel);
-        connect(auth,
-                SIGNAL(finished(Tp::PendingOperation*)),
-                SLOT(onAuthFinished(Tp::PendingOperation*)));
+    if (!channel->hasInterface(TP_QT_IFACE_CHANNEL_INTERFACE_PASSWORD1)) {
+        kDebug() << "Channel does not have password interface, exiting ...";
+        return;
     }
+
+    KTp::TelepathyHandlerApplication::newJob();
+    ConferenceAuthOp *auth = new ConferenceAuthOp(
+                account, channel);
+    connect(auth,
+            SIGNAL(finished(Tp::PendingOperation*)),
+            SLOT(onAuthFinished(Tp::PendingOperation*)));
 
     context->setFinished();
 

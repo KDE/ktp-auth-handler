@@ -35,13 +35,13 @@ public:
     explicit ConferenceAuthObserver(const Tp::ChannelClassSpecList &channelFilter);
     ~ConferenceAuthObserver();
 
-    void observeChannels(const Tp::MethodInvocationContextPtr<> &context,
-                         const Tp::AccountPtr &account,
-                         const Tp::ConnectionPtr &connection,
-                         const QList<Tp::ChannelPtr> &channels,
-                         const Tp::ChannelDispatchOperationPtr &dispatchOperation,
-                         const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
-                         const Tp::AbstractClientObserver::ObserverInfo &observerInfo);
+    void observeChannel(const Tp::MethodInvocationContextPtr<> &context,
+                        const Tp::AccountPtr &account,
+                        const Tp::ConnectionPtr &connection,
+                        const Tp::ChannelPtr &channel,
+                        const Tp::ChannelDispatchOperationPtr &dispatchOperation,
+                        const QList<Tp::ChannelRequestPtr> &requestsSatisfied,
+                        const Tp::AbstractClientObserver::ObserverInfo &observerInfo);
 
 private Q_SLOTS:
     void onAuthFinished(Tp::PendingOperation *op);
