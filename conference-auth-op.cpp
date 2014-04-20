@@ -102,6 +102,10 @@ void ConferenceAuthOp::passwordDialog()
 void ConferenceAuthOp::onPasswordProvided(QDBusPendingCallWatcher *watcher)
 {
     QDBusPendingReply<bool> reply = *watcher;
+    if (!reply.isValid() || reply.count() < 1) {
+        return;
+    }
+
     if (reply.argumentAt<0>()) {
         m_walletInterface->setEntry(m_account,m_channel->targetId(), m_password);
         setFinished();
