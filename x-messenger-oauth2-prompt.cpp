@@ -18,7 +18,6 @@
 
 #include "x-messenger-oauth2-prompt.h"
 
-#include <KIcon>
 #include <KToolInvocation>
 #include <KWebView>
 #include <KWebPage>
@@ -27,6 +26,7 @@
 #include <QtGui/QBoxLayout>
 #include <QtGui/QLayout>
 #include <QtNetwork/QNetworkReply>
+#include <QIcon>
 #include <QUrl>
 #include <QUrlQuery>
 #include <QDebug>
@@ -71,8 +71,8 @@ XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
     widget->setContentsMargins(0, 0, 0, 0);
 
     setMainWidget(widget);
-    setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
     setButtons(Cancel);
+    setWindowIcon(QIcon::fromTheme(QLatin1String("telepathy-kde")));
 
     // connect progress bar
     connect(m_webView,

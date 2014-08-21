@@ -21,7 +21,7 @@
 
 #include <KTp/wallet-interface.h>
 
-#include <KIcon>
+#include <QIcon>
 #include <QDebug>
 
 XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account, KTp::WalletInterface *walletInterface, QWidget *parent)
@@ -31,11 +31,11 @@ XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account
     ui->setupUi(mainWidget());
 
     setAttribute(Qt::WA_ShowWithoutActivating);
-    setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
+    setWindowIcon(QIcon::fromTheme(QLatin1String("telepathy-kde")));
 
     ui->accountName->setText(account->displayName());
-    ui->accountIcon->setPixmap(KIcon(QLatin1String("dialog-password")).pixmap(60, 60));
-    ui->title->setPixmap(KIcon(account->iconName()).pixmap(22, 22));
+    ui->accountIcon->setPixmap(QIcon::fromTheme(QLatin1String("dialog-password")).pixmap(60, 60));
+    ui->title->setPixmap(QIcon::fromTheme(account->iconName()).pixmap(22, 22));
     ui->passwordLineEdit->setFocus();
 
     if (walletInterface->isOpen()) {
