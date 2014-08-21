@@ -50,7 +50,7 @@ private:
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
     KTp::WalletInterface *m_walletInterface;
-    QWeakPointer<XMessengerOAuth2Prompt> m_dialog;
+    QPointer<XMessengerOAuth2Prompt> m_dialog;
 
     friend class SaslAuthOp;
 };

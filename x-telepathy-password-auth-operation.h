@@ -49,7 +49,7 @@ private:
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
     KTp::WalletInterface *m_walletInterface;
     bool m_canTryAgain;
-    QWeakPointer<XTelepathyPasswordPrompt> m_dialog;
+    QPointer<XTelepathyPasswordPrompt> m_dialog;
 
     friend class SaslAuthOp;
 };
