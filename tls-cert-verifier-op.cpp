@@ -29,8 +29,8 @@
 #include <QSslCertificate>
 #include <QSslCipher>
 
-#include "kssl/ksslcertificatemanager.h"
-#include "kssl/ksslinfodialog.h"
+#include <ksslcertificatemanager.h>
+#include <ksslinfodialog.h>
 
 #include <QtCrypto>
 
