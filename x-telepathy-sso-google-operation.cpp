@@ -20,7 +20,7 @@
 #include "getcredentialsjob.h"
 #include "x-telepathy-sso-google-operation.h"
 
-#include <KDebug>
+#include <QDebug>
 
 XTelepathySSOGoogleOperation::XTelepathySSOGoogleOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface)
     : PendingOperation(account)
@@ -36,14 +36,14 @@ void XTelepathySSOGoogleOperation::onSASLStatusChanged(uint status, const QStrin
     switch (status){
     case Tp::SASLStatusNotStarted:
     {
-        kDebug() << "Status Not started";
+        qDebug() << "Status Not started";
         GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
         connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob*)));
         job->start();
         break;
     }
     case Tp::SASLStatusServerSucceeded:
-        kDebug() << "Status Server Succeeded";
+        qDebug() << "Status Server Succeeded";
         m_saslIface->AcceptSASL();
         break;
     }

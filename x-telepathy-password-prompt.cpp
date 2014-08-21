@@ -22,7 +22,7 @@
 #include <KTp/wallet-interface.h>
 
 #include <KIcon>
-#include <KDebug>
+#include <QDebug>
 
 XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account, KTp::WalletInterface *walletInterface, QWidget *parent)
     : KDialog(parent),

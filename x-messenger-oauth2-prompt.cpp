@@ -21,7 +21,6 @@
 #include <KUrl>
 #include <KIcon>
 #include <KToolInvocation>
-#include <KDebug>
 #include <KWebView>
 #include <KWebPage>
 
@@ -29,6 +28,7 @@
 #include <QtGui/QBoxLayout>
 #include <QtGui/QLayout>
 #include <QtNetwork/QNetworkReply>
+#include <QDebug>
 
 #include <QtWebKit/QWebSettings>
 #include <QtWebKit/QWebFrame>
@@ -133,18 +133,18 @@ QSize XMessengerOAuth2Prompt::sizeHint() const
 
 void XMessengerOAuth2Prompt::onUrlChanged(const QUrl &url)
 {
-    kDebug() << url;
+    qDebug() << url;
     if (url.toString().indexOf(redirectUri) != 0) {
         // This is not the url containing the token
         return;
     }
-    kDebug() << "This is the url we are waiting for";
+    qDebug() << "This is the url we are waiting for";
     extractCode(url);
 }
 
 void XMessengerOAuth2Prompt::onLinkClicked(const QUrl& url)
 {
-    kDebug() << url;
+    qDebug() << url;
     KToolInvocation::invokeBrowser(url.toString());
 }
 
@@ -169,7 +169,7 @@ void XMessengerOAuth2Prompt::onUnsupportedContent(QNetworkReply* reply)
     // request
     // FIXME: In the future this might want to remove this
     QUrl url =  reply->url();
-    kDebug() << url;
+    qDebug() << url;
     if (url.toString().indexOf(redirectUri) != 0) {
         // This is not the url containing the token
         return;
@@ -179,16 +179,16 @@ void XMessengerOAuth2Prompt::onUnsupportedContent(QNetworkReply* reply)
 
 void XMessengerOAuth2Prompt::extractCode(const QUrl &url)
 {
-    kDebug() << url;
     QString code = url.queryItemValue(codeParameter);
+    qDebug() << url;
 
     if (code.isEmpty()) {
         // Could not find the access token
-        kWarning() << "Code not found";
+        qWarning() << "Code not found";
         return;
     }
 
-    kDebug() << "Code found:" << code;
+    qDebug() << "Code found:" << code;
 
     // start loading the login URL
     KUrl tokenUrl(QString(tokenRequest).arg(msnClientID).arg(redirectUri).arg(code));
@@ -198,20 +198,20 @@ void XMessengerOAuth2Prompt::extractCode(const QUrl &url)
 
 void XMessengerOAuth2Prompt::extractTokens(const QString &text)
 {
-    kDebug() << text;
+    qDebug() << text;
 
     QJson::Parser parser;
     bool ok;
 
     QVariantMap result = parser.parse(text.toLatin1(), &ok).toMap();
     if (!ok) {
-        kWarning() << "An error occured during parsing reply";
+        qWarning() << "An error occured during parsing reply";
         return;
     }
 
     if (!result.contains(refreshTokenParameter)) {
         // Could not find the refresh token
-        kWarning() << "Refresh token not found";
+        qWarning() << "Refresh token not found";
         return;
     }
 
@@ -220,7 +220,7 @@ void XMessengerOAuth2Prompt::extractTokens(const QString &text)
 
     if (!result.contains(accessTokenParameter)) {
         // Could not find the access token
-        kWarning() << "Access token not found";
+        qWarning() << "Access token not found";
         return;
     }
 

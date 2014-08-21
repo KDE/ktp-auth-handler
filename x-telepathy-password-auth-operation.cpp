@@ -22,7 +22,7 @@
 #include "x-telepathy-password-auth-operation.h"
 #include "x-telepathy-password-prompt.h"
 
-#include <KDebug>
+#include <QDebug>
 #include <KLocalizedString>
 
 #include <KTp/wallet-interface.h>
@@ -51,27 +51,27 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
         const QVariantMap &details)
 {
     if (status == Tp::SASLStatusNotStarted) {
-        kDebug() << "Requesting password";
+        qDebug() << "Requesting password";
         promptUser(m_canTryAgain || !m_walletInterface->hasEntry(m_account, QLatin1String("lastLoginFailed")));
     } else if (status == Tp::SASLStatusServerSucceeded) {
-        kDebug() << "Authentication handshake";
+        qDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
     } else if (status == Tp::SASLStatusSucceeded) {
-        kDebug() << "Authentication succeeded";
+        qDebug() << "Authentication succeeded";
         if (m_walletInterface->hasEntry(m_account, QLatin1String("lastLoginFailed"))) {
             m_walletInterface->removeEntry(m_account, QLatin1String("lastLoginFailed"));
         }
         setFinished();
     } else if (status == Tp::SASLStatusInProgress) {
-        kDebug() << "Authenticating...";
+        qDebug() << "Authenticating...";
     } else if (status == Tp::SASLStatusServerFailed) {
-        kDebug() << "Error authenticating - reason:" << reason << "- details:" << details;
+        qDebug() << "Error authenticating - reason:" << reason << "- details:" << details;
 
         if (m_canTryAgain) {
-            kDebug() << "Retrying...";
+            qDebug() << "Retrying...";
             promptUser(false);
         } else {
-            kWarning() << "Authentication failed and cannot try again";
+            qWarning() << "Authentication failed and cannot try again";
             m_walletInterface->setEntry(m_account, QLatin1String("lastLoginFailed"), QLatin1String("true"));
             // We cannot try again, but we can request again to set the account
             // online. A new channel will be created, but since we set the
@@ -104,7 +104,7 @@ void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
 {
     switch (result) {
     case QDialog::Rejected:
-        kDebug() << "Authentication cancelled";
+        qDebug() << "Authentication cancelled";
         m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, i18n("User cancelled auth"));
         setFinished();
         if (!m_dialog.isNull()) {
@@ -115,7 +115,7 @@ void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
         // save password in kwallet if necessary...
         if (!m_dialog.isNull()) {
             if (m_dialog.data()->savePassword()) {
-                kDebug() << "Saving password in wallet";
+                qDebug() << "Saving password in wallet";
                 m_walletInterface->setPassword(m_account, m_dialog.data()->password());
             }
             m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());

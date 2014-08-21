@@ -32,7 +32,7 @@
 
 #include <TelepathyQt/PendingVariantMap>
 
-#include <KDebug>
+#include <QDebug>
 #include <KLocalizedString>
 
 #include <KTp/wallet-interface.h>
@@ -61,7 +61,7 @@ SaslAuthOp::~SaslAuthOp()
 void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kWarning() << "Unable to retrieve available SASL mechanisms";
+        qWarning() << "Unable to retrieve available SASL mechanisms";
         m_channel->requestClose();
         setFinishedWithError(op->errorName(), op->errorMessage());
         return;
@@ -70,7 +70,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
     Tp::PendingVariantMap *pvm = qobject_cast<Tp::PendingVariantMap*>(op);
     QVariantMap props = qdbus_cast<QVariantMap>(pvm->result());
     QStringList mechanisms = qdbus_cast<QStringList>(props.value(QLatin1String("AvailableMechanisms")));
-    kDebug() << mechanisms;
+    qDebug() << mechanisms;
 
     uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
     QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
@@ -111,7 +111,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else {
-        kWarning() << "X-TELEPATHY-PASSWORD, X-MESSENGER-OAUTH2, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:" << mechanisms;
+        qWarning() << "X-TELEPATHY-PASSWORD, X-MESSENGER-OAUTH2, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:" << mechanisms;
         m_channel->requestClose();
         setFinishedWithError(TP_QT_ERROR_NOT_IMPLEMENTED,
                 QLatin1String("X-TELEPATHY-PASSWORD, X-MESSENGER-OAUTH2, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:"));
@@ -153,11 +153,11 @@ void SaslAuthOp::setReady()
 #ifdef HAVE_SSO
 void SaslAuthOp::onGetAccountStorageFetched(Tp::PendingOperation* op)
 {
-    kDebug();
+    qDebug();
     Tp::PendingVariantMap *pendingMap = qobject_cast<Tp::PendingVariantMap*>(op);
 
     m_accountStorageId = pendingMap->result()["StorageIdentifier"].value<QDBusVariant>().variant().toInt();
-    kDebug() << m_accountStorageId;
+    qDebug() << m_accountStorageId;
 
     setReady();
 }

@@ -20,7 +20,7 @@
 #include <KAboutData>
 #include <KCmdLineArgs>
 #include <KApplication>
-#include <KDebug>
+#include <QDebug>
 
 #include <TelepathyQt/AccountFactory>
 #include <TelepathyQt/AccountManager>
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     }
 
     if (loadedHandlers == 0) {
-        kDebug() << "No handlers registered. Exiting";
+        qDebug() << "No handlers registered. Exiting";
         return 1;
     }
 

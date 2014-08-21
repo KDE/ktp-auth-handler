@@ -24,12 +24,12 @@
 #include <KTp/telepathy-handler-application.h>
 
 #include <QDBusConnection>
+#include <QDebug>
 
 #include <TelepathyQt/Channel>
 #include <TelepathyQt/ChannelDispatchOperation>
 #include <TelepathyQt/MethodInvocationContext>
 
-#include <KDebug>
 
 ConferenceAuthObserver::ConferenceAuthObserver(const Tp::ChannelClassSpecList &channelFilter)
     : Tp::AbstractClientObserver(channelFilter)
@@ -55,7 +55,7 @@ void ConferenceAuthObserver::observeChannels(const Tp::MethodInvocationContextPt
 
     Q_FOREACH (Tp::ChannelPtr channel, channels) {
         if (!channel->hasInterface(TP_QT_IFACE_CHANNEL_INTERFACE_PASSWORD)) {
-            kDebug() << "Channel does not have password interface, exiting ...";
+            qDebug() << "Channel does not have password interface, exiting ...";
             continue;
         }
 
@@ -74,7 +74,7 @@ void ConferenceAuthObserver::observeChannels(const Tp::MethodInvocationContextPt
 void ConferenceAuthObserver::onAuthFinished(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kWarning() << "Error in conference room auth:" << op->errorName() << "-" << op->errorMessage();
+        qWarning() << "Error in conference room auth:" << op->errorName() << "-" << op->errorMessage();
     }
 
     KTp::TelepathyHandlerApplication::jobFinished();

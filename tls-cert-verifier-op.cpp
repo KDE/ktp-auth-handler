@@ -24,8 +24,8 @@
 
 #include <KMessageBox>
 #include <KLocalizedString>
-#include <KDebug>
 
+#include <QDebug>
 #include <QSslCertificate>
 #include <QSslCipher>
 
@@ -63,7 +63,7 @@ TlsCertVerifierOp::~TlsCertVerifierOp()
 void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kWarning() << "Unable to retrieve properties from AuthenticationTLSCertificate object at" <<
+        qWarning() << "Unable to retrieve properties from AuthenticationTLSCertificate object at" <<
             m_authTLSCertificateIface->path();
         m_channel->requestClose();
         setFinishedWithError(op->errorName(), op->errorMessage());

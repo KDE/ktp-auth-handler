@@ -26,8 +26,8 @@
 
 #include <Accounts/Account>
 
-#include <KDebug>
 #include <KUrl>
+#include <QDebug>
 
 #include "getcredentialsjob.h"
 
@@ -45,19 +45,19 @@ XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::Account
 
 void XTelepathySSOFacebookOperation::onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details)
 {
-    kDebug() << "New status is: " << status;
-    kDebug() << "Details: " << details;
-    kDebug() << "Reason: " << reason;
+    qDebug() << "New status is: " << status;
+    qDebug() << "Details: " << details;
+    qDebug() << "Reason: " << reason;
 
     switch (status){
     case Tp::SASLStatusNotStarted:
     {
-        kDebug() << "starting credentials job";
+        qDebug() << "starting credentials job";
         m_saslIface->StartMechanism(QLatin1String("X-FACEBOOK-PLATFORM"));
         break;
     }
     case Tp::SASLStatusServerSucceeded:
-        kDebug() << "Authentication handshake";
+        qDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
         break;
     }
@@ -65,11 +65,11 @@ void XTelepathySSOFacebookOperation::onSASLStatusChanged(uint status, const QStr
 
 void XTelepathySSOFacebookOperation::onNewChallenge(const QByteArray& challengeData)
 {
-    kDebug() << "New Challenge" << challengeData;
+    qDebug() << "New Challenge" << challengeData;
 
     m_challengeData = challengeData;
 
-    kDebug() << "GetCredentialsJob on account: " << m_accountStorageId;
+    qDebug() << "GetCredentialsJob on account: " << m_accountStorageId;
     GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
     connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob *)));
     job->start();
@@ -77,12 +77,12 @@ void XTelepathySSOFacebookOperation::onNewChallenge(const QByteArray& challengeD
 
 void XTelepathySSOFacebookOperation::gotCredentials(KJob *kJob)
 {
-    kDebug();
     KUrl fbRequestUrl;
     KUrl fbResponseUrl;
+    qDebug();
 
     fbRequestUrl.setQuery(m_challengeData);
-    kDebug() << fbRequestUrl.queryItemValue("version");
+    qDebug() << fbRequestQuery.queryItemValue("version");
 
     GetCredentialsJob *job = qobject_cast< GetCredentialsJob* >(kJob);
     QVariantMap credentialsData = job->credentialsData();
@@ -94,6 +94,6 @@ void XTelepathySSOFacebookOperation::gotCredentials(KJob *kJob)
     fbResponseUrl.addQueryItem("v", "1.0");
 
     //.mid(1) trims leading '?' char
-    kDebug() << fbResponseUrl.query().mid(1);
     m_saslIface->Respond(fbResponseUrl.query().mid(1).toUtf8());
+    qDebug() << fbResponseQuery.query().mid(1);
 }
