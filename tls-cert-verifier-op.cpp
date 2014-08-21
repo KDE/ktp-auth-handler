@@ -200,7 +200,7 @@ void TlsCertVerifierOp::showSslDialog(const QCA::CertificateChain &chain, const 
     errorStr.chop(1);
 
     // No way to tell whether QSsl::TlsV1 or QSsl::TlsV1Ssl3
-    KSslCipher cipher = QSslCipher(QLatin1String("TLS"), QSsl::TlsV1);
+    KSslCipher cipher = QSslCipher(QLatin1String("TLS"), QSsl::TlsV1_0);
     QString sslCipher = cipher.encryptionMethod() + QLatin1Char('\n');
     sslCipher += cipher.authenticationMethod() + QLatin1Char('\n');
     sslCipher += cipher.keyExchangeMethod() + QLatin1Char('\n');
