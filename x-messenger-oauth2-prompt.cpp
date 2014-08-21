@@ -30,6 +30,8 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QDialogButtonBox>
 
 #include <QtWebKit/QWebSettings>
@@ -203,11 +205,11 @@ void XMessengerOAuth2Prompt::extractTokens(const QString &text)
 {
     qDebug() << text;
 
-    QJson::Parser parser;
-    bool ok;
+    QJsonParseError error;
+    QJsonDocument parser = QJsonDocument::fromJson(text.toUtf8(), &error);
+    QVariantMap result = parser.object().toVariantMap();
 
-    QVariantMap result = parser.parse(text.toLatin1(), &ok).toMap();
-    if (!ok) {
+    if (error.error == QJsonParseError::NoError) {
         qWarning() << "An error occured during parsing reply";
         return;
     }
