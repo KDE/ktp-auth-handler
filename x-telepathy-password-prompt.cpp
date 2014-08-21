@@ -48,9 +48,11 @@ XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account
         ui->savePassword->setDisabled(true);
     }
 
-    QDialogButtonBox *dbb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    QDialogButtonBox *dbb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(dbb, SIGNAL(accepted()), this, SLOT(accept()));
     connect(dbb, SIGNAL(rejected()), this, SLOT(reject()));
+
+    ui->mainLayout->addWidget(dbb);
 }
 
 XTelepathyPasswordPrompt::~XTelepathyPasswordPrompt()
