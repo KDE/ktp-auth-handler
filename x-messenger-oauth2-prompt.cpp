@@ -30,6 +30,7 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QDebug>
+#include <QDialogButtonBox>
 
 #include <QtWebKit/QWebSettings>
 #include <QtWebKit/QWebFrame>
@@ -50,7 +51,7 @@ const QLatin1String accessTokenParameter("access_token");
 const QLatin1String refreshTokenParameter("refresh_token");
 
 XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
-    KDialog(parent),
+    QDialog(parent),
     m_webView(new KWebView()),
     m_ProgressBar(new QProgressBar()),
     m_loginPageLoaded(false)
@@ -70,9 +71,10 @@ XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
     widget->setLayout(layout);
     widget->setContentsMargins(0, 0, 0, 0);
 
-    setMainWidget(widget);
-    setButtons(Cancel);
     setWindowIcon(QIcon::fromTheme(QLatin1String("telepathy-kde")));
+
+    QDialogButtonBox *dbb = new QDialogButtonBox(QDialogButtonBox::Cancel, this);
+    connect(dbb, SIGNAL(rejected()), this, SIGNAL(rejected()));
 
     // connect progress bar
     connect(m_webView,

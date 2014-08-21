@@ -19,7 +19,7 @@
 #ifndef PASSWORDPROMPT_H
 #define PASSWORDPROMPT_H
 
-#include <KDialog>
+#include <QDialog>
 
 #include <TelepathyQt/Account>
 
@@ -33,7 +33,7 @@ namespace KTp
     class WalletInterface;
 }
 
-class XTelepathyPasswordPrompt : public KDialog
+class XTelepathyPasswordPrompt : public QDialog
 {
     Q_OBJECT
 

@@ -23,12 +23,13 @@
 
 #include <QIcon>
 #include <QDebug>
+#include <QtWidgets/QDialogButtonBox>
 
 XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account, KTp::WalletInterface *walletInterface, QWidget *parent)
-    : KDialog(parent),
+    : QDialog(parent),
       ui(new Ui::XTelepathyPasswordPrompt)
 {
-    ui->setupUi(mainWidget());
+    ui->setupUi(this);
 
     setAttribute(Qt::WA_ShowWithoutActivating);
     setWindowIcon(QIcon::fromTheme(QLatin1String("telepathy-kde")));
@@ -46,6 +47,10 @@ XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account
     } else {
         ui->savePassword->setDisabled(true);
     }
+
+    QDialogButtonBox *dbb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    connect(dbb, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(dbb, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 XTelepathyPasswordPrompt::~XTelepathyPasswordPrompt()
