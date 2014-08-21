@@ -22,20 +22,20 @@
 #include <KWebView>
 #include <KWebPage>
 
-#include <QtGui/QProgressBar>
-#include <QtGui/QBoxLayout>
-#include <QtGui/QLayout>
-#include <QtNetwork/QNetworkReply>
 #include <QIcon>
 #include <QUrl>
 #include <QUrlQuery>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QProgressBar>
+#include <QBoxLayout>
+#include <QLayout>
 #include <QDialogButtonBox>
+#include <QNetworkReply>
 
-#include <QtWebKit/QWebSettings>
-#include <QtWebKit/QWebFrame>
+#include <QWebSettings>
+#include <QWebFrame>
 
 #include <qjson/parser.h>
 
