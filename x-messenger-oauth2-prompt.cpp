@@ -18,7 +18,6 @@
 
 #include "x-messenger-oauth2-prompt.h"
 
-#include <KUrl>
 #include <KIcon>
 #include <KToolInvocation>
 #include <KWebView>
@@ -28,6 +27,8 @@
 #include <QtGui/QBoxLayout>
 #include <QtGui/QLayout>
 #include <QtNetwork/QNetworkReply>
+#include <QUrl>
+#include <QUrlQuery>
 #include <QDebug>
 
 #include <QtWebKit/QWebSettings>
@@ -108,8 +109,8 @@ XMessengerOAuth2Prompt::XMessengerOAuth2Prompt(QWidget* parent) :
             SLOT(onUnsupportedContent(QNetworkReply*)));
 
     // start loading the login URL
-    KUrl url(QString(authorizeRequest).arg(msnClientID).arg(scopes).arg(redirectUri));
-    m_webView->load(url.url());
+    QUrl url(QString(authorizeRequest).arg(msnClientID).arg(scopes).arg(redirectUri));
+    m_webView->load(url);
 }
 
 XMessengerOAuth2Prompt::~XMessengerOAuth2Prompt()
@@ -179,8 +180,8 @@ void XMessengerOAuth2Prompt::onUnsupportedContent(QNetworkReply* reply)
 
 void XMessengerOAuth2Prompt::extractCode(const QUrl &url)
 {
-    QString code = url.queryItemValue(codeParameter);
     qDebug() << url;
+    QString code = QUrlQuery(url).queryItemValue(codeParameter);
 
     if (code.isEmpty()) {
         // Could not find the access token
@@ -191,8 +192,8 @@ void XMessengerOAuth2Prompt::extractCode(const QUrl &url)
     qDebug() << "Code found:" << code;
 
     // start loading the login URL
-    KUrl tokenUrl(QString(tokenRequest).arg(msnClientID).arg(redirectUri).arg(code));
-    m_webView->load(tokenUrl.url());
+    QUrl tokenUrl(QString(tokenRequest).arg(msnClientID).arg(redirectUri).arg(code));
+    m_webView->load(tokenUrl);
 }
 
 

@@ -26,8 +26,9 @@
 
 #include <Accounts/Account>
 
-#include <KUrl>
 #include <QDebug>
+#include <QUrlQuery>
+#include <QUrl>
 
 #include "getcredentialsjob.h"
 
@@ -77,23 +78,25 @@ void XTelepathySSOFacebookOperation::onNewChallenge(const QByteArray& challengeD
 
 void XTelepathySSOFacebookOperation::gotCredentials(KJob *kJob)
 {
-    KUrl fbRequestUrl;
-    KUrl fbResponseUrl;
     qDebug();
+    QUrl fbRequestUrl;
 
     fbRequestUrl.setQuery(m_challengeData);
+    QUrlQuery fbRequestQuery(fbRequestUrl);
+    QUrlQuery fbResponseQuery;
+
     qDebug() << fbRequestQuery.queryItemValue("version");
 
     GetCredentialsJob *job = qobject_cast< GetCredentialsJob* >(kJob);
     QVariantMap credentialsData = job->credentialsData();
-    fbResponseUrl.addQueryItem("method", fbRequestUrl.queryItemValue("method"));
-    fbResponseUrl.addQueryItem("nonce", fbRequestUrl.queryItemValue("nonce"));
-    fbResponseUrl.addQueryItem("access_token", credentialsData["AccessToken"].toString());
-    fbResponseUrl.addQueryItem("api_key", credentialsData["ClientId"].toString());
-    fbResponseUrl.addQueryItem("call_id", "0");
-    fbResponseUrl.addQueryItem("v", "1.0");
+    fbResponseQuery.addQueryItem("method", fbRequestQuery.queryItemValue("method"));
+    fbResponseQuery.addQueryItem("nonce", fbRequestQuery.queryItemValue("nonce"));
+    fbResponseQuery.addQueryItem("access_token", credentialsData["AccessToken"].toString());
+    fbResponseQuery.addQueryItem("api_key", credentialsData["ClientId"].toString());
+    fbResponseQuery.addQueryItem("call_id", "0");
+    fbResponseQuery.addQueryItem("v", "1.0");
 
     //.mid(1) trims leading '?' char
-    m_saslIface->Respond(fbResponseUrl.query().mid(1).toUtf8());
     qDebug() << fbResponseQuery.query().mid(1);
+    m_saslIface->Respond(fbResponseQuery.query().mid(1).toUtf8());
 }
