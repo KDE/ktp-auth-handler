@@ -18,7 +18,6 @@
 
 #include "x-messenger-oauth2-auth-operation.h"
 
-#include <KUrl>
 #include <QDebug>
 
 #include <KLocalizedString>
