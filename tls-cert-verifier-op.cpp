@@ -86,7 +86,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
         m_authTLSCertificateIface->Reject(rejections);
         m_channel->requestClose();
         setFinishedWithError(QLatin1String("Cert.Unknown"),
-                             QString::fromLatin1("Invalid certificate type %1").arg(m_certType));
+                             i18n("Invalid certificate type %1", m_certType));
         return;
     }
 
@@ -117,7 +117,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
         m_authTLSCertificateIface->Reject(rejections);
         m_channel->requestClose();
         setFinishedWithError(QLatin1String("Cert.Untrusted"),
-                             QLatin1String("Certificate rejected by the user"));
+                             i18n("Certificate rejected by the user"));
     }
 }
 
