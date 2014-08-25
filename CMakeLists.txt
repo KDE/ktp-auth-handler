@@ -77,7 +77,7 @@ set(ktp_auth_handler_LIBS
 )
 
 #If we find Accounts-SSO frameworks, add support for it
-if(ACCOUNTSQT_FOUND AND SIGNONQT_FOUND)
+if(AccountsQt5_FOUND AND SignOnQt5_FOUND)
 
     add_definitions(-DHAVE_SSO)
     set(ktp_auth_handler_SRCS
@@ -97,7 +97,7 @@ if(ACCOUNTSQT_FOUND AND SIGNONQT_FOUND)
                         ${SIGNONQT_INCLUDE_DIRS}
     )
 
-endif(ACCOUNTSQT_FOUND AND SIGNONQT_FOUND)
+endif(AccountsQt5_FOUND AND SignOnQt5_FOUND)
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
