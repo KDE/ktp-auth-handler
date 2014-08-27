@@ -17,10 +17,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <k4aboutdata.h>
-#include <KCmdLineArgs>
-#include <KApplication>
+#include <KAboutData>
+#include <KLocalizedString>
+
+#include <QApplication>
 #include <QDebug>
+#include <QCommandLineParser>
 
 #include <TelepathyQt/AccountFactory>
 #include <TelepathyQt/AccountManager>
@@ -44,15 +46,34 @@
 
 int main(int argc, char *argv[])
 {
-    K4AboutData aboutData("ktp-auth-handler", 0,
-                         ki18n("Telepathy Authentication Handler"),
+    KAboutData aboutData("ktp-auth-handler",
+                         i18n("Telepathy Authentication Handler"),
+
                          KTP_AUTH_HANDLER_VERSION);
-    aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
-    aboutData.addAuthor(ki18n("Daniele E. Domenichelli"), ki18n("Developer"), "daniele.domenichelli@gmail.com");
+    aboutData.addAuthor(i18n("David Edmundson"), i18n("Developer"), "kde@davidedmundson.co.uk");
+    aboutData.addAuthor(i18n("Daniele E. Domenichelli"), i18n("Developer"), "daniele.domenichelli@gmail.com");
     aboutData.setProductName("telepathy/auth-handler");
     aboutData.setProgramIconName(QLatin1String("telepathy-kde"));
 
-    KCmdLineArgs::init(argc, argv, &aboutData);
+    KAboutData::setApplicationData(aboutData);
+
+    // This is a very very very ugly hack that attempts to solve the following problem:
+    // D-Bus service activated applications inherit the environment of dbus-daemon.
+    // Normally, in KDE, startkde sets these environment variables. However, the session's
+    // dbus-daemon is started before this happens, which means that dbus-daemon does NOT
+    // have these variables in its environment and therefore all service-activated UIs
+    // think that they are not running in KDE. This causes Qt not to load the KDE platform
+    // plugin, which leaves the UI in a sorry state, using a completely wrong theme,
+    // wrong colors, etc...
+    // See also:
+    // - https://bugs.kde.org/show_bug.cgi?id=269861
+    // - https://bugs.kde.org/show_bug.cgi?id=267770
+    // - https://git.reviewboard.kde.org/r/102194/
+    // Here we are just going to assume that kde-telepathy is always used in KDE and
+    // not anywhere else. This is probably the best that we can do.
+    setenv("KDE_FULL_SESSION", "true", 0);
+    setenv("KDE_SESSION_VERSION", "5", 0);
+
     KTp::TelepathyHandlerApplication app(argc, argv);
 
     // FIXME: Move this to tp-qt4 itself
