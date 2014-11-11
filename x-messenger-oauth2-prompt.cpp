@@ -37,9 +37,6 @@
 #include <QWebSettings>
 #include <QWebFrame>
 
-#include <qjson/parser.h>
-
-
 const QLatin1String msnClientID("000000004C070A47");
 const QLatin1String scopes("wl.messenger wl.offline_access");
 const QLatin1String redirectUri("https://oauth.live.com/desktop");
