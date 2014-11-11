@@ -9,7 +9,7 @@ find_package(Qt5 5.3 CONFIG REQUIRED COMPONENTS DBus Gui Core Network) #Network 
 find_package(ECM 0.0.11 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
-find_package(KF5 5.0 REQUIRED COMPONENTS Wallet WidgetsAddons I18n KIO WebKit)
+find_package(KF5 5.0 REQUIRED COMPONENTS Wallet WidgetsAddons I18n KIO WebKit KDELibs4Support)
 
 cmake_policy(SET CMP0002 OLD)
 
@@ -39,10 +39,7 @@ include(ECMMarkNonGuiExecutable)
 include(CMakePackageConfigHelpers)
 include(FeatureSummary)
 
-include_directories (${TELEPATHY_QT5_INCLUDE_DIR}
-                     ${KTP_INCLUDE_DIR}
-                     ${QCA_INCLUDE_DIR}
-)
+include_directories ( ${QCA_INCLUDE_DIR} )
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
@@ -62,8 +59,7 @@ set(ktp_auth_handler_SRCS
 )
 
 set(ktp_auth_handler_LIBS
-    ${TELEPATHY_QT5_LIBRARIES}
-    ${KTP_LIBRARIES}
+    KTp::CommonInternals
     ${Qca_LIBRARY}
     KF5::WidgetsAddons
     KF5::Wallet
@@ -71,6 +67,7 @@ set(ktp_auth_handler_LIBS
     KF5::KIOCore
     KF5::KIOWidgets
     KF5::WebKit
+    KF5::KDELibs4Support
     Qt5::Core
     Qt5::DBus
     Qt5::Network

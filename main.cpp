@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <KAboutData>
+#include <k4aboutdata.h>
 #include <KCmdLineArgs>
 #include <KApplication>
 #include <QDebug>
@@ -44,7 +44,7 @@
 
 int main(int argc, char *argv[])
 {
-    KAboutData aboutData("ktp-auth-handler", 0,
+    K4AboutData aboutData("ktp-auth-handler", 0,
                          ki18n("Telepathy Authentication Handler"),
                          KTP_AUTH_HANDLER_VERSION);
     aboutData.addAuthor(ki18n("David Edmundson"), ki18n("Developer"), "kde@davidedmundson.co.uk");
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     aboutData.setProgramIconName(QLatin1String("telepathy-kde"));
 
     KCmdLineArgs::init(argc, argv, &aboutData);
-    KTp::TelepathyHandlerApplication app;
+    KTp::TelepathyHandlerApplication app(argc, argv);
 
     // FIXME: Move this to tp-qt4 itself
     registerTypes();
