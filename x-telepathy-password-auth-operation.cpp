@@ -3,6 +3,7 @@
  *   @author Andre Moreira Magalhaes <andre.magalhaes@collabora.co.uk>
  * Copyright (C) 2011 David Edmundson <kde@davidedmundson.co.uk>
  * Copyright (C) 2011 Daniele E. Domenichelli <daniele.domenichelli@gmail.com>
+ * Copyright (C) 2014 Martin Klapetek <mklapetek@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,25 +23,38 @@
 #include "x-telepathy-password-auth-operation.h"
 #include "x-telepathy-password-prompt.h"
 
-#include <QDebug>
-#include <KLocalizedString>
+#include <KAccounts/getcredentialsjob.h>
+#include <KAccounts/core.h>
 
-#include <KTp/wallet-interface.h>
+#include <QDebug>
+
+#include <KLocalizedString>
+#include <KSharedConfig>
+#include <KConfigGroup>
+
+#include <Accounts/Account>
+#include <Accounts/Manager>
+#include <Accounts/AccountService>
+#include <SignOn/Identity>
 
 XTelepathyPasswordAuthOperation::XTelepathyPasswordAuthOperation(
         const Tp::AccountPtr &account,
         Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
-        KTp::WalletInterface *walletInterface,
         bool canTryAgain) :
     Tp::PendingOperation(account),
     m_account(account),
     m_saslIface(saslIface),
-    m_walletInterface(walletInterface),
     m_canTryAgain(canTryAgain)
 {
     connect(m_saslIface,
             SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)),
             SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
+
+    m_config = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
+    m_lastLoginFailedConfig = m_config->group(QStringLiteral("lastLoginFailed"));
+
+    KConfigGroup kaccountsGroup = m_config->group(QStringLiteral("ktp-kaccounts"));
+    m_kaccountsId = kaccountsGroup.readEntry(m_account->objectPath(), 0);
 }
 
 XTelepathyPasswordAuthOperation::~XTelepathyPasswordAuthOperation()
@@ -52,14 +66,25 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
 {
     if (status == Tp::SASLStatusNotStarted) {
         qDebug() << "Requesting password";
-        promptUser(m_canTryAgain || !m_walletInterface->hasEntry(m_account, QLatin1String("lastLoginFailed")));
+        // if we have non-null id AND if the last attempt didn't fail,
+        // proceed with the credentials receieved from the SSO;
+        // otherwise prompt the user
+        if (m_kaccountsId != 0 && !m_lastLoginFailedConfig.hasKey(m_account->objectPath())) {
+            GetCredentialsJob *credentialsJob = new GetCredentialsJob(m_kaccountsId, this);
+            connect(credentialsJob, &GetCredentialsJob::finished, [this](KJob *job){
+                m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), qobject_cast<GetCredentialsJob*>(job)->credentialsData().value("Secret").toByteArray());
+            });
+            credentialsJob->start();
+        } else {
+            promptUser();
+        }
     } else if (status == Tp::SASLStatusServerSucceeded) {
         qDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
     } else if (status == Tp::SASLStatusSucceeded) {
         qDebug() << "Authentication succeeded";
-        if (m_walletInterface->hasEntry(m_account, QLatin1String("lastLoginFailed"))) {
-            m_walletInterface->removeEntry(m_account, QLatin1String("lastLoginFailed"));
+        if (m_lastLoginFailedConfig.hasKey(m_account->objectPath())) {
+            m_lastLoginFailedConfig.deleteEntry(m_account->objectPath());
         }
         setFinished();
     } else if (status == Tp::SASLStatusInProgress) {
@@ -69,10 +94,11 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
 
         if (m_canTryAgain) {
             qDebug() << "Retrying...";
-            promptUser(false);
+            promptUser();
         } else {
             qWarning() << "Authentication failed and cannot try again";
-            m_walletInterface->setEntry(m_account, QLatin1String("lastLoginFailed"), QLatin1String("true"));
+            m_lastLoginFailedConfig.writeEntry(m_account->objectPath(), "1");
+
             // We cannot try again, but we can request again to set the account
             // online. A new channel will be created, but since we set the
             // lastLoginFailed entry, next time we will prompt for password
@@ -86,18 +112,13 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
     }
 }
 
-void XTelepathyPasswordAuthOperation::promptUser(bool isFirstRun)
+void XTelepathyPasswordAuthOperation::promptUser()
 {
-    if (m_walletInterface->hasPassword(m_account) && isFirstRun) {
-        m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"),
-                                            m_walletInterface->password(m_account).toUtf8());
-    } else {
-        m_dialog = new XTelepathyPasswordPrompt(m_account, m_walletInterface);
-        connect(m_dialog.data(),
-                SIGNAL(finished(int)),
-                SLOT(onDialogFinished(int)));
-        m_dialog.data()->show();
-    }
+    m_dialog = new XTelepathyPasswordPrompt(m_account);
+    connect(m_dialog.data(),
+            SIGNAL(finished(int)),
+            SLOT(onDialogFinished(int)));
+    m_dialog.data()->show();
 }
 
 void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
@@ -115,11 +136,32 @@ void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
         // save password in kwallet if necessary...
         if (!m_dialog.isNull()) {
             if (m_dialog.data()->savePassword()) {
-                qDebug() << "Saving password in wallet";
-                m_walletInterface->setPassword(m_account, m_dialog.data()->password());
+                qDebug() << "Saving password in SSO";
+                Accounts::Manager *manager = KAccounts::accountsManager();
+                Accounts::Account *acc = manager->account(m_kaccountsId);
+                if (acc) {
+                    Accounts::AccountService *service = new Accounts::AccountService(acc, manager->service(QString()), m_dialog);
+                    Accounts::AuthData authData = service->authData();
+                    SignOn::Identity *identity = SignOn::Identity::existingIdentity(authData.credentialsId(), m_dialog);
+
+                    // Get the current identity info, change the password and store it back
+                    connect(identity, &SignOn::Identity::info, [this, identity](SignOn::IdentityInfo info){
+                        info.setSecret(m_dialog->password());
+                        identity->storeCredentials(info);
+                        // we don't need the dialog anymore, delete it
+                        m_dialog.data()->deleteLater();
+                    });
+                    identity->queryInfo();
+                } else {
+                    // FIXME: Should this show a message box to the user? Or a notification?
+                    qWarning() << "Could not open Accounts Manager, password will not be stored";
+                    m_dialog.data()->deleteLater();
+                }
+            } else {
+                // The user does not want to save the password, delete the dialog
+                m_dialog.data()->deleteLater();
             }
             m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());
-            m_dialog.data()->deleteLater();
         }
     }
 }

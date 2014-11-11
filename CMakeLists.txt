@@ -19,6 +19,7 @@ find_package (KTp REQUIRED)
 find_package (Qca REQUIRED)
 find_package(AccountsQt5 1.10 REQUIRED CONFIG)
 find_package(SignOnQt5 8.55 REQUIRED CONFIG)
+find_package(KAccounts REQUIRED)
 
 # include (MacroLibrary)
 #
@@ -39,7 +40,11 @@ include(ECMMarkNonGuiExecutable)
 include(CMakePackageConfigHelpers)
 include(FeatureSummary)
 
-include_directories ( ${QCA_INCLUDE_DIR} )
+include_directories (${QCA_INCLUDE_DIR}
+                     ${ACCOUNTSQT_INCLUDE_DIRS}
+                     ${SIGNONQT_INCLUDE_DIRS}
+                     ${KACCOUNTS_INCLUDE_DIRS}
+)
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
@@ -52,6 +57,8 @@ set(ktp_auth_handler_SRCS
     types.cpp
     x-telepathy-password-auth-operation.cpp
     x-telepathy-password-prompt.cpp
+    x-telepathy-sso-facebook-operation.cpp
+    x-telepathy-sso-google-operation.cpp
     x-messenger-oauth2-auth-operation.cpp
     x-messenger-oauth2-prompt.cpp
     conference-auth-op.cpp
@@ -61,6 +68,9 @@ set(ktp_auth_handler_SRCS
 set(ktp_auth_handler_LIBS
     KTp::CommonInternals
     ${Qca_LIBRARY}
+    ${ACCOUNTSQT_LIBRARIES}
+    ${SIGNONQT_LIBRARIES}
+    ${KACCOUNTS_LIBRARIES}
     KF5::WidgetsAddons
     KF5::Wallet
     KF5::I18n
@@ -72,29 +82,6 @@ set(ktp_auth_handler_LIBS
     Qt5::DBus
     Qt5::Network
 )
-
-#If we find Accounts-SSO frameworks, add support for it
-if(AccountsQt5_FOUND AND SignOnQt5_FOUND)
-
-    add_definitions(-DHAVE_SSO)
-    set(ktp_auth_handler_SRCS
-        ${ktp_auth_handler_SRCS}
-        x-telepathy-sso-facebook-operation.cpp
-        x-telepathy-sso-google-operation.cpp
-        getcredentialsjob.cpp
-    )
-
-    set(ktp_auth_handler_LIBS
-        ${ktp_auth_handler_LIBS}
-        ${ACCOUNTSQT_LIBRARIES}
-        ${SIGNONQT_LIBRARIES}
-    )
-
-    include_directories(${ACCOUNTSQT_INCLUDE_DIRS}
-                        ${SIGNONQT_INCLUDE_DIRS}
-    )
-
-endif(AccountsQt5_FOUND AND SignOnQt5_FOUND)
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 

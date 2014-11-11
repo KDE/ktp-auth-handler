@@ -93,7 +93,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
     // Initialize QCA module
     QCA::Initializer initializer;
 
-    if(!QCA::isSupported("cert")) {
+    if (!QCA::isSupported("cert")) {
       Tp::TLSCertificateRejectionList rejections;
       m_authTLSCertificateIface->Reject(rejections);
       m_channel->requestClose();

@@ -1,5 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) 2013  David Edmundson <kde@davidedmundson.co.uk>
 
     This program is free software: you can redistribute it and/or modify
@@ -25,20 +24,20 @@
 #include <TelepathyQt/PendingVariantMap>
 
 #include <Accounts/Account>
+#include <KAccounts/getcredentialsjob.h>
 
 #include <QDebug>
 #include <QUrlQuery>
 #include <QUrl>
 
-#include "getcredentialsjob.h"
 
-XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
-    PendingOperation(account),
-    m_account(account),
-    m_saslIface(saslIface),
-    m_accountStorageId(accountStorageId)
+XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::AccountPtr &account, quint32 kaccountsId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface)
+    : PendingOperation(account),
+      m_account(account),
+      m_saslIface(saslIface),
+      m_kaccountsId(kaccountsId)
 {
-    Q_ASSERT(m_accountStorageId);
+    Q_ASSERT(kaccountsId);
     connect(m_saslIface, SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)), SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
     connect(m_saslIface, SIGNAL(NewChallenge(QByteArray)), SLOT(onNewChallenge(QByteArray)));
 }
@@ -57,21 +56,24 @@ void XTelepathySSOFacebookOperation::onSASLStatusChanged(uint status, const QStr
         m_saslIface->StartMechanism(QLatin1String("X-FACEBOOK-PLATFORM"));
         break;
     }
+
     case Tp::SASLStatusServerSucceeded:
         qDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
+        break;
+
+    case Tp::SASLStatusSucceeded:
+        qDebug() << "Authentication succeeded";
+        setFinished();
         break;
     }
 }
 
 void XTelepathySSOFacebookOperation::onNewChallenge(const QByteArray& challengeData)
 {
-    qDebug() << "New Challenge" << challengeData;
-
     m_challengeData = challengeData;
 
-    qDebug() << "GetCredentialsJob on account: " << m_accountStorageId;
-    GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
+    GetCredentialsJob *job = new GetCredentialsJob(m_kaccountsId, this);
     connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob *)));
     job->start();
 }
@@ -96,7 +98,5 @@ void XTelepathySSOFacebookOperation::gotCredentials(KJob *kJob)
     fbResponseQuery.addQueryItem("call_id", "0");
     fbResponseQuery.addQueryItem("v", "1.0");
 
-    //.mid(1) trims leading '?' char
-    qDebug() << fbResponseQuery.query().mid(1);
-    m_saslIface->Respond(fbResponseQuery.query().mid(1).toUtf8());
+    m_saslIface->Respond(fbResponseQuery.query().toUtf8());
 }

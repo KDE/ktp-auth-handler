@@ -17,27 +17,29 @@
  *  Boston, MA 02110-1301, USA.                                                      *
  *************************************************************************************/
 
-#include "getcredentialsjob.h"
 #include "x-telepathy-sso-google-operation.h"
 
+#include <KAccounts/getcredentialsjob.h>
 #include <QDebug>
 
-XTelepathySSOGoogleOperation::XTelepathySSOGoogleOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface)
+#include <KSharedConfig>
+#include <KConfigGroup>
+
+XTelepathySSOGoogleOperation::XTelepathySSOGoogleOperation(const Tp::AccountPtr &account, quint32 kaccountsId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface)
     : PendingOperation(account)
     , m_saslIface(saslIface)
-    , m_accountStorageId(accountStorageId)
+    , m_kaccountsId(kaccountsId)
 {
-    Q_ASSERT(m_accountStorageId);
     connect(m_saslIface, SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)), SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
 }
 
-void XTelepathySSOGoogleOperation::onSASLStatusChanged(uint status, const QString& reason, const QVariantMap& details)
+void XTelepathySSOGoogleOperation::onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details)
 {
     switch (status){
     case Tp::SASLStatusNotStarted:
     {
         qDebug() << "Status Not started";
-        GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
+        GetCredentialsJob *job = new GetCredentialsJob(m_kaccountsId, this);
         connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob*)));
         job->start();
         break;
@@ -46,10 +48,15 @@ void XTelepathySSOGoogleOperation::onSASLStatusChanged(uint status, const QStrin
         qDebug() << "Status Server Succeeded";
         m_saslIface->AcceptSASL();
         break;
+
+    case Tp::SASLStatusSucceeded:
+        qDebug() << "Authentication succeeded";
+        setFinished();
+        break;
     }
 }
 
-void XTelepathySSOGoogleOperation::gotCredentials(KJob* kjob)
+void XTelepathySSOGoogleOperation::gotCredentials(KJob *kjob)
 {
     GetCredentialsJob *job = qobject_cast< GetCredentialsJob* >(kjob);
     QVariantMap credentialsData = job->credentialsData();
@@ -59,6 +66,8 @@ void XTelepathySSOGoogleOperation::gotCredentials(KJob* kjob)
     data.append(credentialsData["AccountUsername"].toByteArray());
     data.append("\0", 1);
     data.append(credentialsData["AccessToken"].toByteArray());
+
+    qDebug() << "Received Google credentials, starting auth mechanism...";
 
     m_saslIface->StartMechanismWithData(QLatin1String("X-OAUTH2"), data);
 }
