@@ -138,24 +138,77 @@ void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
             if (m_dialog.data()->savePassword()) {
                 qDebug() << "Saving password in SSO";
                 Accounts::Manager *manager = KAccounts::accountsManager();
-                Accounts::Account *acc = manager->account(m_kaccountsId);
-                if (acc) {
-                    Accounts::AccountService *service = new Accounts::AccountService(acc, manager->service(QString()), m_dialog);
-                    Accounts::AuthData authData = service->authData();
-                    SignOn::Identity *identity = SignOn::Identity::existingIdentity(authData.credentialsId(), m_dialog);
+                if (m_kaccountsId == 0) {
+                    //we don't have KAccounts account yet, let's try to add it
+                    QString username = m_account->parameters().value(QStringLiteral("account")).toString();
+                    SignOn::IdentityInfo info;
+                    info.setUserName(username);
+                    info.setSecret(m_dialog->password());
+                    info.setCaption(username);
+                    info.setAccessControlList(QStringList(QLatin1String("*")));
+                    info.setType(SignOn::IdentityInfo::Application);
 
-                    // Get the current identity info, change the password and store it back
-                    connect(identity, &SignOn::Identity::info, [this, identity](SignOn::IdentityInfo info){
-                        info.setSecret(m_dialog->password());
-                        identity->storeCredentials(info);
-                        // we don't need the dialog anymore, delete it
-                        m_dialog.data()->deleteLater();
+                    SignOn::Identity *identity = SignOn::Identity::newIdentity(info, this);
+                    identity->storeCredentials();
+
+                    QString providerName = QStringLiteral("ktp-");
+
+                    providerName.append(m_account->serviceName());
+
+                    qDebug() << "Creating account with providerName" << providerName;
+
+                    Accounts::Account *account = manager->createAccount(providerName);
+                    account->setDisplayName(m_account->displayName());
+                    account->setCredentialsId(info.id());
+                    account->setValue("uid", m_account->objectPath());
+                    account->setValue("username", username);
+                    account->setValue(QStringLiteral("auth/mechanism"), QStringLiteral("password"));
+                    account->setValue(QStringLiteral("auth/method"), QStringLiteral("password"));
+
+                    account->setEnabled(true);
+
+                    Accounts::ServiceList services = account->services();
+                    Q_FOREACH(const Accounts::Service &service, services) {
+                        account->selectService(service);
+                        account->setEnabled(true);
+                    }
+
+                    connect(account, &Accounts::Account::synced, [=]() {
+                        m_kaccountsId = account->id();
+
+                        QString uid = m_account->objectPath();
+
+                        KSharedConfigPtr kaccountsConfig = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
+                        KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
+                        ktpKaccountsGroup.writeEntry(uid, account->id());
+
+                        KConfigGroup kaccountsKtpGroup = kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
+                        kaccountsKtpGroup.writeEntry(QString::number(account->id()), uid);
+                        qDebug() << "Syncing config";
+                        kaccountsConfig->sync();
                     });
-                    identity->queryInfo();
+
+                    account->sync();
                 } else {
-                    // FIXME: Should this show a message box to the user? Or a notification?
-                    qWarning() << "Could not open Accounts Manager, password will not be stored";
-                    m_dialog.data()->deleteLater();
+                    Accounts::Account *acc = manager->account(m_kaccountsId);
+                    if (acc) {
+                        Accounts::AccountService *service = new Accounts::AccountService(acc, manager->service(QString()), m_dialog);
+                        Accounts::AuthData authData = service->authData();
+                        SignOn::Identity *identity = SignOn::Identity::existingIdentity(authData.credentialsId(), m_dialog);
+
+                        // Get the current identity info, change the password and store it back
+                        connect(identity, &SignOn::Identity::info, [this, identity](SignOn::IdentityInfo info){
+                            info.setSecret(m_dialog->password());
+                            identity->storeCredentials(info);
+                            // we don't need the dialog anymore, delete it
+                            m_dialog.data()->deleteLater();
+                        });
+                        identity->queryInfo();
+                    } else {
+                        // FIXME: Should this show a message box to the user? Or a notification?
+                        qWarning() << "Could not open Accounts Manager, password will not be stored";
+                        m_dialog.data()->deleteLater();
+                    }
                 }
             } else {
                 // The user does not want to save the password, delete the dialog
