@@ -35,7 +35,7 @@ class XTelepathySSOFacebookOperation : public Tp::PendingOperation
 public:
     explicit XTelepathySSOFacebookOperation(
             const Tp::AccountPtr &account,
-            int accountStorageId,
+            quint32 kaccountsId,
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);
 
 private Q_SLOTS:
@@ -47,7 +47,7 @@ private:
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
 
-    int m_accountStorageId;
+    quint32 m_kaccountsId;
     QByteArray m_challengeData;
 
     friend class SaslAuthOp;

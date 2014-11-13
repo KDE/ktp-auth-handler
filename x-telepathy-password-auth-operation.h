@@ -23,7 +23,8 @@
 #include <TelepathyQt/Types>
 #include "x-telepathy-password-prompt.h"
 
-#include <KTp/wallet-interface.h>
+#include <KConfigGroup>
+#include <KSharedConfig>
 
 class XTelepathyPasswordAuthOperation : public Tp::PendingOperation
 {
@@ -34,7 +35,6 @@ public:
     explicit XTelepathyPasswordAuthOperation(
             const Tp::AccountPtr &account,
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
-            KTp::WalletInterface *walletInterface,
             bool canTryAgain);
     ~XTelepathyPasswordAuthOperation();
 
@@ -43,13 +43,15 @@ private Q_SLOTS:
     void onDialogFinished(int result);
 
 private:
-    void promptUser(bool isFirstPrompt);
+    void promptUser();
 
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
-    KTp::WalletInterface *m_walletInterface;
+    KSharedConfigPtr m_config;
+    KConfigGroup m_lastLoginFailedConfig;
+    quint32 m_kaccountsId;
     bool m_canTryAgain;
-    QWeakPointer<XTelepathyPasswordPrompt> m_dialog;
+    QPointer<XTelepathyPasswordPrompt> m_dialog;
 
     friend class SaslAuthOp;
 };

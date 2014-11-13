@@ -1,5 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) 2013  David Edmundson <kde@davidedmundson.co.uk>
 
     This program is free software: you can redistribute it and/or modify
@@ -25,19 +24,20 @@
 #include <TelepathyQt/PendingVariantMap>
 
 #include <Accounts/Account>
+#include <KAccounts/getcredentialsjob.h>
 
-#include <KDebug>
-#include <KUrl>
+#include <QDebug>
+#include <QUrlQuery>
+#include <QUrl>
 
-#include "getcredentialsjob.h"
 
-XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::AccountPtr& account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface* saslIface) :
-    PendingOperation(account),
-    m_account(account),
-    m_saslIface(saslIface),
-    m_accountStorageId(accountStorageId)
+XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::AccountPtr &account, quint32 kaccountsId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface)
+    : PendingOperation(account),
+      m_account(account),
+      m_saslIface(saslIface),
+      m_kaccountsId(kaccountsId)
 {
-    Q_ASSERT(m_accountStorageId);
+    Q_ASSERT(kaccountsId);
     connect(m_saslIface, SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)), SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
     connect(m_saslIface, SIGNAL(NewChallenge(QByteArray)), SLOT(onNewChallenge(QByteArray)));
 }
@@ -45,55 +45,58 @@ XTelepathySSOFacebookOperation::XTelepathySSOFacebookOperation(const Tp::Account
 
 void XTelepathySSOFacebookOperation::onSASLStatusChanged(uint status, const QString &reason, const QVariantMap &details)
 {
-    kDebug() << "New status is: " << status;
-    kDebug() << "Details: " << details;
-    kDebug() << "Reason: " << reason;
+    qDebug() << "New status is: " << status;
+    qDebug() << "Details: " << details;
+    qDebug() << "Reason: " << reason;
 
     switch (status){
     case Tp::SASLStatusNotStarted:
     {
-        kDebug() << "starting credentials job";
+        qDebug() << "starting credentials job";
         m_saslIface->StartMechanism(QLatin1String("X-FACEBOOK-PLATFORM"));
         break;
     }
+
     case Tp::SASLStatusServerSucceeded:
-        kDebug() << "Authentication handshake";
+        qDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
+        break;
+
+    case Tp::SASLStatusSucceeded:
+        qDebug() << "Authentication succeeded";
+        setFinished();
         break;
     }
 }
 
 void XTelepathySSOFacebookOperation::onNewChallenge(const QByteArray& challengeData)
 {
-    kDebug() << "New Challenge" << challengeData;
-
     m_challengeData = challengeData;
 
-    kDebug() << "GetCredentialsJob on account: " << m_accountStorageId;
-    GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
+    GetCredentialsJob *job = new GetCredentialsJob(m_kaccountsId, this);
     connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob *)));
     job->start();
 }
 
 void XTelepathySSOFacebookOperation::gotCredentials(KJob *kJob)
 {
-    kDebug();
-    KUrl fbRequestUrl;
-    KUrl fbResponseUrl;
+    qDebug();
+    QUrl fbRequestUrl;
 
     fbRequestUrl.setQuery(m_challengeData);
-    kDebug() << fbRequestUrl.queryItemValue("version");
+    QUrlQuery fbRequestQuery(fbRequestUrl);
+    QUrlQuery fbResponseQuery;
+
+    qDebug() << fbRequestQuery.queryItemValue("version");
 
     GetCredentialsJob *job = qobject_cast< GetCredentialsJob* >(kJob);
     QVariantMap credentialsData = job->credentialsData();
-    fbResponseUrl.addQueryItem("method", fbRequestUrl.queryItemValue("method"));
-    fbResponseUrl.addQueryItem("nonce", fbRequestUrl.queryItemValue("nonce"));
-    fbResponseUrl.addQueryItem("access_token", credentialsData["AccessToken"].toString());
-    fbResponseUrl.addQueryItem("api_key", credentialsData["ClientId"].toString());
-    fbResponseUrl.addQueryItem("call_id", "0");
-    fbResponseUrl.addQueryItem("v", "1.0");
+    fbResponseQuery.addQueryItem("method", fbRequestQuery.queryItemValue("method"));
+    fbResponseQuery.addQueryItem("nonce", fbRequestQuery.queryItemValue("nonce"));
+    fbResponseQuery.addQueryItem("access_token", credentialsData["AccessToken"].toString());
+    fbResponseQuery.addQueryItem("api_key", credentialsData["ClientId"].toString());
+    fbResponseQuery.addQueryItem("call_id", "0");
+    fbResponseQuery.addQueryItem("v", "1.0");
 
-    //.mid(1) trims leading '?' char
-    kDebug() << fbResponseUrl.query().mid(1);
-    m_saslIface->Respond(fbResponseUrl.query().mid(1).toUtf8());
+    m_saslIface->Respond(fbResponseQuery.query().toUtf8());
 }

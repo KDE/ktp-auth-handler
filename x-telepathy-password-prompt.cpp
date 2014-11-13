@@ -21,31 +21,31 @@
 
 #include <KTp/wallet-interface.h>
 
-#include <KIcon>
-#include <KDebug>
+#include <QIcon>
+#include <QDebug>
+#include <QtWidgets/QDialogButtonBox>
 
-XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account, KTp::WalletInterface *walletInterface, QWidget *parent)
-    : KDialog(parent),
+XTelepathyPasswordPrompt::XTelepathyPasswordPrompt(const Tp::AccountPtr &account, QWidget *parent)
+    : QDialog(parent),
       ui(new Ui::XTelepathyPasswordPrompt)
 {
-    ui->setupUi(mainWidget());
+    ui->setupUi(this);
 
     setAttribute(Qt::WA_ShowWithoutActivating);
-    setWindowIcon(KIcon(QLatin1String("telepathy-kde")));
+    setWindowIcon(QIcon::fromTheme(QLatin1String("telepathy-kde")));
 
     ui->accountName->setText(account->displayName());
-    ui->accountIcon->setPixmap(KIcon(QLatin1String("dialog-password")).pixmap(60, 60));
-    ui->title->setPixmap(KIcon(account->iconName()).pixmap(22, 22));
+    ui->accountIcon->setPixmap(QIcon::fromTheme(QLatin1String("dialog-password")).pixmap(60, 60));
+    ui->title->setPixmap(QIcon::fromTheme(account->iconName()).pixmap(22, 22));
     ui->passwordLineEdit->setFocus();
 
-    if (walletInterface->isOpen()) {
-        ui->savePassword->setChecked(true);
-        if (walletInterface->hasPassword(account)) {
-            ui->passwordLineEdit->setText(walletInterface->password(account));
-        }
-    } else {
-        ui->savePassword->setDisabled(true);
-    }
+    ui->savePassword->setEnabled(true);
+
+    QDialogButtonBox *dbb = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(dbb, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(dbb, SIGNAL(rejected()), this, SLOT(reject()));
+
+    ui->mainLayout->addWidget(dbb);
 }
 
 XTelepathyPasswordPrompt::~XTelepathyPasswordPrompt()

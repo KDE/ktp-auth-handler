@@ -24,13 +24,13 @@
 
 #include <KMessageBox>
 #include <KLocalizedString>
-#include <KDebug>
 
+#include <QDebug>
 #include <QSslCertificate>
 #include <QSslCipher>
 
-#include "kssl/ksslcertificatemanager.h"
-#include "kssl/ksslinfodialog.h"
+#include <ksslcertificatemanager.h>
+#include <ksslinfodialog.h>
 
 #include <QtCrypto>
 
@@ -63,7 +63,7 @@ TlsCertVerifierOp::~TlsCertVerifierOp()
 void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
 {
     if (op->isError()) {
-        kWarning() << "Unable to retrieve properties from AuthenticationTLSCertificate object at" <<
+        qWarning() << "Unable to retrieve properties from AuthenticationTLSCertificate object at" <<
             m_authTLSCertificateIface->path();
         m_channel->requestClose();
         setFinishedWithError(op->errorName(), op->errorMessage());
@@ -86,14 +86,14 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
         m_authTLSCertificateIface->Reject(rejections);
         m_channel->requestClose();
         setFinishedWithError(QLatin1String("Cert.Unknown"),
-                             QString::fromLatin1("Invalid certificate type %1").arg(m_certType));
+                             i18n("Invalid certificate type %1", m_certType));
         return;
     }
 
     // Initialize QCA module
     QCA::Initializer initializer;
 
-    if(!QCA::isSupported("cert")) {
+    if (!QCA::isSupported("cert")) {
       Tp::TLSCertificateRejectionList rejections;
       m_authTLSCertificateIface->Reject(rejections);
       m_channel->requestClose();
@@ -117,7 +117,7 @@ void TlsCertVerifierOp::gotProperties(Tp::PendingOperation *op)
         m_authTLSCertificateIface->Reject(rejections);
         m_channel->requestClose();
         setFinishedWithError(QLatin1String("Cert.Untrusted"),
-                             QLatin1String("Certificate rejected by the user"));
+                             i18n("Certificate rejected by the user"));
     }
 }
 
@@ -200,7 +200,7 @@ void TlsCertVerifierOp::showSslDialog(const QCA::CertificateChain &chain, const 
     errorStr.chop(1);
 
     // No way to tell whether QSsl::TlsV1 or QSsl::TlsV1Ssl3
-    KSslCipher cipher = QSslCipher(QLatin1String("TLS"), QSsl::TlsV1);
+    KSslCipher cipher = QSslCipher(QLatin1String("TLS"), QSsl::TlsV1_0);
     QString sslCipher = cipher.encryptionMethod() + QLatin1Char('\n');
     sslCipher += cipher.authenticationMethod() + QLatin1Char('\n');
     sslCipher += cipher.keyExchangeMethod() + QLatin1Char('\n');

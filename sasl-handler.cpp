@@ -31,7 +31,7 @@
 #include <TelepathyQt/ChannelDispatchOperation>
 #include <TelepathyQt/MethodInvocationContext>
 
-#include <KDebug>
+#include <QDebug>
 
 static inline Tp::ChannelClassSpecList channelFilter() {
     Tp::ChannelClassSpecList filter;
@@ -101,7 +101,7 @@ void SaslHandler::onAuthFinished(Tp::PendingOperation *op)
     Q_ASSERT(mAuthContexts.contains(auth));
 
     if (op->isError()) {
-        kWarning() << "Error in SASL auth:" << op->errorName() << "-" << op->errorMessage();
+        qWarning() << "Error in SASL auth:" << op->errorName() << "-" << op->errorMessage();
     }
 
     mAuthContexts.remove(auth);

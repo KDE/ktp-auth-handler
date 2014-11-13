@@ -19,7 +19,7 @@
 #ifndef PASSWORDPROMPT_H
 #define PASSWORDPROMPT_H
 
-#include <KDialog>
+#include <QDialog>
 
 #include <TelepathyQt/Account>
 
@@ -33,12 +33,12 @@ namespace KTp
     class WalletInterface;
 }
 
-class XTelepathyPasswordPrompt : public KDialog
+class XTelepathyPasswordPrompt : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit XTelepathyPasswordPrompt(const Tp::AccountPtr &account, KTp::WalletInterface *walletInterface, QWidget *parent=0);
+    explicit XTelepathyPasswordPrompt(const Tp::AccountPtr &account, QWidget *parent=0);
     ~XTelepathyPasswordPrompt();
 
     QString password() const;

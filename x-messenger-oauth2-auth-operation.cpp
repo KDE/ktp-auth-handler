@@ -18,8 +18,8 @@
 
 #include "x-messenger-oauth2-auth-operation.h"
 
-#include <KUrl>
-#include <KDebug>
+#include <QDebug>
+
 #include <KLocalizedString>
 #include <TelepathyQt/Account>
 #include <KTp/wallet-interface.h>
@@ -63,7 +63,7 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
             return;
         }
 
-        kDebug() << "Requesting password";
+        qDebug() << "Requesting password";
         m_dialog = new XMessengerOAuth2Prompt();
 
         connect(m_dialog.data(),
@@ -76,19 +76,19 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
                 SLOT(show()));
         break;
     case Tp::SASLStatusServerSucceeded:
-        kDebug() << "Authentication handshake";
+        qDebug() << "Authentication handshake";
         m_saslIface->AcceptSASL();
         break;
     case Tp::SASLStatusSucceeded:
-        kDebug() << "Authentication succeeded";
+        qDebug() << "Authentication succeeded";
         setFinished();
         break;
     case Tp::SASLStatusInProgress:
-        kDebug() << "Authenticating...";
+        qDebug() << "Authenticating...";
         break;
     case Tp::SASLStatusServerFailed:
     {
-        kDebug() << "Error authenticating - reason:" << reason << "- details:" << details;
+        qDebug() << "Error authenticating - reason:" << reason << "- details:" << details;
         if (m_walletInterface->hasEntry(m_account, XMessengerOAuth2AccessTokenWalletEntry)) {
             // We cannot try again (TODO canTryAgain seems to be always false for
             // X-MESSENGER-OAUTH but we should insert a check here)
@@ -107,7 +107,7 @@ void XMessengerOAuth2AuthOperation::onSASLStatusChanged(uint status, const QStri
         break;
     }
     default:
-        kWarning() << "Unhandled status" << status;
+        qWarning() << "Unhandled status" << status;
         Q_ASSERT(false);
         break;
     }
@@ -117,7 +117,7 @@ void XMessengerOAuth2AuthOperation::onDialogFinished(int result)
 {
     switch (result) {
     case QDialog::Rejected:
-        kDebug() << "Authentication cancelled";
+        qDebug() << "Authentication cancelled";
         m_saslIface->AbortSASL(Tp::SASLAbortReasonUserAbort, i18n("User cancelled auth"));
         setFinished();
         if (!m_dialog.isNull()) {
@@ -125,7 +125,7 @@ void XMessengerOAuth2AuthOperation::onDialogFinished(int result)
         }
         return;
     case QDialog::Accepted:
-        kDebug() << QLatin1String(m_dialog.data()->accessToken());
+        qDebug() << QLatin1String(m_dialog.data()->accessToken());
         m_walletInterface->setEntry(m_account, XMessengerOAuth2AccessTokenWalletEntry, QLatin1String(m_dialog.data()->accessToken().toBase64()));
         m_walletInterface->setEntry(m_account, XMessengerOAuth2RefreshTokenWalletEntry, QLatin1String(m_dialog.data()->refreshToken().toBase64()));
         m_saslIface->StartMechanismWithData(QLatin1String("X-MESSENGER-OAUTH2"), m_dialog.data()->accessToken());

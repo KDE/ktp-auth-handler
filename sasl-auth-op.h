@@ -43,14 +43,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void gotProperties(Tp::PendingOperation *op);
-    void onOpenWalletOperationFinished(Tp::PendingOperation *op);
     void onAuthOperationFinished(Tp::PendingOperation *op);
-
-#ifdef HAVE_SSO
-    //FIXME this is a workaround until Tp::Client::AccountInterfaceStorageInterface is merged into Tp::Account
-    //https://bugs.freedesktop.org/show_bug.cgi?id=63191
-    void onGetAccountStorageFetched(Tp::PendingOperation *op);
-#endif
 
 private:
     void setReady();
@@ -58,11 +51,7 @@ private:
     Tp::AccountPtr m_account;
     Tp::ChannelPtr m_channel;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
-
-#ifdef HAVE_SSO
-    void fetchAccountStorage();
-    int m_accountStorageId;
-#endif
+    quint32 m_kaccountsId;
 };
 
 #endif // SASL_AUTH_OP_H

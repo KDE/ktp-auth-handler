@@ -30,7 +30,7 @@
 #include <TelepathyQt/ChannelDispatchOperation>
 #include <TelepathyQt/MethodInvocationContext>
 
-#include <KDebug>
+#include <QDebug>
 
 static inline Tp::ChannelClassSpecList channelFilter() {
     Tp::ChannelClassSpecList filter;
@@ -94,7 +94,7 @@ void TlsHandler::onCertVerifierFinished(Tp::PendingOperation *op)
     Q_ASSERT(mVerifiers.contains(verifier));
 
     if (op->isError()) {
-        kWarning() << "Error verifying TLS certificate:" << op->errorName() << "-" << op->errorMessage();
+        qWarning() << "Error verifying TLS certificate:" << op->errorName() << "-" << op->errorMessage();
     }
 
     mVerifiers.remove(verifier);

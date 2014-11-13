@@ -19,13 +19,13 @@
 #ifndef X_MESSENGER_OAUTH2_PROMPT_H
 #define X_MESSENGER_OAUTH2_PROMPT_H
 
-#include <KDialog>
+#include <QDialog>
 
-class QProgressBar;
 class KWebView;
+class QProgressBar;
 class QNetworkReply;
 
-class XMessengerOAuth2Prompt : public KDialog
+class XMessengerOAuth2Prompt : public QDialog
 {
     Q_OBJECT
 
