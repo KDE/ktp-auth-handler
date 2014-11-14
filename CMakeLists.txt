@@ -59,8 +59,6 @@ set(ktp_auth_handler_SRCS
     x-telepathy-password-prompt.cpp
     x-telepathy-sso-facebook-operation.cpp
     x-telepathy-sso-google-operation.cpp
-    x-messenger-oauth2-auth-operation.cpp
-    x-messenger-oauth2-prompt.cpp
     conference-auth-op.cpp
     conference-auth-observer.cpp
 )
@@ -76,10 +74,8 @@ set(ktp_auth_handler_LIBS
     KF5::I18n
     KF5::KIOCore
     KF5::KIOWidgets
-    KF5::WebKit
     Qt5::Core
     Qt5::DBus
-    Qt5::Network
 )
 
 configure_file(version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h)

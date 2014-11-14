@@ -21,7 +21,6 @@
 #include "sasl-auth-op.h"
 
 #include "x-telepathy-password-auth-operation.h"
-#include "x-messenger-oauth2-auth-operation.h"
 #include "x-telepathy-sso-facebook-operation.h"
 #include "x-telepathy-sso-google-operation.h"
 
