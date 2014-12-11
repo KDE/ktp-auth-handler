@@ -44,7 +44,8 @@ XTelepathyPasswordAuthOperation::XTelepathyPasswordAuthOperation(
     Tp::PendingOperation(account),
     m_account(account),
     m_saslIface(saslIface),
-    m_canTryAgain(canTryAgain)
+    m_canTryAgain(canTryAgain),
+    m_canFinish(false)
 {
     connect(m_saslIface,
             SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)),
@@ -72,7 +73,15 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
         if (m_kaccountsId != 0 && !m_lastLoginFailedConfig.hasKey(m_account->objectPath())) {
             GetCredentialsJob *credentialsJob = new GetCredentialsJob(m_kaccountsId, this);
             connect(credentialsJob, &GetCredentialsJob::finished, [this](KJob *job){
-                m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), qobject_cast<GetCredentialsJob*>(job)->credentialsData().value("Secret").toByteArray());
+                if (job->error()) {
+                    qWarning() << "Credentials job error:" << job->errorText();
+                    qDebug() << "Prompting for password";
+                    promptUser();
+                } else {
+                    m_canFinish = true;
+                    QByteArray secret = qobject_cast<GetCredentialsJob*>(job)->credentialsData().value("Secret").toByteArray();
+                    m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), secret);
+                }
             });
             credentialsJob->start();
         } else {
@@ -86,7 +95,14 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
         if (m_lastLoginFailedConfig.hasKey(m_account->objectPath())) {
             m_lastLoginFailedConfig.deleteEntry(m_account->objectPath());
         }
-        setFinished();
+        if (m_canFinish) {
+            // if the credentials storage has finished, just finish
+            setFinished();
+        } else {
+            // ...otherwise set this to true and it will finish
+            // when credentials are finished
+            m_canFinish = true;
+        }
     } else if (status == Tp::SASLStatusInProgress) {
         qDebug() << "Authenticating...";
     } else if (status == Tp::SASLStatusServerFailed) {
@@ -137,86 +153,97 @@ void XTelepathyPasswordAuthOperation::onDialogFinished(int result)
         if (!m_dialog.isNull()) {
             if (m_dialog.data()->savePassword()) {
                 qDebug() << "Saving password in SSO";
-                Accounts::Manager *manager = KAccounts::accountsManager();
-                if (m_kaccountsId == 0) {
-                    //we don't have KAccounts account yet, let's try to add it
-                    QString username = m_account->parameters().value(QStringLiteral("account")).toString();
-                    SignOn::IdentityInfo info;
-                    info.setUserName(username);
-                    info.setSecret(m_dialog->password());
-                    info.setCaption(username);
-                    info.setAccessControlList(QStringList(QLatin1String("*")));
-                    info.setType(SignOn::IdentityInfo::Application);
-
-                    SignOn::Identity *identity = SignOn::Identity::newIdentity(info, this);
-                    identity->storeCredentials();
-
-                    QString providerName = QStringLiteral("ktp-");
-
-                    providerName.append(m_account->serviceName());
-
-                    qDebug() << "Creating account with providerName" << providerName;
-
-                    Accounts::Account *account = manager->createAccount(providerName);
-                    account->setDisplayName(m_account->displayName());
-                    account->setCredentialsId(info.id());
-                    account->setValue("uid", m_account->objectPath());
-                    account->setValue("username", username);
-                    account->setValue(QStringLiteral("auth/mechanism"), QStringLiteral("password"));
-                    account->setValue(QStringLiteral("auth/method"), QStringLiteral("password"));
-
-                    account->setEnabled(true);
-
-                    Accounts::ServiceList services = account->services();
-                    Q_FOREACH(const Accounts::Service &service, services) {
-                        account->selectService(service);
-                        account->setEnabled(true);
-                    }
-
-                    connect(account, &Accounts::Account::synced, [=]() {
-                        m_kaccountsId = account->id();
-
-                        QString uid = m_account->objectPath();
-
-                        KSharedConfigPtr kaccountsConfig = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
-                        KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
-                        ktpKaccountsGroup.writeEntry(uid, account->id());
-
-                        KConfigGroup kaccountsKtpGroup = kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
-                        kaccountsKtpGroup.writeEntry(QString::number(account->id()), uid);
-                        qDebug() << "Syncing config";
-                        kaccountsConfig->sync();
-                    });
-
-                    account->sync();
-                } else {
-                    Accounts::Account *acc = manager->account(m_kaccountsId);
-                    if (acc) {
-                        Accounts::AccountService *service = new Accounts::AccountService(acc, manager->service(QString()), m_dialog);
-                        Accounts::AuthData authData = service->authData();
-                        SignOn::Identity *identity = SignOn::Identity::existingIdentity(authData.credentialsId(), m_dialog);
-
-                        // Get the current identity info, change the password and store it back
-                        connect(identity, &SignOn::Identity::info, [this, identity](SignOn::IdentityInfo info){
-                            info.setSecret(m_dialog->password());
-                            identity->storeCredentials(info);
-                            // we don't need the dialog anymore, delete it
-                            m_dialog.data()->deleteLater();
-                        });
-                        identity->queryInfo();
-                    } else {
-                        // FIXME: Should this show a message box to the user? Or a notification?
-                        qWarning() << "Could not open Accounts Manager, password will not be stored";
-                        m_dialog.data()->deleteLater();
-                    }
-                }
+                m_canFinish = false;
+                storeCredentials(m_dialog.data()->password());
             } else {
-                // The user does not want to save the password, delete the dialog
-                m_dialog.data()->deleteLater();
+                m_canFinish = true;
             }
+
+            m_dialog.data()->deleteLater();
+
             m_saslIface->StartMechanismWithData(QLatin1String("X-TELEPATHY-PASSWORD"), m_dialog.data()->password().toUtf8());
         }
     }
+}
+
+void XTelepathyPasswordAuthOperation::storeCredentials(const QString &secret)
+{
+    QString username = m_account->parameters().value(QStringLiteral("account")).toString();
+    Accounts::Manager *manager = KAccounts::accountsManager();
+    Accounts::Account *account = manager->account(m_kaccountsId);
+    SignOn::Identity *identity;
+
+    if (account) {
+        Accounts::AccountService *service = new Accounts::AccountService(account, manager->service(QString()), this);
+        Accounts::AuthData authData = service->authData();
+        identity = SignOn::Identity::existingIdentity(authData.credentialsId(), this);
+    } else {
+        // there's no valid KAccounts account, so let's try creating one
+        QString providerName = QStringLiteral("ktp-");
+
+        providerName.append(m_account->serviceName());
+
+        qDebug() << "Creating account with providerName" << providerName;
+
+        account = manager->createAccount(providerName);
+        account->setDisplayName(m_account->displayName());
+        account->setValue("uid", m_account->objectPath());
+        account->setValue("username", username);
+        account->setValue(QStringLiteral("auth/mechanism"), QStringLiteral("password"));
+        account->setValue(QStringLiteral("auth/method"), QStringLiteral("password"));
+
+        account->setEnabled(true);
+
+        Accounts::ServiceList services = account->services();
+        Q_FOREACH(const Accounts::Service &service, services) {
+            account->selectService(service);
+            account->setEnabled(true);
+        }
+    }
+
+    SignOn::IdentityInfo info;
+    info.setUserName(username);
+    info.setSecret(secret);
+    info.setCaption(username);
+    info.setAccessControlList(QStringList(QLatin1String("*")));
+    info.setType(SignOn::IdentityInfo::Application);
+
+    if (!identity) {
+        // we don't have a valid SignOn::Identity, let's create new one
+        identity = SignOn::Identity::newIdentity(info, this);
+    }
+
+    identity->storeCredentials(info);
+
+    connect(identity, &SignOn::Identity::credentialsStored, [=](const quint32 id) {
+        account->setCredentialsId(id);
+        account->sync();
+
+        connect(account, &Accounts::Account::synced, [=]() {
+            m_kaccountsId = account->id();
+
+            QString uid = m_account->objectPath();
+
+            KSharedConfigPtr kaccountsConfig = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
+            KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
+            ktpKaccountsGroup.writeEntry(uid, account->id());
+
+            KConfigGroup kaccountsKtpGroup = kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
+            kaccountsKtpGroup.writeEntry(QString::number(account->id()), uid);
+            kaccountsConfig->sync();
+
+            qDebug() << "Account credentials synchronisation finished";
+
+            if (m_canFinish) {
+                // if the sasl channel has already finished, set finished
+                setFinished();
+            } else {
+                // ...otherwise set this to true and when the auth succeeds,
+                // it will finish then
+                m_canFinish = true;
+            }
+        });
+    });
 }
 
 #include "x-telepathy-password-auth-operation.moc"

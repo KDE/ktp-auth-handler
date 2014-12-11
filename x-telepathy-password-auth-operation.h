@@ -44,6 +44,7 @@ private Q_SLOTS:
 
 private:
     void promptUser();
+    void storeCredentials(const QString &secret);
 
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
@@ -51,6 +52,7 @@ private:
     KConfigGroup m_lastLoginFailedConfig;
     quint32 m_kaccountsId;
     bool m_canTryAgain;
+    bool m_canFinish;
     QPointer<XTelepathyPasswordPrompt> m_dialog;
 
     friend class SaslAuthOp;
