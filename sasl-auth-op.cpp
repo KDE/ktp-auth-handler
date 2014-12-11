@@ -93,10 +93,10 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else {
-        qWarning() << "X-TELEPATHY-PASSWORD, X-MESSENGER-OAUTH2, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:" << mechanisms;
+        qWarning() << "X-TELEPATHY-PASSWORD, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:" << mechanisms;
         m_channel->requestClose();
         setFinishedWithError(TP_QT_ERROR_NOT_IMPLEMENTED,
-                QLatin1String("X-TELEPATHY-PASSWORD, X-MESSENGER-OAUTH2, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:"));
+                QLatin1String("X-TELEPATHY-PASSWORD, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:"));
         return;
     }
 }
