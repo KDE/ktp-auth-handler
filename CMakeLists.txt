@@ -16,7 +16,7 @@ cmake_policy(SET CMP0002 OLD)
 set(IS_KTP_INTERNAL_MODULE TRUE)
 find_package (TelepathyQt5 0.8.9 REQUIRED)
 find_package (KTp REQUIRED)
-find_package (Qca REQUIRED)
+find_package (Qca-qt5 REQUIRED)
 find_package(AccountsQt5 1.10 REQUIRED CONFIG)
 find_package(SignOnQt5 8.55 REQUIRED CONFIG)
 find_package(KAccounts REQUIRED)
@@ -65,7 +65,7 @@ set(ktp_auth_handler_SRCS
 
 set(ktp_auth_handler_LIBS
     KTp::CommonInternals
-    ${Qca_LIBRARY}
+    qca-qt5
     ${ACCOUNTSQT_LIBRARIES}
     ${SIGNONQT_LIBRARIES}
     ${KACCOUNTS_LIBRARIES}
