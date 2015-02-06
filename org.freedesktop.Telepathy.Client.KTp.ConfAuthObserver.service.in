@@ -1,3 +1,3 @@
 [D-BUS Service]
 Name=org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver
-Exec=@CMAKE_INSTALL_PREFIX@/@LIBEXEC_INSTALL_DIR@/ktp-auth-handler
+Exec=@CMAKE_INSTALL_FULL_LIBEXECDIR@/ktp-auth-handler
