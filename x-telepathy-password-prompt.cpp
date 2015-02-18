@@ -62,5 +62,3 @@ bool XTelepathyPasswordPrompt::savePassword() const
 {
     return ui->savePassword->isChecked();
 }
-
-#include "x-telepathy-password-prompt.moc"

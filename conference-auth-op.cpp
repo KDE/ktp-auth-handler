@@ -114,5 +114,3 @@ void ConferenceAuthOp::onPasswordProvided(QDBusPendingCallWatcher *watcher)
         passwordDialog();
     }
 }
-
-#include "conference-auth-op.moc"

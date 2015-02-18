@@ -245,5 +245,3 @@ void XTelepathyPasswordAuthOperation::storeCredentials(const QString &secret)
         });
     });
 }
-
-#include "x-telepathy-password-auth-operation.moc"

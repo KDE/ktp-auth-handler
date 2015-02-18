@@ -107,5 +107,3 @@ void SaslHandler::onAuthFinished(Tp::PendingOperation *op)
     mAuthContexts.remove(auth);
     KTp::TelepathyHandlerApplication::jobFinished();
 }
-
-#include "sasl-handler.moc"

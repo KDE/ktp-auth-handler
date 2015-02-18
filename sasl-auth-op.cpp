@@ -117,5 +117,3 @@ void SaslAuthOp::setReady()
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(gotProperties(Tp::PendingOperation*)));
 }
-
-#include "sasl-auth-op.moc"

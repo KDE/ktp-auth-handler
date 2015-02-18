@@ -273,5 +273,3 @@ QList< QSslCertificate > TlsCertVerifierOp::chainToList(const QCA::CertificateCh
 
     return certs;
 }
-
-#include "tls-cert-verifier-op.moc"

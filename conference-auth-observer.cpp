@@ -79,5 +79,3 @@ void ConferenceAuthObserver::onAuthFinished(Tp::PendingOperation *op)
 
     KTp::TelepathyHandlerApplication::jobFinished();
 }
-
-#include "conference-auth-observer.moc"

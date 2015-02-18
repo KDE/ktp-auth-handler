@@ -100,5 +100,3 @@ void TlsHandler::onCertVerifierFinished(Tp::PendingOperation *op)
     mVerifiers.remove(verifier);
     KTp::TelepathyHandlerApplication::jobFinished();
 }
-
-#include "tls-handler.moc"
