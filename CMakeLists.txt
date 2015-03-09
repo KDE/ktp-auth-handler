@@ -43,7 +43,6 @@ include(FeatureSummary)
 include_directories (${QCA_INCLUDE_DIR}
                      ${ACCOUNTSQT_INCLUDE_DIRS}
                      ${SIGNONQT_INCLUDE_DIRS}
-                     ${KACCOUNTS_INCLUDE_DIRS}
 )
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
@@ -68,7 +67,7 @@ set(ktp_auth_handler_LIBS
     qca-qt5
     ${ACCOUNTSQT_LIBRARIES}
     ${SIGNONQT_LIBRARIES}
-    ${KACCOUNTS_LIBRARIES}
+    KAccounts
     KF5::WidgetsAddons
     KF5::Wallet
     KF5::I18n
