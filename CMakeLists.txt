@@ -32,6 +32,12 @@ message("This project will build, but will fail to run properly. Please ensure i
 message("If you are a packager you _must_ mark this as a dependency.")
 message("-----------------------------------------------------------------------------")
 
+find_package(Qca-qt5-ossl QUIET)
+set_package_properties(Qca-qt5-ossl PROPERTIES
+         PURPOSE "Runtime-only dependency on the OSSL plugin of QCA for authentication to work properly"
+         TYPE RUNTIME
+         )
+
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings)
