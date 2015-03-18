@@ -1,6 +1,6 @@
 project(ktp-auth-handler)
 
-set(KTP_AUTH_HANDLER_VERSION "0.9.80")
+set(KTP_AUTH_HANDLER_VERSION "15.03.95")
 
 cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 
