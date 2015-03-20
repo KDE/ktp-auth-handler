@@ -25,10 +25,10 @@
 #include <KSharedConfig>
 #include <KConfigGroup>
 
-XTelepathySSOGoogleOperation::XTelepathySSOGoogleOperation(const Tp::AccountPtr &account, quint32 kaccountsId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface)
+XTelepathySSOGoogleOperation::XTelepathySSOGoogleOperation(const Tp::AccountPtr &account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface)
     : PendingOperation(account)
     , m_saslIface(saslIface)
-    , m_kaccountsId(kaccountsId)
+    , m_accountStorageId(accountStorageId)
 {
     connect(m_saslIface, SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)), SLOT(onSASLStatusChanged(uint,QString,QVariantMap)));
 }
@@ -39,7 +39,7 @@ void XTelepathySSOGoogleOperation::onSASLStatusChanged(uint status, const QStrin
     case Tp::SASLStatusNotStarted:
     {
         qDebug() << "Status Not started";
-        GetCredentialsJob *job = new GetCredentialsJob(m_kaccountsId, this);
+        GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
         connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob*)));
         job->start();
         break;

@@ -35,7 +35,7 @@ class XTelepathySSOGoogleOperation : public Tp::PendingOperation
 public:
     explicit XTelepathySSOGoogleOperation(
             const Tp::AccountPtr &account,
-            quint32 kaccountsId,
+            int accountStorageId,
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface);
 
 private Q_SLOTS:
@@ -46,7 +46,7 @@ private:
     Tp::AccountPtr m_account;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
 
-    quint32 m_kaccountsId;
+    int m_accountStorageId;
     QByteArray m_challengeData;
 
     friend class SaslAuthOp;

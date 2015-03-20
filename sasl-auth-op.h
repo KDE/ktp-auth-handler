@@ -44,6 +44,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void gotProperties(Tp::PendingOperation *op);
     void onAuthOperationFinished(Tp::PendingOperation *op);
+    void onGetAccountStorageFetched(Tp::PendingOperation *op);
 
 private:
     void setReady();
@@ -51,7 +52,7 @@ private:
     Tp::AccountPtr m_account;
     Tp::ChannelPtr m_channel;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
-    quint32 m_kaccountsId;
+    int m_accountStorageId;
 };
 
 #endif // SASL_AUTH_OP_H

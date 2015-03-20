@@ -38,11 +38,13 @@ SaslAuthOp::SaslAuthOp(const Tp::AccountPtr &account,
       m_channel(channel),
       m_saslIface(channel->interface<Tp::Client::ChannelInterfaceSASLAuthenticationInterface>())
 {
-    KSharedConfigPtr config = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
-    KConfigGroup ktpKaccountsGroup = config->group(QStringLiteral("ktp-kaccounts"));
-    m_kaccountsId = ktpKaccountsGroup.readEntry(account->objectPath()).toUInt();
+    //Check if the account has any StorageIdentifier, in which case we will
+    //prioritize those mechanism related with KDE Accounts integration
+    QScopedPointer<Tp::Client::AccountInterfaceStorageInterface> accountStorageInterface(
+        new Tp::Client::AccountInterfaceStorageInterface(m_account->busName(), m_account->objectPath()));
 
-    setReady();
+    Tp::PendingVariantMap *pendingMap = accountStorageInterface->requestAllProperties();
+    connect(pendingMap, SIGNAL(finished(Tp::PendingOperation*)), SLOT(onGetAccountStorageFetched(Tp::PendingOperation*)));
 }
 
 SaslAuthOp::~SaslAuthOp()
@@ -67,17 +69,17 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
     QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
     QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
 
-    if (mechanisms.contains(QLatin1String("X-FACEBOOK-PLATFORM")) && m_kaccountsId != 0) {
+    if (mechanisms.contains(QLatin1String("X-FACEBOOK-PLATFORM"))) {
         qDebug() << "Starting Facebook OAuth auth";
-        XTelepathySSOFacebookOperation *authop = new XTelepathySSOFacebookOperation(m_account, m_kaccountsId, m_saslIface);
+        XTelepathySSOFacebookOperation *authop = new XTelepathySSOFacebookOperation(m_account, m_accountStorageId, m_saslIface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
 
         authop->onSASLStatusChanged(status, error, errorDetails);
-    } else if (mechanisms.contains(QLatin1String("X-OAUTH2")) && m_kaccountsId != 0) {
+    } else if (mechanisms.contains(QLatin1String("X-OAUTH2"))) {
         qDebug() << "Starting X-OAuth2 auth";
-        XTelepathySSOGoogleOperation *authop = new XTelepathySSOGoogleOperation(m_account, m_kaccountsId, m_saslIface);
+        XTelepathySSOGoogleOperation *authop = new XTelepathySSOGoogleOperation(m_account, m_accountStorageId, m_saslIface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
@@ -116,4 +118,14 @@ void SaslAuthOp::setReady()
     connect(m_saslIface->requestAllProperties(),
             SIGNAL(finished(Tp::PendingOperation*)),
             SLOT(gotProperties(Tp::PendingOperation*)));
+}
+
+void SaslAuthOp::onGetAccountStorageFetched(Tp::PendingOperation* op)
+{
+    Tp::PendingVariantMap *pendingMap = qobject_cast<Tp::PendingVariantMap*>(op);
+
+    m_accountStorageId = pendingMap->result()["StorageIdentifier"].value<QDBusVariant>().variant().toInt();
+    qDebug() << m_accountStorageId;
+
+    setReady();
 }
