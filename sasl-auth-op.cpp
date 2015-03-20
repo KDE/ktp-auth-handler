@@ -69,15 +69,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
     QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
     QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
 
-    if (mechanisms.contains(QLatin1String("X-FACEBOOK-PLATFORM"))) {
-        qDebug() << "Starting Facebook OAuth auth";
-        XTelepathySSOFacebookOperation *authop = new XTelepathySSOFacebookOperation(m_account, m_accountStorageId, m_saslIface);
-        connect(authop,
-                SIGNAL(finished(Tp::PendingOperation*)),
-                SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
-
-        authop->onSASLStatusChanged(status, error, errorDetails);
-    } else if (mechanisms.contains(QLatin1String("X-OAUTH2"))) {
+    if (mechanisms.contains(QLatin1String("X-OAUTH2"))) {
         qDebug() << "Starting X-OAuth2 auth";
         XTelepathySSOGoogleOperation *authop = new XTelepathySSOGoogleOperation(m_account, m_accountStorageId, m_saslIface);
         connect(authop,
@@ -95,10 +87,10 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else {
-        qWarning() << "X-TELEPATHY-PASSWORD, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:" << mechanisms;
+        qWarning() << "X-TELEPATHY-PASSWORD, X-OAUTH2 are the only supported SASL mechanism and are not available:" << mechanisms;
         m_channel->requestClose();
         setFinishedWithError(TP_QT_ERROR_NOT_IMPLEMENTED,
-                QLatin1String("X-TELEPATHY-PASSWORD, X-OAUTH2, X-FACEBOOK_PLATFORM are the only supported SASL mechanism and are not available:"));
+                QLatin1String("X-TELEPATHY-PASSWORD, X-OAUTH2 are the only supported SASL mechanism and are not available:"));
         return;
     }
 }
