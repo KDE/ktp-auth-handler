@@ -72,8 +72,8 @@ void XTelepathyPasswordAuthOperation::onSASLStatusChanged(uint status, const QSt
         // if we have non-null id AND if the last attempt didn't fail,
         // proceed with the credentials receieved from the SSO;
         // otherwise prompt the user
-        if (m_kaccountsId != 0 && !m_lastLoginFailedConfig.hasKey(m_account->objectPath())) {
-            GetCredentialsJob *credentialsJob = new GetCredentialsJob(m_kaccountsId, this);
+        if (!m_lastLoginFailedConfig.hasKey(m_account->objectPath())) {
+            GetCredentialsJob *credentialsJob = new GetCredentialsJob(m_accountStorageId, QStringLiteral("password"), QStringLiteral("password"), this);
             connect(credentialsJob, &GetCredentialsJob::finished, [this](KJob *job){
                 if (job->error()) {
                     qWarning() << "Credentials job error:" << job->errorText();
@@ -172,7 +172,7 @@ void XTelepathyPasswordAuthOperation::storeCredentials(const QString &secret)
 {
     QString username = m_account->parameters().value(QStringLiteral("account")).toString();
     Accounts::Manager *manager = KAccounts::accountsManager();
-    Accounts::Account *account = manager->account(m_kaccountsId);
+    Accounts::Account *account = manager->account(m_accountStorageId);
     SignOn::Identity *identity;
 
     if (account) {
