@@ -55,9 +55,6 @@ XTelepathyPasswordAuthOperation::XTelepathyPasswordAuthOperation(
 
     m_config = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
     m_lastLoginFailedConfig = m_config->group(QStringLiteral("lastLoginFailed"));
-
-    KConfigGroup kaccountsGroup = m_config->group(QStringLiteral("ktp-kaccounts"));
-    m_kaccountsId = kaccountsGroup.readEntry(m_account->objectPath(), 0);
 }
 
 XTelepathyPasswordAuthOperation::~XTelepathyPasswordAuthOperation()
@@ -222,17 +219,7 @@ void XTelepathyPasswordAuthOperation::storeCredentials(const QString &secret)
         account->sync();
 
         connect(account, &Accounts::Account::synced, [=]() {
-            m_kaccountsId = account->id();
-
-            QString uid = m_account->objectPath();
-
-            KSharedConfigPtr kaccountsConfig = KSharedConfig::openConfig(QStringLiteral("kaccounts-ktprc"));
-            KConfigGroup ktpKaccountsGroup = kaccountsConfig->group(QStringLiteral("ktp-kaccounts"));
-            ktpKaccountsGroup.writeEntry(uid, account->id());
-
-            KConfigGroup kaccountsKtpGroup = kaccountsConfig->group(QStringLiteral("kaccounts-ktp"));
-            kaccountsKtpGroup.writeEntry(QString::number(account->id()), uid);
-            kaccountsConfig->sync();
+            m_accountStorageId = account->id();
 
             qDebug() << "Account credentials synchronisation finished";
 
