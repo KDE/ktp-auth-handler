@@ -24,6 +24,7 @@
 
 #include <KSharedConfig>
 #include <KConfigGroup>
+#include <KLocalizedString>
 
 XTelepathySSOGoogleOperation::XTelepathySSOGoogleOperation(const Tp::AccountPtr &account, int accountStorageId, Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface)
     : PendingOperation(account)
@@ -53,6 +54,13 @@ void XTelepathySSOGoogleOperation::onSASLStatusChanged(uint status, const QStrin
         qDebug() << "Authentication succeeded";
         setFinished();
         break;
+    case Tp::SASLStatusServerFailed:
+        qDebug() << "Auth failed";
+        QString errorMessage = details[QLatin1String("server-message")].toString();
+        if (errorMessage.isEmpty()) {
+            errorMessage = details[QLatin1String("debug-message")].toString();
+        }
+        setFinishedWithError(reason, errorMessage.isEmpty() ? i18n("Authentication error") : errorMessage);
     }
 }
 
