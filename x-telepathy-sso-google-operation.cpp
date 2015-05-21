@@ -39,7 +39,7 @@ void XTelepathySSOGoogleOperation::onSASLStatusChanged(uint status, const QStrin
     case Tp::SASLStatusNotStarted:
     {
         qDebug() << "Status Not started";
-        GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, this);
+        GetCredentialsJob *job = new GetCredentialsJob(m_accountStorageId, QStringLiteral("oauth2"), QStringLiteral("web_server"), this);
         connect(job, SIGNAL(finished(KJob*)), SLOT(gotCredentials(KJob*)));
         job->start();
         break;
