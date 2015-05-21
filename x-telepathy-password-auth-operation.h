@@ -34,6 +34,7 @@ class XTelepathyPasswordAuthOperation : public Tp::PendingOperation
 public:
     explicit XTelepathyPasswordAuthOperation(
             const Tp::AccountPtr &account,
+            int accountStorageId,
             Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
             bool canTryAgain);
     ~XTelepathyPasswordAuthOperation();
@@ -50,7 +51,7 @@ private:
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
     KSharedConfigPtr m_config;
     KConfigGroup m_lastLoginFailedConfig;
-    quint32 m_kaccountsId;
+    int m_accountStorageId;
     bool m_canTryAgain;
     bool m_canFinish;
     QPointer<XTelepathyPasswordPrompt> m_dialog;

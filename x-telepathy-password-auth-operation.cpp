@@ -39,13 +39,15 @@
 
 XTelepathyPasswordAuthOperation::XTelepathyPasswordAuthOperation(
         const Tp::AccountPtr &account,
+        int accountStorageId,
         Tp::Client::ChannelInterfaceSASLAuthenticationInterface *saslIface,
         bool canTryAgain) :
     Tp::PendingOperation(account),
     m_account(account),
     m_saslIface(saslIface),
     m_canTryAgain(canTryAgain),
-    m_canFinish(false)
+    m_canFinish(false),
+    m_accountStorageId(accountStorageId)
 {
     connect(m_saslIface,
             SIGNAL(SASLStatusChanged(uint,QString,QVariantMap)),

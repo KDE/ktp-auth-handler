@@ -79,7 +79,7 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
     } else if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
         qDebug() << "Starting Password auth";
         Q_EMIT ready(this);
-        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_saslIface, qdbus_cast<bool>(props.value(QLatin1String("CanTryAgain"))));
+        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_accountStorageId, m_saslIface, qdbus_cast<bool>(props.value(QLatin1String("CanTryAgain"))));
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
