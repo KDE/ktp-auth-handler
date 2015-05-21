@@ -62,7 +62,6 @@ set(ktp_auth_handler_SRCS
     types.cpp
     x-telepathy-password-auth-operation.cpp
     x-telepathy-password-prompt.cpp
-    x-telepathy-sso-facebook-operation.cpp
     x-telepathy-sso-google-operation.cpp
     conference-auth-op.cpp
     conference-auth-observer.cpp
