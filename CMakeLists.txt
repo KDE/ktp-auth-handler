@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 2.8.9)
 project(ktp-auth-handler)
 
 set(KTP_AUTH_HANDLER_VERSION "0.9.0")
