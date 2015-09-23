@@ -52,41 +52,45 @@ SaslAuthOp::~SaslAuthOp()
 
 void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 {
-    if (op->isError()) {
-        qWarning() << "Unable to retrieve available SASL mechanisms";
-        m_channel->requestClose();
-        setFinishedWithError(op->errorName(), op->errorMessage());
-        return;
+    if (m_mechanisms.isEmpty()) {
+        if (op->isError()) {
+            qWarning() << "Unable to retrieve available SASL mechanisms";
+            m_channel->requestClose();
+            setFinishedWithError(op->errorName(), op->errorMessage());
+            return;
+        }
+
+        Tp::PendingVariantMap *pvm = qobject_cast<Tp::PendingVariantMap*>(op);
+        m_properties = qdbus_cast<QVariantMap>(pvm->result());
+        m_mechanisms = qdbus_cast<QStringList>(m_properties.value(QLatin1String("AvailableMechanisms")));
+        qDebug() << m_mechanisms;
     }
 
-    Tp::PendingVariantMap *pvm = qobject_cast<Tp::PendingVariantMap*>(op);
-    QVariantMap props = qdbus_cast<QVariantMap>(pvm->result());
-    QStringList mechanisms = qdbus_cast<QStringList>(props.value(QLatin1String("AvailableMechanisms")));
-    qDebug() << mechanisms;
+    uint status = qdbus_cast<uint>(m_properties.value(QLatin1String("SASLStatus")));
+    QString error = qdbus_cast<QString>(m_properties.value(QLatin1String("SASLError")));
+    QVariantMap errorDetails = qdbus_cast<QVariantMap>(m_properties.value(QLatin1String("SASLErrorDetails")));
 
-    uint status = qdbus_cast<uint>(props.value(QLatin1String("SASLStatus")));
-    QString error = qdbus_cast<QString>(props.value(QLatin1String("SASLError")));
-    QVariantMap errorDetails = qdbus_cast<QVariantMap>(props.value(QLatin1String("SASLErrorDetails")));
-
-    if (mechanisms.contains(QLatin1String("X-OAUTH2"))) {
+    if (m_mechanisms.contains(QLatin1String("X-OAUTH2"))) {
         qDebug() << "Starting X-OAuth2 auth";
+        m_mechanisms.removeAll(QStringLiteral("X-OAUTH2"));
         XTelepathySSOGoogleOperation *authop = new XTelepathySSOGoogleOperation(m_account, m_accountStorageId, m_saslIface);
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
 
         authop->onSASLStatusChanged(status, error, errorDetails);
-    } else if (mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
+    } else if (m_mechanisms.contains(QLatin1String("X-TELEPATHY-PASSWORD"))) {
         qDebug() << "Starting Password auth";
+        m_mechanisms.removeAll(QStringLiteral("X-TELEPATHY-PASSWORD"));
         Q_EMIT ready(this);
-        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_accountStorageId, m_saslIface, qdbus_cast<bool>(props.value(QLatin1String("CanTryAgain"))));
+        XTelepathyPasswordAuthOperation *authop = new XTelepathyPasswordAuthOperation(m_account, m_accountStorageId, m_saslIface, qdbus_cast<bool>(m_properties.value(QLatin1String("CanTryAgain"))));
         connect(authop,
                 SIGNAL(finished(Tp::PendingOperation*)),
                 SLOT(onAuthOperationFinished(Tp::PendingOperation*)));
 
         authop->onSASLStatusChanged(status, error, errorDetails);
     } else {
-        qWarning() << "X-TELEPATHY-PASSWORD, X-OAUTH2 are the only supported SASL mechanism and are not available:" << mechanisms;
+        qWarning() << "X-TELEPATHY-PASSWORD, X-OAUTH2 are the only supported SASL mechanism and are not available:" << m_mechanisms;
         m_channel->requestClose();
         setFinishedWithError(TP_QT_ERROR_NOT_IMPLEMENTED,
                 QLatin1String("X-TELEPATHY-PASSWORD, X-OAUTH2 are the only supported SASL mechanism and are not available:"));
@@ -96,11 +100,17 @@ void SaslAuthOp::gotProperties(Tp::PendingOperation *op)
 
 void SaslAuthOp::onAuthOperationFinished(Tp::PendingOperation *op)
 {
-    m_channel->requestClose();
     if (op->isError()) {
-        setFinishedWithError(op->errorName(), op->errorMessage());
+        if (!m_mechanisms.isEmpty()) {
+            // if we have other mechanisms left, try again with different one
+            gotProperties(0);
+        } else {
+            setFinishedWithError(op->errorName(), op->errorMessage());
+            m_channel->requestClose();
+        }
     } else {
         setFinished();
+        m_channel->requestClose();
     }
 }
 

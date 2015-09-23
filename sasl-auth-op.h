@@ -53,6 +53,8 @@ private:
     Tp::ChannelPtr m_channel;
     Tp::Client::ChannelInterfaceSASLAuthenticationInterface *m_saslIface;
     int m_accountStorageId;
+    QStringList m_mechanisms;
+    QVariantMap m_properties;
 };
 
 #endif // SASL_AUTH_OP_H
