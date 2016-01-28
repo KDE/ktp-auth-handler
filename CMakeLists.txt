@@ -44,7 +44,7 @@ set_package_properties(Qca-qt5-ossl PROPERTIES
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
-include(KDECompilerSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
 include(ECMPackageConfigHelpers)
 include(ECMMarkNonGuiExecutable)
 include(CMakePackageConfigHelpers)
