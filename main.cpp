@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QCommandLineParser>
+#include <QIcon>
 
 #include <TelepathyQt/AccountFactory>
 #include <TelepathyQt/AccountManager>
@@ -53,7 +54,6 @@ int main(int argc, char *argv[])
     aboutData.addAuthor(i18n("David Edmundson"), i18n("Developer"), "kde@davidedmundson.co.uk");
     aboutData.addAuthor(i18n("Daniele E. Domenichelli"), i18n("Developer"), "daniele.domenichelli@gmail.com");
     aboutData.setProductName("telepathy/auth-handler");
-    aboutData.setProgramIconName(QLatin1String("telepathy-kde"));
 
     KAboutData::setApplicationData(aboutData);
 
@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
     setenv("KDE_SESSION_VERSION", "5", 0);
 
     KTp::TelepathyHandlerApplication app(argc, argv);
+    QApplication::setWindowIcon(QIcon::fromTheme(QLatin1String("telepathy-kde")));
 
     // FIXME: Move this to tp-qt4 itself
     registerTypes();
