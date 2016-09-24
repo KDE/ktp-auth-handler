@@ -170,7 +170,7 @@ void XTelepathyPasswordAuthOperation::storeCredentials(const QString &secret)
     QString username = m_account->parameters().value(QStringLiteral("account")).toString();
     Accounts::Manager *manager = KAccounts::accountsManager();
     Accounts::Account *account = manager->account(m_accountStorageId);
-    SignOn::Identity *identity;
+    SignOn::Identity *identity = nullptr;
 
     if (account) {
         Accounts::AccountService *service = new Accounts::AccountService(account, manager->service(QString()), this);
