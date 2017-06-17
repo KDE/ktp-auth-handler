@@ -13,7 +13,7 @@ find_package(Qt5 5.3 CONFIG REQUIRED COMPONENTS DBus Gui Core Network) #Network 
 find_package(ECM 0.0.11 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
-find_package(KF5 5.0 REQUIRED COMPONENTS Wallet WidgetsAddons I18n KIO WebKit)
+find_package(KF5 5.0 REQUIRED COMPONENTS Wallet WidgetsAddons I18n KIO)
 
 cmake_policy(SET CMP0002 OLD)
 
