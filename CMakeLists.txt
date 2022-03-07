@@ -1,4 +1,4 @@
-project(ktp-auth-handler)
+cmake_minimum_required(VERSION 3.16)
 
 # KDE Application Version, managed by release script
 set(RELEASE_SERVICE_VERSION_MAJOR "22")
@@ -6,7 +6,7 @@ set(RELEASE_SERVICE_VERSION_MINOR "03")
 set(RELEASE_SERVICE_VERSION_MICRO "70")
 set(KTP_AUTH_HANDLER_VERSION "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_VERSION_MINOR}.${RELEASE_SERVICE_VERSION_MICRO}")
 
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+project(ktp-auth-handler VERSION ${KTP_AUTH_HANDLER_VERSION})
 
 find_package(Qt5 5.3 CONFIG REQUIRED COMPONENTS DBus Gui Core Network) #Network for QSsl
 
@@ -14,8 +14,6 @@ find_package(ECM 0.0.11 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 find_package(KF5 5.0 REQUIRED COMPONENTS Wallet WidgetsAddons I18n KIO)
-
-cmake_policy(SET CMP0002 OLD)
 
 set(IS_KTP_INTERNAL_MODULE TRUE)
 find_package (TelepathyQt5 0.8.9 REQUIRED)
@@ -45,7 +43,6 @@ set_package_properties(Qca-qt5-ossl PROPERTIES
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
-include(ECMPackageConfigHelpers)
 include(ECMMarkNonGuiExecutable)
 include(CMakePackageConfigHelpers)
 include(FeatureSummary)
