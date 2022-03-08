@@ -15,7 +15,6 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} "${CMAKE_CURRENT_
 
 find_package(KF5 5.0 REQUIRED COMPONENTS Wallet WidgetsAddons I18n KIO)
 
-set(IS_KTP_INTERNAL_MODULE TRUE)
 find_package (TelepathyQt5 0.8.9 REQUIRED)
 find_package (KTp REQUIRED)
 find_package (Qca-qt5 REQUIRED)
