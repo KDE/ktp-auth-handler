@@ -108,3 +108,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.T
 install(FILES KTp.SASLHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
 install(FILES KTp.TLSHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
 install(FILES KTp.ConfAuthObserver.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
+
+ki18n_install(po)
