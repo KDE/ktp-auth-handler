@@ -10,7 +10,7 @@ project(ktp-auth-handler VERSION ${KTP_AUTH_HANDLER_VERSION})
 
 find_package(Qt5 5.3 CONFIG REQUIRED COMPONENTS DBus Gui Core Network) #Network for QSsl
 
-find_package(ECM 0.0.11 REQUIRED NO_MODULE)
+find_package(ECM 1.6.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 find_package(KF5 5.0 REQUIRED COMPONENTS Wallet WidgetsAddons I18n KIO)
@@ -99,14 +99,14 @@ configure_file(org.freedesktop.Telepathy.Client.KTp.TLSHandler.service.in
 configure_file(org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service.in
     ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service)
 
-install(TARGETS ktp-auth-handler DESTINATION ${LIBEXEC_INSTALL_DIR})
+install(TARGETS ktp-auth-handler DESTINATION ${KDE_INSTALL_LIBEXECDIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.SASLHandler.service
     ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.ConfAuthObserver.service
-        DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
+        DESTINATION ${KDE_INSTALL_DBUSSERVICEDIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/org.freedesktop.Telepathy.Client.KTp.TLSHandler.service
-        DESTINATION ${DBUS_SERVICES_INSTALL_DIR})
-install(FILES KTp.SASLHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
-install(FILES KTp.TLSHandler.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
-install(FILES KTp.ConfAuthObserver.client DESTINATION ${SHARE_INSTALL_PREFIX}/telepathy/clients/)
+        DESTINATION ${KDE_INSTALL_DBUSSERVICEDIR})
+install(FILES KTp.SASLHandler.client DESTINATION ${KDE_INSTALL_DATAROOTDIR}/telepathy/clients/)
+install(FILES KTp.TLSHandler.client DESTINATION ${KDE_INSTALL_DATAROOTDIR}/telepathy/clients/)
+install(FILES KTp.ConfAuthObserver.client DESTINATION ${KDE_INSTALL_DATAROOTDIR}/telepathy/clients/)
 
 ki18n_install(po)
