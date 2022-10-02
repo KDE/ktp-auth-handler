@@ -1,0 +1,157 @@
+# Translation of ktp-auth-handler.po to Euskara/Basque (eu).
+# Copyright (C) 2019, This file is copyright:
+# This file is distributed under the same license as the ktp-auth-handler package.
+# KDE euskaratzeko proiektuaren arduraduna <xalba@euskalnet.net>.
+#
+# Translators:
+# Gontzal M. Pujana <juchuf@gmail.com>, 2018.
+# Iñigo Salvador Azurmendi <xalba@euskalnet.net>, 2019.
+msgid ""
+msgstr ""
+"Project-Id-Version: ktp-auth-handler\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2019-07-26 00:03+0200\n"
+"Last-Translator: Iñigo Salvador Azurmendi <xalba@euskalnet.net>\n"
+"Language-Team: Basque <kde-i18n-eu@kde.org>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 19.04.3\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Gontzal Pujana"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "juchuf@gmail.com"
+
+#: conference-auth-op.cpp:94
+#, kde-format
+msgid "Please provide a password for the chat room %1"
+msgstr "Mesedez sartu pasahitza %1 berriketa gelarako"
+
+#: main.cpp:51
+#, kde-format
+msgid "Telepathy Authentication Handler"
+msgstr "Telepathy autentifikazio maneilatzailea"
+
+#: main.cpp:54
+#, kde-format
+msgid "David Edmundson"
+msgstr "David Edmundson"
+
+#: main.cpp:54 main.cpp:55
+#, kde-format
+msgid "Developer"
+msgstr "Garatzailea"
+
+#: main.cpp:55
+#, kde-format
+msgid "Daniele E. Domenichelli"
+msgstr "Daniele E. Domenichelli"
+
+#: tls-cert-verifier-op.cpp:89
+#, kde-format
+msgid "Invalid certificate type %1"
+msgstr "Ziurtagiri mota baliogabea %1"
+
+#: tls-cert-verifier-op.cpp:102
+#, kde-format
+msgid ""
+"The SSL/TLS support plugin is not available. Certificate validation cannot "
+"be done."
+msgstr ""
+"SSL/TLS euskarri plugina ez dago eskuragarri. Ziurtagiriaren baliozkotzea "
+"ezin da egin."
+
+#: tls-cert-verifier-op.cpp:120
+#, kde-format
+msgid "Certificate rejected by the user"
+msgstr "Erabiltzaileak ziurtagiria errefusatu du"
+
+#: tls-cert-verifier-op.cpp:146
+#, kde-format
+msgid ""
+"The server failed the authenticity check (%1).\n"
+"\n"
+msgstr ""
+"Zerbitzariak autentikotasun egiaztapenean huts egin du (%1).\n"
+"\n"
+
+#: tls-cert-verifier-op.cpp:156 tls-cert-verifier-op.cpp:174
+#, kde-format
+msgid "Server Authentication"
+msgstr "Zerbitzari autentifikazioa"
+
+#: tls-cert-verifier-op.cpp:157
+#, kde-format
+msgid "&Details"
+msgstr "&Xehetasunak"
+
+#: tls-cert-verifier-op.cpp:158
+#, kde-format
+msgid "Co&ntinue"
+msgstr "&Jarraitu"
+
+#: tls-cert-verifier-op.cpp:159
+#, kde-format
+msgid "&Cancel"
+msgstr "&Utzi"
+
+#: tls-cert-verifier-op.cpp:171
+#, kde-format
+msgid ""
+"Would you like to accept this certificate forever without being prompted?"
+msgstr ""
+"Ziurtagiri hau betirako onartu nahi duzu behin eta berriz galdetua izan gabe?"
+
+#: tls-cert-verifier-op.cpp:175
+#, kde-format
+msgid "&Forever"
+msgstr "&Betirako"
+
+#: tls-cert-verifier-op.cpp:176
+#, kde-format
+msgid "&Current Session only"
+msgstr "U&neko saiorako soilik"
+
+#: x-telepathy-password-auth-operation.cpp:125
+#: x-telepathy-sso-google-operation.cpp:63
+#, kde-format
+msgid "Authentication error"
+msgstr "Autentifikatze errorea"
+
+#: x-telepathy-password-auth-operation.cpp:144
+#, kde-format
+msgid "User cancelled auth"
+msgstr "Erabiltzaileak autentifikazioa utzi du"
+
+#. i18n: ectx: property (text), widget (KTitleWidget, title)
+#: x-telepathy-password-prompt.ui:47
+#, kde-format
+msgid "Please Enter Your Account Password"
+msgstr "Mesedez sartu zure kontuaren pasahitza"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: x-telepathy-password-prompt.ui:59
+#, kde-format
+msgid "Account:"
+msgstr "Kontua:"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: x-telepathy-password-prompt.ui:73
+#, kde-format
+msgid "Password:"
+msgstr "Pasahitza:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, savePassword)
+#: x-telepathy-password-prompt.ui:87
+#, kde-format
+msgid "Save Password"
+msgstr "Gorde pasahitza"

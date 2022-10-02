@@ -1,0 +1,154 @@
+# translation of telepathy-auth-handler.po to Low Saxon
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# Manfred Wiese <m.j.wiese@web.de>, 2011.
+# Sönke Dibbern <s_dibbern@web.de>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: telepathy-auth-handler\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2014-06-05 17:47+0200\n"
+"Last-Translator: Sönke Dibbern <s_dibbern@web.de>\n"
+"Language-Team: Low Saxon <kde-i18n-nds@kde.org>\n"
+"Language: nds\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 1.4\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Manfred Wiese, Sönke Dibbern"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "m.j.wiese@web.de, s_dibbern@web.de"
+
+#: conference-auth-op.cpp:94
+#, kde-format
+msgid "Please provide a password for the chat room %1"
+msgstr "Giff bitte en Passwoort för den Klöönruum %1 an"
+
+#: main.cpp:51
+#, kde-format
+msgid "Telepathy Authentication Handler"
+msgstr "Telepathy-Identiteetprööv-Hanteerprogramm"
+
+#: main.cpp:54
+#, kde-format
+msgid "David Edmundson"
+msgstr "David Edmundson"
+
+#: main.cpp:54 main.cpp:55
+#, kde-format
+msgid "Developer"
+msgstr "Programmschriever"
+
+#: main.cpp:55
+#, kde-format
+msgid "Daniele E. Domenichelli"
+msgstr "Daniele E. Domenichelli"
+
+#: tls-cert-verifier-op.cpp:89
+#, kde-format
+msgid "Invalid certificate type %1"
+msgstr ""
+
+#: tls-cert-verifier-op.cpp:102
+#, kde-format
+msgid ""
+"The SSL/TLS support plugin is not available. Certificate validation cannot "
+"be done."
+msgstr ""
+"Dat SSL-/TLS-Ünnerstüttenmoduul is nich verföögbor. Zertifikaatpröven sünd "
+"nich mööglich."
+
+#: tls-cert-verifier-op.cpp:120
+#, kde-format
+msgid "Certificate rejected by the user"
+msgstr ""
+
+#: tls-cert-verifier-op.cpp:146
+#, kde-format
+msgid ""
+"The server failed the authenticity check (%1).\n"
+"\n"
+msgstr ""
+"De Identiteetprööv för den Server is fehlslaan (%1).\n"
+"\n"
+
+#: tls-cert-verifier-op.cpp:156 tls-cert-verifier-op.cpp:174
+#, kde-format
+msgid "Server Authentication"
+msgstr "Server-Identiteetprööv"
+
+#: tls-cert-verifier-op.cpp:157
+#, kde-format
+msgid "&Details"
+msgstr "&Enkelheiten"
+
+#: tls-cert-verifier-op.cpp:158
+#, kde-format
+msgid "Co&ntinue"
+msgstr "&Wiedermaken"
+
+#: tls-cert-verifier-op.cpp:159
+#, kde-format
+msgid "&Cancel"
+msgstr "&Afbreken"
+
+#: tls-cert-verifier-op.cpp:171
+#, kde-format
+msgid ""
+"Would you like to accept this certificate forever without being prompted?"
+msgstr "Wullt Du dit Zertifikaat duerhaftig ahn Nafragen annehmen?"
+
+#: tls-cert-verifier-op.cpp:175
+#, kde-format
+msgid "&Forever"
+msgstr "&Duerhaftig"
+
+#: tls-cert-verifier-op.cpp:176
+#, kde-format
+msgid "&Current Session only"
+msgstr "Bloots &aktuell Törn"
+
+#: x-telepathy-password-auth-operation.cpp:125
+#: x-telepathy-sso-google-operation.cpp:63
+#, kde-format
+msgid "Authentication error"
+msgstr "Identiteetprööv fehlslaan"
+
+#: x-telepathy-password-auth-operation.cpp:144
+#, kde-format
+msgid "User cancelled auth"
+msgstr "Bruker hett Identiteetprööv afbraken"
+
+#. i18n: ectx: property (text), widget (KTitleWidget, title)
+#: x-telepathy-password-prompt.ui:47
+#, kde-format
+msgid "Please Enter Your Account Password"
+msgstr "Giff bitte Dien Togangpasswoort in"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: x-telepathy-password-prompt.ui:59
+#, kde-format
+msgid "Account:"
+msgstr "Togang:"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: x-telepathy-password-prompt.ui:73
+#, kde-format
+msgid "Password:"
+msgstr "Passwoort:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, savePassword)
+#: x-telepathy-password-prompt.ui:87
+#, kde-format
+msgid "Save Password"
+msgstr "Passwoort sekern"

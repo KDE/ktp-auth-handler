@@ -1,0 +1,159 @@
+# translation of ktp-auth-handler.po to Français
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# Joëlle Cornavin <jcorn@free.fr>, 2012, 2013.
+# Maxime Corteel <mcorteel@gmail.com>, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ktp-auth-handler\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2014-12-07 16:58+0100\n"
+"Last-Translator: Maxime Corteel <mcorteel@gmail.com>\n"
+"Language-Team: French <kde-francophone@kde.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Lokalize 1.5\n"
+"X-Environment: kde\n"
+"X-Accelerator-Marker: &\n"
+"X-Text-Markup: kde4\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Joëlle Cornavin, Maxime Corteel"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "jcorn@free.fr, mcorteel@gmail.com"
+
+#: conference-auth-op.cpp:94
+#, kde-format
+msgid "Please provide a password for the chat room %1"
+msgstr "Veuillez fournir un mot de passe pour le forum %1"
+
+#: main.cpp:51
+#, kde-format
+msgid "Telepathy Authentication Handler"
+msgstr "Gestionnaire d'authentification de Telepathy"
+
+#: main.cpp:54
+#, kde-format
+msgid "David Edmundson"
+msgstr "David Edmundson"
+
+#: main.cpp:54 main.cpp:55
+#, kde-format
+msgid "Developer"
+msgstr "Développeur"
+
+#: main.cpp:55
+#, kde-format
+msgid "Daniele E. Domenichelli"
+msgstr "Daniele E. Domenichelli"
+
+#: tls-cert-verifier-op.cpp:89
+#, kde-format
+msgid "Invalid certificate type %1"
+msgstr "Type de certificat non valable %1"
+
+#: tls-cert-verifier-op.cpp:102
+#, kde-format
+msgid ""
+"The SSL/TLS support plugin is not available. Certificate validation cannot "
+"be done."
+msgstr ""
+"Le module externe de prise en charge de SSL / TLS n'est pas disponible. Il "
+"est impossible d'effectuer la validation du certificat."
+
+#: tls-cert-verifier-op.cpp:120
+#, kde-format
+msgid "Certificate rejected by the user"
+msgstr "Certificat rejeté par l'utilisateur"
+
+#: tls-cert-verifier-op.cpp:146
+#, kde-format
+msgid ""
+"The server failed the authenticity check (%1).\n"
+"\n"
+msgstr ""
+"Le serveur n'a pas réussi à vérifier l'authenticité (%1).\n"
+"\n"
+
+#: tls-cert-verifier-op.cpp:156 tls-cert-verifier-op.cpp:174
+#, kde-format
+msgid "Server Authentication"
+msgstr "Authentification du serveur"
+
+#: tls-cert-verifier-op.cpp:157
+#, kde-format
+msgid "&Details"
+msgstr "&Détails"
+
+#: tls-cert-verifier-op.cpp:158
+#, kde-format
+msgid "Co&ntinue"
+msgstr "Co&ntinuer"
+
+#: tls-cert-verifier-op.cpp:159
+#, kde-format
+msgid "&Cancel"
+msgstr "&Annuler"
+
+#: tls-cert-verifier-op.cpp:171
+#, kde-format
+msgid ""
+"Would you like to accept this certificate forever without being prompted?"
+msgstr ""
+"Voulez-vous accepter ce certificat indéfiniment sans recevoir de demande de "
+"confirmation ?"
+
+#: tls-cert-verifier-op.cpp:175
+#, kde-format
+msgid "&Forever"
+msgstr "&Indéfiniment"
+
+#: tls-cert-verifier-op.cpp:176
+#, kde-format
+msgid "&Current Session only"
+msgstr "Session a&ctuelle uniquement"
+
+#: x-telepathy-password-auth-operation.cpp:125
+#: x-telepathy-sso-google-operation.cpp:63
+#, kde-format
+msgid "Authentication error"
+msgstr "Erreur d'authentification"
+
+#: x-telepathy-password-auth-operation.cpp:144
+#, kde-format
+msgid "User cancelled auth"
+msgstr "L'utilisateur a annulé l'authentification"
+
+#. i18n: ectx: property (text), widget (KTitleWidget, title)
+#: x-telepathy-password-prompt.ui:47
+#, kde-format
+msgid "Please Enter Your Account Password"
+msgstr "Veuillez saisir le mot de passe de votre compte"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: x-telepathy-password-prompt.ui:59
+#, kde-format
+msgid "Account:"
+msgstr "Compte :"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: x-telepathy-password-prompt.ui:73
+#, kde-format
+msgid "Password:"
+msgstr "Mot de passe :"
+
+#. i18n: ectx: property (text), widget (QCheckBox, savePassword)
+#: x-telepathy-password-prompt.ui:87
+#, kde-format
+msgid "Save Password"
+msgstr "Enregistrer le mot de passe"

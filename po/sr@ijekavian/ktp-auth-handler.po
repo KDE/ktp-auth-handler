@@ -1,0 +1,155 @@
+# Translation of ktp-auth-handler.po into Serbian.
+# Mladen Pejakovic <pejakm@gmail.com>, 2012.
+# Chusslove Illich <caslav.ilic@gmx.net>, 2012, 2013, 2014, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: ktp-auth-handler\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2019-05-20 03:11+0200\n"
+"PO-Revision-Date: 2016-01-28 22:53+0100\n"
+"Last-Translator: Chusslove Illich <caslav.ilic@gmx.net>\n"
+"Language-Team: Serbian <kde-i18n-sr@kde.org>\n"
+"Language: sr@ijekavian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Accelerator-Marker: &\n"
+"X-Text-Markup: kde4\n"
+"X-Environment: kde\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Младен Пејаковић"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "pejakm@gmail.com"
+
+#: conference-auth-op.cpp:94
+#, kde-format
+msgid "Please provide a password for the chat room %1"
+msgstr "Унесите лозинку собе за ћаскање %1"
+
+#: main.cpp:51
+#, kde-format
+msgid "Telepathy Authentication Handler"
+msgstr "Руковалац аутентификацијом за Телепатију"
+
+#: main.cpp:54
+#, kde-format
+msgid "David Edmundson"
+msgstr "Дејвид Едмундсон"
+
+#: main.cpp:54 main.cpp:55
+#, kde-format
+msgid "Developer"
+msgstr "Програмер"
+
+#: main.cpp:55
+#, kde-format
+msgid "Daniele E. Domenichelli"
+msgstr "Данијеле Доменичели"
+
+# skip-rule: t-invalid2
+#: tls-cert-verifier-op.cpp:89
+#, kde-format
+msgid "Invalid certificate type %1"
+msgstr "Лош тип сертификата %1"
+
+#: tls-cert-verifier-op.cpp:102
+#, kde-format
+msgid ""
+"The SSL/TLS support plugin is not available. Certificate validation cannot "
+"be done."
+msgstr ""
+"Прикључак за подршку ССЛ‑а/ТЛС‑а није доступан. Сертификати не могу да се "
+"оверавају."
+
+#: tls-cert-verifier-op.cpp:120
+#, kde-format
+msgid "Certificate rejected by the user"
+msgstr "Корисник је одбио сертификат."
+
+#: tls-cert-verifier-op.cpp:146
+#, kde-format
+msgid ""
+"The server failed the authenticity check (%1).\n"
+"\n"
+msgstr ""
+"Сервер није прошао аутентификацију (%1).\n"
+"\n"
+
+#: tls-cert-verifier-op.cpp:156 tls-cert-verifier-op.cpp:174
+#, kde-format
+msgid "Server Authentication"
+msgstr "Аутентификација сервера"
+
+#: tls-cert-verifier-op.cpp:157
+#, kde-format
+msgid "&Details"
+msgstr "&Детаљи"
+
+#: tls-cert-verifier-op.cpp:158
+#, kde-format
+msgid "Co&ntinue"
+msgstr "&Настави"
+
+#: tls-cert-verifier-op.cpp:159
+#, kde-format
+msgid "&Cancel"
+msgstr "&Одустани"
+
+#: tls-cert-verifier-op.cpp:171
+#, kde-format
+msgid ""
+"Would you like to accept this certificate forever without being prompted?"
+msgstr "Желите ли да прихватите овај сертификат заувијек, без даљег питања?"
+
+#: tls-cert-verifier-op.cpp:175
+#, kde-format
+msgid "&Forever"
+msgstr "&Заувијек"
+
+#: tls-cert-verifier-op.cpp:176
+#, kde-format
+msgid "&Current Session only"
+msgstr "&Само за текућу сесију"
+
+#: x-telepathy-password-auth-operation.cpp:125
+#: x-telepathy-sso-google-operation.cpp:63
+#, kde-format
+msgid "Authentication error"
+msgstr "Грешка аутентификације"
+
+#: x-telepathy-password-auth-operation.cpp:144
+#, kde-format
+msgid "User cancelled auth"
+msgstr "Корисник је отказао аутентификацију"
+
+#. i18n: ectx: property (text), widget (KTitleWidget, title)
+#: x-telepathy-password-prompt.ui:47
+#, kde-format
+msgid "Please Enter Your Account Password"
+msgstr "Унесите лозинку за свој налог"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: x-telepathy-password-prompt.ui:59
+#, kde-format
+msgid "Account:"
+msgstr "Налог:"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: x-telepathy-password-prompt.ui:73
+#, kde-format
+msgid "Password:"
+msgstr "Лозинка:"
+
+#. i18n: ectx: property (text), widget (QCheckBox, savePassword)
+#: x-telepathy-password-prompt.ui:87
+#, kde-format
+msgid "Save Password"
+msgstr "Сачувај лозинку"
