@@ -102,7 +102,7 @@ msgstr "Co&ntinua"
 #: tls-cert-verifier-op.cpp:159
 #, kde-format
 msgid "&Cancel"
-msgstr "&Cancel·la"
+msgstr "C&ancel·la"
 
 #: tls-cert-verifier-op.cpp:171
 #, kde-format
