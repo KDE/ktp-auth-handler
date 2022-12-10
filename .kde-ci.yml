@@ -8,6 +8,6 @@ Dependencies:
     'frameworks/kwallet': '@stable'
     'frameworks/ki18n': '@stable'
     'frameworks/kio': '@stable'
-    'frameworks/kwidgetaddons': '@stable'
+    'frameworks/kwidgetsaddons': '@stable'
     'network/kaccounts-integration': '@same'
     'network/ktp-common-internals': '@same'
