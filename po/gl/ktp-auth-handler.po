@@ -33,7 +33,7 @@ msgstr "xosecalvo@gmail.com"
 #: conference-auth-op.cpp:94
 #, kde-format
 msgid "Please provide a password for the chat room %1"
-msgstr "Forneza un contrasinal para a sala de conversas %1"
+msgstr "Forneza un contrasinal para a sala de charlas %1"
 
 #: main.cpp:51
 #, kde-format
